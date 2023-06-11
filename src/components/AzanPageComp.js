@@ -70,7 +70,7 @@ const AzanPageComp = () => {
       <div style={{ background: 'var(--alt-color)' }} className="filter rounded px-2 py-3 my-3 ">
         <div className="d-flex gap-3 justify-content-start align-items-center ">
           <span className="fs-4" htmlFor="select"> اختر البلد </span>
-          <select onChange={handleSelect} className="form-select w-fit fs-5" id="select">
+          <select onChange={handleSelect} style={{backgroundColor:'var(--main-color)', color:'var(--black)'}} className="form-select w-fit fs-5" id="select">
             {Object.keys(cities).map((key, index) => {
               return <option key={index} value={key} > {cities[key]} </option>
             })}
