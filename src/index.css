@@ -1,13 +1,176 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root {
+  --main-color: #1e293b;
+  --secondary-color: #334155;
+  --black: white;
+  --alt-color: #465975;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.light-theme {
+  --main-color:#dcdcdc;
+  --secondary-color:  rgb(255, 255, 255) ;
+  --black: black;
+  --alt-color: white;
 }
+
+
+/* start normalize */
+body {
+  font-family: 'Almarai', sans-serif;
+  font-family: 'Cairo', sans-serif;
+  background-color: var(--main-color);
+  color: var(--black);
+}
+
+a {
+  text-decoration: none;
+  color: var(--black);
+}
+
+.page {
+  min-height: 80vh;
+}
+
+/* end normalize */
+
+
+/* start frame work */
+.w-fit {
+  width: fit-content;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.flex1 {
+  flex: 1;
+}
+
+.underline{
+  text-decoration: underline;
+}
+
+.pointer{
+  cursor: pointer;
+}
+
+/* end framework */
+
+
+
+/* start navbar */
+.navbar{
+  position: sticky;
+  top: 0;
+  z-index: 12;
+}
+.navbar,
+.footer {
+  background: var(--secondary-color);
+  padding: 14px 0;
+  font-size: 17px;
+}
+
+.active {
+  display: block;
+}
+
+.not-active {
+  display: none;
+}
+
+.change-theme {
+  position: relative;
+}
+
+.change-theme::after {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  content: '';
+}
+
+
+
+/* loading  */
+
+.lds-dual-ring {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid var(--black);
+  border-color: var(--black) transparent var(--black) transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* end loading  */
+
+/* pagination */
+.page-link {
+  background-color: var(--alt-color) !important;
+  color: var(--black) !important;
+  border-radius: 10px !important;
+  border: solid 1px 272727 !important;
+  
+}
+.page-item a {
+  box-shadow: none !important;
+  border: 1px solid var(--black) !important;
+}
+.page-item a:hover {
+  border: 1px solid var(--black) !important;
+}
+
+.page-link:hover {
+  background-color: var(--main-color) !important;
+  color:var(--black) !important;
+  border: solid 1px 272727 !important;
+}
+
+/* end pagination */
+
+
+/* azan page  */
+.azan-table tr,.azan-table td,.azan-table th{
+  background-color: transparent !important;
+  color:var(--black) !important;
+}
+
+.azan-table{
+  background-color: var(--alt-color) !important;
+  color:var(--black) !important;
+}
+
+.azan-page select{
+  box-shadow: none !important;
+  border: none !important;
+}
+/* end azan page */
+
+/* start hadees page */
+.hadees .hadees{
+  line-height: 1.7;
+  font-size: 15px;
+  font-family: emoji;
+}
+

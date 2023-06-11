@@ -1,23 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import QuranPage from "./pages/QuranPage";
+import AzkarPage from "./pages/AzkarPage";
+import TafseerPage from "./pages/TafseerPage";
+import HadeesPage from "./pages/HadeesPage";
+import AzanPage from "./pages/AzanPage";
+import Navbar from "./components/utility/Navbar";
+import Footer from "./components/utility/Footer";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+      {/* start header */}
+      <Navbar />
+
+      {/* start content */}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/quran" element={<QuranPage />} />
+        <Route path="/azkar" element={<AzkarPage />} />
+        <Route path="/hadees" element={<HadeesPage />} />
+        <Route path="/tafseer" element={<TafseerPage />} />
+        <Route path="/azan" element={<AzanPage />} />
+      </Routes>
+
+      {/* start footer */}
+      <Footer />
     </div>
   );
 }
