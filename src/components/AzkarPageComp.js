@@ -27,7 +27,7 @@ const AzkarPageComp = () => {
     setMyChosen(myFilter)
   }
 
-  console.log(filter);
+
 
   return (
     <div>

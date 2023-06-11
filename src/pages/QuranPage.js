@@ -1,8 +1,13 @@
 import React from 'react'
+import QuranPageComp from '../components/QuranPageComp'
 
 const QuranPage = () => {
   return (
-    <div className='page'>QuranPage</div>
+    <div className='page quran-page'>
+      <div className="container">
+        <QuranPageComp />
+      </div>
+    </div>
   )
 }
 

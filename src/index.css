@@ -27,7 +27,17 @@ a {
 }
 
 .page {
-  min-height: 80vh;
+  min-height: 82vh;
+}
+
+
+select{
+  border: none !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+select option{
+  cursor: pointer;
 }
 
 /* end normalize */
@@ -168,9 +178,19 @@ a {
 /* end azan page */
 
 /* start hadees page */
-.hadees .hadees{
+.hadees-page .hadees{
   line-height: 1.7;
   font-size: 15px;
   font-family: emoji;
 }
 
+
+
+/* start quran page  */
+
+.quran-page audio{
+  flex: 1;
+  height: 32px;
+  background-color: white;
+  border-radius: 6px;
+}
