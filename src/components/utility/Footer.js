@@ -8,7 +8,7 @@ const Footer = () => {
     <div className="footer">
         <Container>
           <div className="d-flex justify-content-between align-items-center">
-            <span> تم الانشاء بواسطه <a className="fw-bold" target="_blank" href="https://www.linkedin.com/in/abdelrahman-gadallah-384508231/"> Abdelrahman Sameeh </a> </span>
+            <span> تم الانشاء بواسطه <a className="fw-bold" target="_blank" href="https://www.linkedin.com/in/abdelrahman-gadallah-384508231/"> عبدالرحمن سميح </a> </span>
 
             <div className="d-flex fs-3 gap-3">
               <a target="_blank" href="https://www.linkedin.com/in/abdelrahman-gadallah-384508231/">
@@ -19,6 +19,7 @@ const Footer = () => {
               </a>
             </div>
           </div>
+        <div className='text-center'>  شكرا على زيارة الموقع ادعوا الله ان يهدينا جميعا وان يدخنا الجنة برحمته </div>
         </Container>
       </div>
   )

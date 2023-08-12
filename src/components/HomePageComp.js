@@ -9,7 +9,7 @@ const HomePageComp = () => {
     <>
       {/* sub-title  */}
       <div className="sub-title fs-3 pt-3 ">
-        مرحبا بك فى موقع <span className='fw-bold '>اسلام ويب</span>
+        مرحبا بك فى موقع <span className='fw-bold '> اسلامنا </span>
       </div>
 
       {/* content */}

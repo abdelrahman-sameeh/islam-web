@@ -1,0 +1,187 @@
+{
+	"info": {
+		"_postman_id": "67539702-0658-46b8-83e7-102a54c634e2",
+		"name": "eslam web",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25804108",
+		"_collection_link": "https://gold-escape-37166.postman.co/workspace/My-Workspace~c710e81b-9a90-40a4-817f-0a386e30bb02/collection/25804108-67539702-0658-46b8-83e7-102a54c634e2?action=share&creator=25804108&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "azan",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.aladhan.com/v1/timingsByCity/9-6?city=menofia&country=egypt",
+					"protocol": "https",
+					"host": [
+						"api",
+						"aladhan",
+						"com"
+					],
+					"path": [
+						"v1",
+						"timingsByCity",
+						"9-6"
+					],
+					"query": [
+						{
+							"key": "city",
+							"value": "menofia"
+						},
+						{
+							"key": "country",
+							"value": "egypt"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "surah",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.alquran.cloud/v1/surah/1",
+					"protocol": "https",
+					"host": [
+						"api",
+						"alquran",
+						"cloud"
+					],
+					"path": [
+						"v1",
+						"surah",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "hadees",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://hadis-api-id.vercel.app/hadith/abu-dawud?page=1&limit=50",
+					"protocol": "https",
+					"host": [
+						"hadis-api-id",
+						"vercel",
+						"app"
+					],
+					"path": [
+						"hadith",
+						"abu-dawud"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "50"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "azkar",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.hisnmuslim.com/api/ar/27.json",
+					"protocol": "https",
+					"host": [
+						"www",
+						"hisnmuslim",
+						"com"
+					],
+					"path": [
+						"api",
+						"ar",
+						"27.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "azkar2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://raw.githubusercontent.com/nawafalqari/azkar-api/56df51279ab6eb86dc2f6202c7de26c8948331c1/azkar.json",
+					"protocol": "https",
+					"host": [
+						"raw",
+						"githubusercontent",
+						"com"
+					],
+					"path": [
+						"nawafalqari",
+						"azkar-api",
+						"56df51279ab6eb86dc2f6202c7de26c8948331c1",
+						"azkar.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "tafseer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://quranenc.com/api/v1/translation/sura/arabic_moyassar/1",
+					"protocol": "https",
+					"host": [
+						"quranenc",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"translation",
+						"sura",
+						"arabic_moyassar",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "surah audio",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/001.mp3",
+					"protocol": "https",
+					"host": [
+						"download",
+						"quranicaudio",
+						"com"
+					],
+					"path": [
+						"quran",
+						"mishaari_raashid_al_3afaasee",
+						"001.mp3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

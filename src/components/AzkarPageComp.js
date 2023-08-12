@@ -6,16 +6,23 @@ const AzkarPageComp = () => {
 
   const [azkar, setAzkar] = useState({})
   const [filter, setFilter] = useState([])
-  const [myChosen, setMyChosen] = useState('الذكر المضعف')
+  const [myChosen, setMyChosen] = useState('دعاء سيد الاستغفار')
 
+  const clearSpecialCharacter = (arr) => arr.map(zekr => {
+    return {
+      ...zekr,
+      content: zekr.content.replace(/n|\\|'|,\s+/g, ''),
+    }
+  })
 
   useEffect(() => {
 
     const getAzkar = async () => {
+
       const res = await axios.get('https://raw.githubusercontent.com/nawafalqari/azkar-api/56df51279ab6eb86dc2f6202c7de26c8948331c1/azkar.json')
+
       setAzkar(res.data)
     }
-
     getAzkar()
 
   }, [])
@@ -23,8 +30,10 @@ const AzkarPageComp = () => {
   const handleClick = (e) => {
     // console.log(e.target.innerHTML);
     const myFilter = e.target.innerHTML.trim()
-    setFilter(azkar[`${myFilter}`].flat())
     setMyChosen(myFilter)
+
+    // setFilter(azkar[`${myFilter}`].flat())
+    setFilter(clearSpecialCharacter(azkar[`${myFilter}`].flat()));
   }
 
 
@@ -64,16 +73,16 @@ const AzkarPageComp = () => {
           </div>
         }
         {(filter && filter.length) ?
-          filter.map(zekr => {
+          filter.map((zekr, index) => {
 
-            return <div key={zekr.number} style={{ background: 'var(--alt-color)' }} className="rounded px-2 py-3 my-3 " >
+            return <div key={index} style={{ background: 'var(--alt-color)' }} className="rounded px-2 py-3 my-3 " >
               <div className="content d-flex"> {zekr.content} {`(${+zekr.count} ${(+zekr.count > 2 && +zekr.count < 10) ? 'مرات' : 'مرة'})`} </div>
               {zekr.description && <div className="content d-flex justify-content-end "> {zekr.description} </div>}
             </div>
 
           }) :// 
           <div style={{ backgroundColor: 'var(--alt-color)' }} className="w-100 rounded my-3 px-2 py-3 fs-3 d-flex justify-content-center align-items-center">
-            لا اله الا انت سبحانك انى كنت من الظالمين
+            اللهم أنت ربي لا إله إلا أنت خلقتني وأنا عبدك وأنا على عَهْدِكَ وَوَعْدِكَ ما اسْتَطَعْتُ أعوذ بك من شر ما صنعتُ أَبُوءُ لك بنعمتك عليَّ وأَبُوءُ لك بذنبي فَاغْفرْ لي فإنه لا يغفر الذنوب إلا أنت
           </div>
         }
 
