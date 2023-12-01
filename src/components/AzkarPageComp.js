@@ -36,11 +36,11 @@ const AzkarPageComp = () => {
   ];
 
   const handleClick = (e) => {
+    const myFilter = e.target.innerHTML.trim();
+    setMyChosen(myFilter);
     if (e.target.classList.contains("seeking-refuge-in-God")) {
       setFilter(seekingRefugeInGod);
     } else {
-      const myFilter = e.target.innerHTML.trim();
-      setMyChosen(myFilter);
       setFilter(clearSpecialCharacter(azkar[`${myFilter}`].flat()));
     }
   };
