@@ -69,13 +69,6 @@ const AzanPageComp = () => {
 
   }, [city])
 
-
-  console.log(time);
-
-
-
-
-
   return (
     <div className="container">
       {/* sub title */}

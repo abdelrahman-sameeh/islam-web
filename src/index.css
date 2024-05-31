@@ -6,8 +6,8 @@
 }
 
 .light-theme {
-  --main-color:#dcdcdc;
-  --secondary-color:  rgb(255, 255, 255) ;
+  --main-color: #dcdcdc;
+  --secondary-color: rgb(255, 255, 255);
   --black: black;
   --alt-color: white;
 }
@@ -31,12 +31,13 @@ a {
 }
 
 
-select{
+select {
   border: none !important;
   box-shadow: none !important;
   cursor: pointer;
 }
-select option{
+
+select option {
   cursor: pointer;
 }
 
@@ -56,11 +57,11 @@ select option{
   flex: 1;
 }
 
-.underline{
+.underline {
   text-decoration: underline;
 }
 
-.pointer{
+.pointer {
   cursor: pointer;
 }
 
@@ -69,11 +70,12 @@ select option{
 
 
 /* start navbar */
-.navbar{
+.navbar {
   position: sticky;
   top: 0;
   z-index: 12;
 }
+
 .navbar,
 .footer {
   background: var(--secondary-color);
@@ -113,6 +115,7 @@ select option{
   width: 80px;
   height: 80px;
 }
+
 .lds-dual-ring:after {
   content: " ";
   display: block;
@@ -124,10 +127,12 @@ select option{
   border-color: var(--black) transparent var(--black) transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
+
 @keyframes lds-dual-ring {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -141,19 +146,21 @@ select option{
   color: var(--black) !important;
   border-radius: 10px !important;
   border: solid 1px 272727 !important;
-  
+
 }
+
 .page-item a {
   box-shadow: none !important;
   border: 1px solid var(--black) !important;
 }
+
 .page-item a:hover {
   border: 1px solid var(--black) !important;
 }
 
 .page-link:hover {
   background-color: var(--main-color) !important;
-  color:var(--black) !important;
+  color: var(--black) !important;
   border: solid 1px 272727 !important;
 }
 
@@ -161,36 +168,41 @@ select option{
 
 
 /* azan page  */
-.azan-table tr,.azan-table td,.azan-table th{
+.azan-table tr,
+.azan-table td,
+.azan-table th {
   background-color: transparent !important;
-  color:var(--black) !important;
+  color: var(--black) !important;
 }
 
-.azan-table{
+.azan-table {
   background-color: var(--alt-color) !important;
-  color:var(--black) !important;
+  color: var(--black) !important;
 }
 
-.azan-page select{
+.azan-page select {
   box-shadow: none !important;
   border: none !important;
 }
+
 /* end azan page */
 
 /* start hadees page */
-.hadees-page .hadees{
+.hadees-page .hadees {
   line-height: 1.7;
   font-size: 15px;
   font-family: emoji;
 }
 
-
-
 /* start quran page  */
+.quran-page select {
+  background-color: #f1f3f4;
+  height: 38px;
+}
 
-.quran-page audio{
+.quran-page audio {
   flex: 1;
-  height: 32px;
-  background-color: white;
+  background-color: #f1f3f4;
   border-radius: 6px;
+  height: 38px;
 }
