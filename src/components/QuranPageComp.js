@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import SubTitle from "./utility/SubTitle";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { suwar } from "../utils/suwarList";
+import { suwar } from "../utils/suwar";
 
 const QuranPageComp = () => {
   const { id: surahId } = useParams();
   const [surahNum, setSurahNum] = useState(surahId);
   const [surahText, setSurahText] = useState();
+  const [reciters, setReciters] = useState([]);
   const surahAudioLink = useRef();
   const navigate = useNavigate();
 
@@ -27,9 +28,7 @@ const QuranPageComp = () => {
       }
       surahAudioLink.current.src = `https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/${surahNumber}.mp3`;
     };
-
     getSurahAudio(surahNum);
-
     // get audio
     const getSurahText = async (surahNumber = 1) => {
       const res = await axios.get(
@@ -40,6 +39,26 @@ const QuranPageComp = () => {
 
     getSurahText(surahNum);
   }, [surahNum]);
+
+  const getReciters = async () => {
+    try {
+      const response = await axios.get(
+        "https://www.mp3quran.net/api/v3/reciters?language=ar"
+      );
+      if (response.status == 200) {
+        setReciters(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getReciters();
+  }, []);
+
+  console.log(reciters);
+
 
   return (
     <div>
@@ -98,7 +117,6 @@ const QuranPageComp = () => {
           </div>
         </>
       ) : (
-        // loading
         <div
           style={{ backgroundColor: "var(--alt-color)" }}
           className="rounded my-3 d-flex justify-content-center align-items-center"
