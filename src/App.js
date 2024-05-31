@@ -18,7 +18,11 @@ function App() {
       {/* start content */}
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/quran" element={<QuranPage />} />
+        <Route path="/quran" >
+          <Route index element={<QuranPage />} />
+          <Route path="surah/:id" element={<QuranPage />} />
+        </Route>
+
         <Route path="/azkar" element={<AzkarPage />} />
         <Route path="/hadees" element={<HadeesPage />} />
         <Route path="/tafseer" element={<TafseerPage />} />
