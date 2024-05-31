@@ -206,3 +206,11 @@ select option {
   border-radius: 6px;
   height: 38px;
 }
+
+@media (width<450px) {
+
+  .quran-page select,
+  .quran-page audio {
+    width: 100%;
+  }
+}
