@@ -214,3 +214,26 @@ select option {
     width: 100%;
   }
 }
+
+
+.css-vb9noc-MuiAutocomplete-root {
+  background-color: transparent !important;
+}
+
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root {
+  height: 38px;
+  border: none !important;
+  outline: none !important;
+  border-radius: 6px;
+  background-color: #f1f3f4;
+
+}
+
+.MuiInputLabel-sizeMedium.MuiInputLabel-outlined.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+  top: -5px;
+}
+
+.MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root {
+  border-radius: 6px !important;
+  background-color: transparent !important;
+}

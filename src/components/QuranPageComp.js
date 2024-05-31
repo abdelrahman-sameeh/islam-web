@@ -2,13 +2,20 @@ import React, { useEffect, useRef, useState } from "react";
 import SubTitle from "./utility/SubTitle";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { suwar } from "../utils/suwar";
+import suwarList from "../utils/suwar";
+import { Autocomplete, Grid, TextField } from "@mui/material";
 
 const QuranPageComp = () => {
   const { id: surahId } = useParams();
+  const [suwar, setSuwar] = useState(suwarList);
   const [surahNum, setSurahNum] = useState(surahId);
   const [surahText, setSurahText] = useState();
   const [reciters, setReciters] = useState([]);
+  const [server, setServer] = useState("https://server8.mp3quran.net/lhdan/");
+  const [moshafs, setMoshafs] = useState([]);
+  const [moshaf, setMoshaf] = useState({});
+  const [reciterName, setReciterName] = useState("محمد اللحيدان");
+
   const surahAudioLink = useRef();
   const navigate = useNavigate();
 
@@ -21,15 +28,16 @@ const QuranPageComp = () => {
   useEffect(() => {
     // get audio
     const getSurahAudio = (surahNumber = 1) => {
-      if (surahNumber < 100 && surahNumber > 10) {
+      if (surahNumber < 100 && surahNumber >= 10) {
         surahNumber = `0${surahNumber}`;
       } else if (surahNumber < 10) {
         surahNumber = `00${surahNumber}`;
       }
-      surahAudioLink.current.src = `https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/${surahNumber}.mp3`;
+      surahAudioLink.current.src = `${server}${surahNumber}.mp3`;
     };
     getSurahAudio(surahNum);
-    // get audio
+
+    // get text
     const getSurahText = async (surahNumber = 1) => {
       const res = await axios.get(
         `https://quranenc.com/api/v1/translation/sura/arabic_moyassar/${surahNumber}`
@@ -38,7 +46,7 @@ const QuranPageComp = () => {
     };
 
     getSurahText(surahNum);
-  }, [surahNum]);
+  }, [surahNum, server]);
 
   const getReciters = async () => {
     try {
@@ -46,7 +54,11 @@ const QuranPageComp = () => {
         "https://www.mp3quran.net/api/v3/reciters?language=ar"
       );
       if (response.status == 200) {
-        setReciters(response.data);
+        const newReciters = response?.data?.reciters?.map((reciter) => ({
+          ...reciter,
+          label: reciter.name,
+        }));
+        setReciters(newReciters);
       }
     } catch (err) {
       console.log(err);
@@ -57,38 +69,84 @@ const QuranPageComp = () => {
     getReciters();
   }, []);
 
-  console.log(reciters);
+  const handleChangeReciter = (e, newValue) => {
+    if(newValue?.id){
+      setReciterName(newValue?.name);
+      setMoshafs(newValue?.moshaf);
+      setMoshaf(newValue?.moshaf[0]);
+      setServer(newValue?.moshaf[0]?.server);
 
+      const availableSuwar = newValue?.moshaf[0]?.surah_list?.split(',')
+      const filteredSuwar = suwarList.filter(surah=>availableSuwar.includes(surah.id))
+      setSuwar(filteredSuwar)
+    }
+  };
 
   return (
     <div>
       {/* sub title */}
       <SubTitle pageName=" القران الكريم" />
-      {/* audio */}
-      <div
-        style={{ flexWrap: "wrap" }}
-        className="d-flex justify-content-between gap-2"
-      >
-        <select
-          onChange={handleSelect}
-          value={surahNum}
-          className="form-select w-fit"
-          name=""
-          id=""
-        >
-          {suwar.map((surah) => (
-            <option key={surah.value} value={surah.value}>
-              {surah.label}
-            </option>
-          ))}
-        </select>
 
-        <audio
-          style={{ minWidth: "200px" }}
-          ref={surahAudioLink}
-          controls
-        ></audio>
-      </div>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <Autocomplete
+            onChange={handleChangeReciter}
+            disablePortal
+            options={reciters}
+            value={reciterName}
+            sx={{ backgroundColor: "white", width: "100%", direction: "rtl" }}
+            renderInput={(params) => (
+              <TextField {...params} label="ابحث عن قارئ" />
+            )}
+          />
+        </Grid>
+
+        {moshafs?.length > 1 && (
+          <Grid item xs={12} md={6}>
+            <select
+              onChange={(e) => {
+                const newMoshaf = JSON.parse(e.target.value);
+                setMoshaf(newMoshaf);
+                setServer(newMoshaf?.server);
+                // 
+                const availableSuwar = newMoshaf?.surah_list?.split(',')
+                const filteredSuwar = suwarList.filter(surah=>availableSuwar.includes(surah.id))
+                setSuwar(filteredSuwar)
+              }}
+              value={JSON.stringify(moshaf)}
+              className="form-select"
+            >
+              {moshafs.map((moshaf) => (
+                <option key={moshaf.id} value={JSON.stringify(moshaf)}>
+                  {moshaf.name}
+                </option>
+              ))}
+            </select>
+          </Grid>
+        )}
+
+        <Grid item xs={12} md={6}>
+          <select
+            onChange={handleSelect}
+            value={surahNum}
+            className="form-select"
+          >
+            {suwar.map((surah) => (
+              <option key={surah.id} value={surah.id}>
+                {surah.label}
+              </option>
+            ))}
+          </select>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <audio
+            style={{ width: "100%" }}
+            ref={surahAudioLink}
+            controls
+          ></audio>
+        </Grid>
+      </Grid>
+
       {/* text */}
       {surahText && surahText.length ? (
         <>
