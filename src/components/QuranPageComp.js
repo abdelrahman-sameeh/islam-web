@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import SubTitle from './utility/SubTitle'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const QuranPageComp = () => {
 
-  const [surahNum, setSurahNum] = useState(1)
+  const {id: surahId} = useParams()
+  const [surahNum, setSurahNum] = useState(surahId)
   const [surahText, setSurahText] = useState()
   const surahAudioLink = useRef()
   const navigate = useNavigate()
