@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Scheherazade';
+  src: url('./assets/fonts/Scheherazade_New/ScheherazadeNew-Regular.ttf') format('truetype');
+}
+
 :root {
   --main-color: #1e293b;
   --secondary-color: #334155;
@@ -14,6 +19,10 @@
 
 
 /* start normalize */
+.quran-font{
+  font-family: 'Scheherazade', serif;
+}
+
 body {
   font-family: 'Almarai', sans-serif;
   font-family: 'Cairo', sans-serif;

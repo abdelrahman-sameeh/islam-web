@@ -154,10 +154,9 @@ const QuranPageComp = () => {
           <div
             style={{
               backgroundColor: "var(--alt-color)",
-              fontFamily: "sans-serif",
               lineHeight: "1.7",
             }}
-            className="px-2 py-3 rounded my-3 fs-5"
+            className="px-2 py-3 rounded my-3 fs-5 quran-font"
           >
             <div className="text-center fs-3 mb-2">
               {" "}

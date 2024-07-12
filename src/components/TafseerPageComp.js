@@ -36,7 +36,7 @@ const TafseerPageComp = () => {
       {surahText && surahText.length ? 
         surahText.map(ayah=> {
           return <div key={ayah.id} style={{backgroundColor:'var(--alt-color)'}} className="px-3 py-2 fs-5 mt-3 mb-3 rounded">
-            <div style={{fontFamily: 'sans-serif'}} className=''> {ayah.arabic_text} ({ayah.aya}) </div>
+            <div className='quran-font'> {ayah.arabic_text} ({ayah.aya}) </div>
             <div className='mt-2'> {ayah.translation} </div>
           </div>
         })
