@@ -11,10 +11,10 @@ const QuranPageComp = () => {
   const [surahNum, setSurahNum] = useState(surahId);
   const [surahText, setSurahText] = useState();
   const [reciters, setReciters] = useState([]);
-  const [server, setServer] = useState("https://server8.mp3quran.net/lhdan/");
+  const [server, setServer] = useState("https://server10.mp3quran.net/minsh/");
   const [moshafs, setMoshafs] = useState([]);
   const [moshaf, setMoshaf] = useState({});
-  const [reciterName, setReciterName] = useState("محمد اللحيدان");
+  const [reciterName, setReciterName] = useState("محمد صديق المنشاوي");
 
   const surahAudioLink = useRef();
   const navigate = useNavigate();
@@ -70,15 +70,16 @@ const QuranPageComp = () => {
   }, []);
 
   const handleChangeReciter = (e, newValue) => {
-    if(newValue?.id){
+    if (newValue?.id) {
       setReciterName(newValue?.name);
       setMoshafs(newValue?.moshaf);
       setMoshaf(newValue?.moshaf[0]);
       setServer(newValue?.moshaf[0]?.server);
-
-      const availableSuwar = newValue?.moshaf[0]?.surah_list?.split(',')
-      const filteredSuwar = suwarList.filter(surah=>availableSuwar.includes(surah.id))
-      setSuwar(filteredSuwar)
+      const availableSuwar = newValue?.moshaf[0]?.surah_list?.split(",");
+      const filteredSuwar = suwarList.filter((surah) =>
+        availableSuwar.includes(surah.id)
+      );
+      setSuwar(filteredSuwar);
     }
   };
 
@@ -108,10 +109,11 @@ const QuranPageComp = () => {
                 const newMoshaf = JSON.parse(e.target.value);
                 setMoshaf(newMoshaf);
                 setServer(newMoshaf?.server);
-                // 
-                const availableSuwar = newMoshaf?.surah_list?.split(',')
-                const filteredSuwar = suwarList.filter(surah=>availableSuwar.includes(surah.id))
-                setSuwar(filteredSuwar)
+                const availableSuwar = newMoshaf?.surah_list?.split(",");
+                const filteredSuwar = suwarList.filter((surah) =>
+                  availableSuwar.includes(surah.id)
+                );
+                setSuwar(filteredSuwar);
               }}
               value={JSON.stringify(moshaf)}
               className="form-select"
