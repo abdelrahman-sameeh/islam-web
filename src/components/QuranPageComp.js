@@ -160,10 +160,13 @@ const QuranPageComp = () => {
             }}
             className="px-2 py-3 rounded my-3 fs-5 quran-font"
           >
-            <div className="text-center fs-3 mb-2">
-              {" "}
-              بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ{" "}
-            </div>
+            {surahNum != 9 ? (
+              <div className="text-center fs-3 mb-2">
+                بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ
+              </div>
+            ) : (
+              ""
+            )}
             {surahText.map((ayah) => {
               return (
                 <span key={ayah.id}>
