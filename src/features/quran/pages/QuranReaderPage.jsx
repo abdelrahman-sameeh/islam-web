@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
+import SearchableSelect from "../../../components/ui/SearchableSelect";
 import SourceBadge from "../../../components/ui/SourceBadge";
 import surahList from "../data/surahs";
 import { getSurahAyahs } from "../api/quranApi";
@@ -13,6 +14,10 @@ import {
   getSurahAudioUrl,
 } from "../api/recitationsApi";
 import ReciterSelect from "../components/ReciterSelect";
+import {
+  BISMILLAH,
+  shouldShowStandaloneBismillah,
+} from "../utils/bismillah";
 
 const getSafeSurahId = (value) => {
   const number = Number(value);
@@ -109,21 +114,19 @@ const QuranReaderPage = () => {
         />
 
         <section className="reader-toolbar" aria-label="إعدادات القراءة">
-          <label>
+          <div className="reader-toolbar__field">
             <span>السورة</span>
-            <select
+            <SearchableSelect
+              options={availableSurahs}
               value={surahId}
-              onChange={(event) =>
-                navigate(`/quran/surah/${event.target.value}`)
+              onChange={(surah) =>
+                navigate(`/quran/surah/${surah.id}`)
               }
-            >
-              {availableSurahs.map((surah) => (
-                <option key={surah.id} value={surah.id}>
-                  {surah.label}
-                </option>
-              ))}
-            </select>
-          </label>
+              searchPlaceholder="ابحث باسم السورة"
+              emptyMessage="لا توجد سورة بهذا الاسم."
+              listLabel="قائمة السور"
+            />
+          </div>
           <div className="reader-toolbar__field">
             <span>القارئ والرواية</span>
             <ReciterSelect
@@ -168,6 +171,14 @@ const QuranReaderPage = () => {
               </div>
               <SourceBadge>QuranEnc · التفسير الميسر</SourceBadge>
             </header>
+            {shouldShowStandaloneBismillah(
+              surahId,
+              hasPassageRange && passageStart > 1
+            ) && (
+              <p className="quran-bismillah" translate="no">
+                {BISMILLAH}
+              </p>
+            )}
             <div className="quran-text" translate="no">
               {visibleAyahs.map((ayah) => (
                 <span key={ayah.id}>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
+import SearchableSelect from "../../../components/ui/SearchableSelect";
 import SourceBadge from "../../../components/ui/SourceBadge";
 import { getSurahAyahs } from "../../quran/api/quranApi";
 import surahList from "../../quran/data/surahs";
@@ -19,6 +20,7 @@ const TafsirPage = () => {
 
   useEffect(() => {
     const controller = new AbortController();
+    setAyahs([]);
     setStatus("loading");
 
     getSurahAyahs(surahId, controller.signal)
@@ -37,12 +39,12 @@ const TafsirPage = () => {
     ayahs.find(({ number }) => number === requestedAyah) ?? ayahs[0];
   const surahName = surahList.find(({ id }) => id === String(surahId))?.label;
 
-  const handleSurahChange = (event) => {
-    setSearchParams({ surah: event.target.value, ayah: "1" });
+  const handleSurahChange = (surah) => {
+    setSearchParams({ surah: surah.id, ayah: "1" });
   };
 
-  const handleAyahChange = (event) => {
-    setSearchParams({ surah: surahId, ayah: event.target.value });
+  const handleAyahChange = (ayah) => {
+    setSearchParams({ surah: surahId, ayah: String(ayah.number) });
   };
 
   return (
@@ -57,30 +59,39 @@ const TafsirPage = () => {
         <div className="tafsir-layout">
           <aside className="filter-panel">
             <h2>اختيار الآية</h2>
-            <label>
+            <div className="filter-panel__field">
               <span>السورة</span>
-              <select value={surahId} onChange={handleSurahChange}>
-                {surahList.map((surah) => (
-                  <option key={surah.id} value={surah.id}>
-                    {surah.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              <span>رقم الآية</span>
-              <select
+              <SearchableSelect
+                options={surahList}
+                value={surahId}
+                onChange={handleSurahChange}
+                searchPlaceholder="ابحث باسم السورة"
+                emptyMessage="لا توجد سورة بهذا الاسم."
+                listLabel="قائمة السور"
+              />
+            </div>
+            <div className="filter-panel__field">
+              <span>الآية</span>
+              <SearchableSelect
+                options={ayahs}
                 value={selectedAyah?.number ?? 1}
                 onChange={handleAyahChange}
                 disabled={!ayahs.length}
-              >
-                {ayahs.map((ayah) => (
-                  <option key={ayah.id} value={ayah.number}>
-                    الآية {ayah.number.toLocaleString("ar-EG")}
-                  </option>
-                ))}
-              </select>
-            </label>
+                getOptionValue={(ayah) => ayah.number}
+                getOptionLabel={(ayah) =>
+                  `الآية ${ayah.number.toLocaleString("ar-EG")} · ${ayah.text}`
+                }
+                getSelectedLabel={(ayah) =>
+                  `الآية ${ayah.number.toLocaleString("ar-EG")}`
+                }
+                getSearchText={(ayah) =>
+                  `${ayah.number} ${ayah.number.toLocaleString("ar-EG")} ${ayah.text}`
+                }
+                searchPlaceholder="ابحث برقم الآية أو كلمات منها"
+                emptyMessage="لا توجد آية مطابقة للبحث."
+                listLabel="آيات السورة"
+              />
+            </div>
             <div className="source-panel">
               <span>مصدر التفسير</span>
               <strong>التفسير الميسر</strong>
