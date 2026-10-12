@@ -18,9 +18,10 @@
   "scripts": {
     "start": "PORT=8080 react-scripts start",
     "build": "react-scripts build",
-    "mobile:sync": "npm run build && cap sync",
-    "mobile:android": "npm run mobile:sync && cap open android",
-    "mobile:ios": "npm run mobile:sync && cap open ios",
+    "ios:sync": "npm run build && cap sync ios",
+    "ios:open": "npm run ios:sync && cap open ios",
+    "ios:run": "npm run ios:sync && cap run ios",
+    "ios:assets": "capacitor-assets generate --ios --assetPath resources --iconBackgroundColor '#123B35' --iconBackgroundColorDark '#123B35' --splashBackgroundColor '#F7F3EA' --splashBackgroundColorDark '#071B18'",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -43,7 +44,6 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/android": "^8.5.3",
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.5.3",
     "@capacitor/ios": "^8.5.3"

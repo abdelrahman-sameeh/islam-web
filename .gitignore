@@ -11,6 +11,10 @@
 # production
 /build
 
+# artifacts from the separate Android branch
+/android
+/releases
+
 # misc
 .DS_Store
 .env.local
