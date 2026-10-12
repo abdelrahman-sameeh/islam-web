@@ -4,7 +4,7 @@ All frames are 1440 × 1024 SVG files and can be dragged into Figma.
 
 | File | Primary UX decision |
 | --- | --- |
-| `01-home.svg` | Continue reading and next prayer appear before discovery cards |
+| `01-home.svg` | Saved-location prayer times plus a fresh random verse and dhikr appear before discovery cards |
 | `02-quran-reader.svg` | Reading, tafsir, and persistent audio share one focused view |
 | `03-adhkar.svg` | Category, progress, source, and count action stay explicit |
 | `04-hadith.svg` | Search/category filters and source quality replace blind pagination |

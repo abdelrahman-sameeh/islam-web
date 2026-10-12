@@ -215,7 +215,9 @@ export const PRAYER_COUNTRIES = [
   },
 ];
 
-export const DEFAULT_LOCATION_ID = "EG:cairo";
+export const PRAYER_LOCATION_STORAGE_KEY = "islamona.prayer-location.v2";
+export const LEGACY_PRAYER_CITY_STORAGE_KEY = "islamona.prayer-city.v1";
+export const DEFAULT_LOCATION_ID = "EG:monufia";
 
 export const getLocationId = (countryId, cityId) => `${countryId}:${cityId}`;
 
