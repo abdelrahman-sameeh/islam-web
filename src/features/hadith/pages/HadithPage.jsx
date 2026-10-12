@@ -5,6 +5,8 @@ import { useSearchParams } from "react-router-dom";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
 import SourceBadge from "../../../components/ui/SourceBadge";
+import FavoriteButton from "../../favorites/components/FavoriteButton";
+import useFavorites from "../../favorites/hooks/useFavorites";
 import {
   getHadithCategories,
   getHadithDetails,
@@ -22,6 +24,10 @@ const getSafePage = (value) => {
 const HadithPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("q")?.trim() ?? "";
+  const requestedHadithId = searchParams.get("hadith") ?? "";
+  const directHadithId = /^\d+$/.test(requestedHadithId)
+    ? requestedHadithId
+    : "";
   const categoryId = searchParams.get("category") ?? "5";
   const page = getSafePage(searchParams.get("page"));
   const [draftQuery, setDraftQuery] = useState(searchQuery);
@@ -33,6 +39,8 @@ const HadithPage = () => {
   const [requestVersion, setRequestVersion] = useState(0);
   const [details, setDetails] = useState({});
   const [expandedId, setExpandedId] = useState(null);
+  const [directHadith, setDirectHadith] = useState(null);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     setDraftQuery(searchQuery);
@@ -47,7 +55,7 @@ const HadithPage = () => {
   }, []);
 
   useEffect(() => {
-    if (searchQuery) return undefined;
+    if (searchQuery || directHadithId) return undefined;
 
     const controller = new AbortController();
     setStatus("loading");
@@ -62,10 +70,10 @@ const HadithPage = () => {
       });
 
     return () => controller.abort();
-  }, [categoryId, page, requestVersion, searchQuery]);
+  }, [categoryId, directHadithId, page, requestVersion, searchQuery]);
 
   useEffect(() => {
-    if (!searchQuery) return undefined;
+    if (!searchQuery || directHadithId) return undefined;
 
     const controller = new AbortController();
     setStatus("loading");
@@ -80,17 +88,60 @@ const HadithPage = () => {
       });
 
     return () => controller.abort();
-  }, [requestVersion, searchQuery]);
+  }, [directHadithId, requestVersion, searchQuery]);
 
-  const isSearchMode = Boolean(searchQuery);
-  const totalItems = isSearchMode
+  useEffect(() => {
+    if (!directHadithId) {
+      setDirectHadith(null);
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    setStatus("loading");
+
+    getHadithDetails(directHadithId, controller.signal)
+      .then((hadith) => {
+        setDirectHadith(hadith);
+        setDetails((current) => ({
+          ...current,
+          [hadith.id]: { status: "success", hadith },
+        }));
+        setExpandedId(hadith.id);
+        setStatus("success");
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setStatus("error");
+      });
+
+    return () => controller.abort();
+  }, [directHadithId, requestVersion]);
+
+  const isDirectMode = Boolean(directHadithId);
+  const isSearchMode = Boolean(searchQuery) && !isDirectMode;
+  const totalItems = isDirectMode
+    ? directHadith
+      ? 1
+      : 0
+    : isSearchMode
     ? searchItems.length
     : browseResult?.totalItems ?? 0;
-  const lastPage = isSearchMode
+  const lastPage = isDirectMode
+    ? 1
+    : isSearchMode
     ? Math.max(1, Math.ceil(searchItems.length / RESULTS_PER_PAGE))
     : browseResult?.lastPage ?? 1;
   const displayedPage = Math.min(page, lastPage);
-  const visibleItems = isSearchMode
+  const visibleItems = isDirectMode
+    ? directHadith
+      ? [
+          {
+            id: directHadith.id,
+            title: directHadith.title,
+            preview: directHadith.text,
+          },
+        ]
+      : []
+    : isSearchMode
     ? searchItems.slice(
         (displayedPage - 1) * RESULTS_PER_PAGE,
         displayedPage * RESULTS_PER_PAGE
@@ -224,7 +275,9 @@ const HadithPage = () => {
 
         <div className="results-heading">
           <h2>
-            {isSearchMode
+            {isDirectMode
+              ? "الحديث المحفوظ"
+              : isSearchMode
               ? `نتائج البحث عن «${searchQuery}»`
               : "نتائج مختارة"}
           </h2>
@@ -270,7 +323,22 @@ const HadithPage = () => {
                     <FontAwesomeIcon icon={faBookOpen} />
                   </div>
                   <div className="hadith-card__body">
-                    <h3>{item.title}</h3>
+                    <div className="hadith-card__heading">
+                      <h3>{item.title}</h3>
+                      <FavoriteButton
+                        label="حفظ الحديث"
+                        isFavorite={isFavorite("hadith", item.id)}
+                        onToggle={() =>
+                          toggleFavorite({
+                            type: "hadith",
+                            entityId: item.id,
+                            title: item.title,
+                            subtitle: "حديث وشرح وفوائد · HadeethEnc",
+                            href: `/hadees?hadith=${item.id}`,
+                          })
+                        }
+                      />
+                    </div>
                     {item.preview && (
                       <p className="hadith-card__preview">{item.preview}</p>
                     )}

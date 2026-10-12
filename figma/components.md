@@ -46,6 +46,10 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
 - `InlineError`: concise Arabic message, retry action, optional support detail.
 - `EmptyState`: explains why the view is empty and gives one useful next action.
 - `Toast`: only for background confirmation, never for blocking errors.
+- `FavoriteButton`: explicit saved/not-saved label with a bookmark icon and
+  `aria-pressed`; never rely on icon color alone.
+- `FavoriteCard`: type label, title, short context, open action, and a separate
+  remove action. Cards are grouped by type on the favorites page.
 
 ## Behavior rules
 

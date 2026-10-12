@@ -6,12 +6,15 @@ import TafsirPage from "./features/tafsir/pages/TafsirPage";
 import AdhkarPage from "./features/adhkar/pages/AdhkarPage";
 import HadithPage from "./features/hadith/pages/HadithPage";
 import PrayerTimesPage from "./features/prayer-times/pages/PrayerTimesPage";
+import FavoritesPage from "./features/favorites/pages/FavoritesPage";
 import AppHeader from "./components/layout/AppHeader";
 import SiteFooter from "./components/layout/SiteFooter";
+import ScrollToTop from "./components/navigation/ScrollToTop";
 
 function App() {
   return (
     <div className="App">
+      <ScrollToTop />
       <AppHeader />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -25,6 +28,7 @@ function App() {
         <Route path="/hadees" element={<HadithPage />} />
         <Route path="/tafseer" element={<TafsirPage />} />
         <Route path="/azan" element={<PrayerTimesPage />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
       </Routes>
       <SiteFooter />
     </div>

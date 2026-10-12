@@ -2,6 +2,7 @@ import {
   faBars,
   faBookOpen,
   faBookQuran,
+  faBookmark,
   faClock,
   faMoon,
   faQuoteRight,
@@ -105,6 +106,16 @@ const AppHeader = () => {
         </nav>
 
         <div className="app-navbar__actions">
+          <NavLink
+            to="/favorites"
+            className={({ isActive }) =>
+              `icon-button ${isActive ? "is-active" : ""}`
+            }
+            aria-label="افتح المحفوظات"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <FontAwesomeIcon icon={faBookmark} aria-hidden="true" />
+          </NavLink>
           <button
             type="button"
             className="icon-button"

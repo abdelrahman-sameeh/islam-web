@@ -232,7 +232,8 @@ select option {
   cursor: pointer;
 }
 
-.icon-button:hover {
+.icon-button:hover,
+.icon-button.is-active {
   color: var(--brand-700);
   background: var(--brand-100);
 }
@@ -662,6 +663,30 @@ select option {
   cursor: pointer;
 }
 
+.favorite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  width: fit-content;
+  padding-inline: 14px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 12px;
+  color: var(--neutral-700);
+  background: var(--neutral-50);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.favorite-button:hover,
+.favorite-button.is-favorite {
+  border-color: var(--brand-500);
+  color: var(--brand-700);
+  background: var(--brand-100);
+}
+
 .primary-button {
   padding-inline: 20px;
   border: 1px solid var(--brand-700);
@@ -819,6 +844,10 @@ body.dark-theme .error-copy {
   border-radius: 12px;
   color: var(--brand-700);
   background: var(--brand-100);
+}
+
+.reader-toolbar__field > .favorite-button {
+  margin-top: 3px;
 }
 
 .searchable-select {
@@ -1064,6 +1093,92 @@ body.dark-theme .error-copy {
 }
 
 /* Tafsir */
+.verse-search-panel {
+  margin-bottom: 22px;
+  padding: 22px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 18px;
+  background: var(--secondary-color);
+  box-shadow: var(--card-shadow);
+}
+
+.verse-search-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.verse-search-form .search-field {
+  max-width: none;
+}
+
+.verse-search-panel .search-error {
+  margin-top: 10px;
+}
+
+.verse-search-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 0;
+  color: var(--neutral-500);
+}
+
+.verse-search-results {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--neutral-200);
+}
+
+.verse-search-results__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.verse-search-results__heading small {
+  color: var(--neutral-500);
+}
+
+.verse-search-results__list {
+  display: grid;
+  gap: 8px;
+  max-height: 430px;
+  overflow-y: auto;
+  padding-inline-end: 3px;
+}
+
+.verse-search-results__list button {
+  width: 100%;
+  padding: 15px 17px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 12px;
+  color: var(--black);
+  background: var(--neutral-50);
+  cursor: pointer;
+  text-align: start;
+}
+
+.verse-search-results__list button:hover,
+.verse-search-results__list button:focus-visible {
+  border-color: var(--brand-500);
+  background: var(--brand-100);
+}
+
+.verse-search-results__list button > span {
+  color: var(--accent-600);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.verse-search-results__list p {
+  margin: 7px 0 0;
+  font-size: 21px;
+  line-height: 1.9;
+}
+
 .tafsir-layout {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
@@ -1140,6 +1255,18 @@ body.dark-theme .error-copy {
 .explanation-panel h2 {
   margin: 0 0 14px;
   font-size: 22px;
+}
+
+.explanation-panel__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.explanation-panel__heading h2 {
+  margin: 0;
 }
 
 .explanation-panel > p {
@@ -1282,6 +1409,17 @@ body.dark-theme .filter-chips button.is-selected {
   line-height: 1.7;
 }
 
+.hadith-card__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hadith-card__heading h3 {
+  flex: 1;
+}
+
 .hadith-card__preview {
   display: -webkit-box;
   overflow: hidden;
@@ -1361,6 +1499,138 @@ body.dark-theme .filter-chips button.is-selected {
 
 .page-source {
   margin-top: 22px;
+}
+
+/* Favorites */
+.favorites-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 24px;
+  padding: 12px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 18px;
+  background: var(--secondary-color);
+  box-shadow: var(--card-shadow);
+  scrollbar-width: thin;
+}
+
+.favorites-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding-inline: 16px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--neutral-700);
+  background: var(--neutral-50);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.favorites-tabs button span {
+  display: grid;
+  place-items: center;
+  min-width: 25px;
+  height: 25px;
+  border-radius: 999px;
+  background: var(--neutral-100);
+  font-size: 12px;
+}
+
+.favorites-tabs button.is-selected {
+  color: var(--neutral-0);
+  background: var(--brand-700);
+}
+
+body.dark-theme .favorites-tabs button.is-selected {
+  color: #0b1211;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.favorite-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 18px;
+  background: var(--secondary-color);
+  box-shadow: var(--card-shadow);
+}
+
+.favorite-card__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  color: var(--brand-700);
+  background: var(--brand-100);
+}
+
+.favorite-card small {
+  color: var(--accent-600);
+  font-weight: 700;
+}
+
+.favorite-card h2 {
+  margin: 6px 0;
+  font-size: 19px;
+  line-height: 1.7;
+}
+
+.favorite-card p {
+  margin: 0;
+  color: var(--neutral-500);
+  line-height: 1.8;
+}
+
+.favorite-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.remove-favorite {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  color: var(--neutral-500);
+  background: transparent;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.remove-favorite:hover {
+  color: var(--accent-600);
+}
+
+.local-storage-note {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 24px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  color: var(--brand-700);
+  background: var(--brand-100);
+}
+
+.local-storage-note span {
+  color: var(--neutral-700);
+  font-size: 14px;
 }
 
 /* Adhkar */
@@ -1854,6 +2124,10 @@ body.dark-theme .filter-chips button.is-selected {
     grid-column: 1 / -1;
   }
 
+  .favorites-grid {
+    grid-template-columns: 1fr;
+  }
+
   .next-prayer-card__clock {
     width: 100px;
     height: 100px;
@@ -1941,6 +2215,26 @@ body.dark-theme .filter-chips button.is-selected {
   .filter-panel {
     grid-template-columns: 1fr;
     padding: 17px;
+  }
+
+  .verse-search-form {
+    grid-template-columns: 1fr;
+  }
+
+  .verse-search-form .primary-button {
+    width: 100%;
+  }
+
+  .verse-search-results__heading,
+  .explanation-panel__heading,
+  .hadith-card__heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .favorite-card {
+    grid-template-columns: 1fr;
+    padding: 20px;
   }
 
   .filter-panel h2,

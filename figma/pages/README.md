@@ -12,6 +12,8 @@ All frames are 1440 × 1024 SVG files and can be dragged into Figma.
 | `06-prayer-times.svg` | Next prayer, location, and calculation method are always visible |
 | `07-daily-session.svg` | A local-first 2/5/10-minute guided session with explicit sources |
 | `08-session-content.svg` | Quran, random sourced hadith, then simplified tafsir in one guided flow |
+| `09-favorites.svg` | One local-only library groups saved surahs, reciters, hadiths, and tafsir references |
+| `10-tafsir-search.svg` | Global verse-text search ignores tashkeel, then opens the selected sourced tafsir |
 
 ## Required states during implementation
 
