@@ -75,6 +75,34 @@ Storage key: `islamona.session-content.v1`
 
 Storage key: `islamona.theme.v1`; allowed values are `light` and `dark`.
 
+## Favorites
+
+Storage key: `islamona.favorites.v1`
+
+```json
+{
+  "items": [
+    {
+      "key": "tafsir:2:255",
+      "type": "tafsir",
+      "entityId": "2:255",
+      "title": "سورة البقرة · الآية ٢٥٥",
+      "href": "/tafseer?surah=2&ayah=255",
+      "savedAt": "ISO-8601 timestamp"
+    }
+  ]
+}
+```
+
+- Allowed types are `surah`, `reciter`, `hadith`, and `tafsir`.
+- Store stable IDs, display labels, and internal links; do not duplicate Quran,
+  tafsir, or hadith bodies in browser storage.
+- The same localStorage boundary works in the web build and the installed
+  Android WebView. Data is device-local and may be removed when site/app data
+  is cleared or the app is uninstalled.
+- Newest items appear first. Adding the same `type + entityId` twice removes it
+  rather than creating a duplicate.
+
 ## Privacy copy
 
 The home page should state: `اختياراتك محفوظة على هذا الجهاز فقط`.

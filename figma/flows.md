@@ -4,7 +4,18 @@
 
 Primary: Home, Quran, Tafsir, Adhkar, Hadith, Prayer Times.
 
-Global utilities: Search, theme, reading settings, saved items (future).
+Global utilities: Search, theme, reading settings, and device-local favorites.
+
+Every internal route or URL-state transition starts at the top of the new page.
+This intentionally favors predictable mobile/WebView navigation over restoring
+the previous scroll position.
+
+## Favorites
+
+Quran, tafsir, or hadith -> save a surah, reciter, hadith, or tafsir reference
+-> open Favorites -> filter by content type -> return to the exact saved route.
+Removing an item updates every mounted save button. Favorites stay on the
+current browser or installed-app device and do not require an account.
 
 ## Quran reading
 

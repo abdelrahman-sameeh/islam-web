@@ -6,6 +6,8 @@ import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
 import SearchableSelect from "../../../components/ui/SearchableSelect";
 import SourceBadge from "../../../components/ui/SourceBadge";
+import FavoriteButton from "../../favorites/components/FavoriteButton";
+import useFavorites from "../../favorites/hooks/useFavorites";
 import surahList from "../data/surahs";
 import { getSurahAyahs } from "../api/quranApi";
 import {
@@ -26,16 +28,25 @@ const getSafeSurahId = (value) => {
     : "1";
 };
 
+const getReaderPath = (surahId, reciterId) => {
+  const path = `/quran/surah/${surahId}`;
+  return reciterId && reciterId !== DEFAULT_RECITER.id
+    ? `${path}?reciter=${encodeURIComponent(reciterId)}`
+    : path;
+};
+
 const QuranReaderPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const surahId = getSafeSurahId(id);
+  const requestedReciterId = searchParams.get("reciter");
   const [ayahs, setAyahs] = useState([]);
   const [status, setStatus] = useState("loading");
   const [requestVersion, setRequestVersion] = useState(0);
   const [reciters, setReciters] = useState([]);
   const [selectedReciter, setSelectedReciter] = useState(DEFAULT_RECITER);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const passageStart = Number(searchParams.get("from"));
   const passageEnd = Number(searchParams.get("to"));
@@ -97,11 +108,46 @@ const QuranReaderPage = () => {
     [reciters]
   );
 
+  useEffect(() => {
+    if (!requestedReciterId) {
+      setSelectedReciter(DEFAULT_RECITER);
+      return;
+    }
+
+    const requestedReciter = reciterOptions.find(
+      ({ id: reciterId }) => reciterId === requestedReciterId
+    );
+    if (!requestedReciter) return;
+
+    if (
+      requestedReciter.availableSurahs &&
+      !requestedReciter.availableSurahs.includes(surahId)
+    ) {
+      navigate(
+        getReaderPath(
+          requestedReciter.availableSurahs[0] ?? "1",
+          requestedReciter.id
+        ),
+        { replace: true }
+      );
+      return;
+    }
+
+    setSelectedReciter((currentReciter) =>
+      currentReciter.id === requestedReciter.id
+        ? currentReciter
+        : requestedReciter
+    );
+  }, [navigate, reciterOptions, requestedReciterId, surahId]);
+
   const handleReciterChange = (reciter) => {
     setSelectedReciter(reciter);
-    if (reciter.availableSurahs && !reciter.availableSurahs.includes(surahId)) {
-      navigate(`/quran/surah/${reciter.availableSurahs[0] ?? "1"}`);
-    }
+    const nextSurahId =
+      reciter.availableSurahs && !reciter.availableSurahs.includes(surahId)
+        ? reciter.availableSurahs[0] ?? "1"
+        : surahId;
+
+    navigate(getReaderPath(nextSurahId, reciter.id));
   };
 
   return (
@@ -120,11 +166,24 @@ const QuranReaderPage = () => {
               options={availableSurahs}
               value={surahId}
               onChange={(surah) =>
-                navigate(`/quran/surah/${surah.id}`)
+                navigate(getReaderPath(surah.id, selectedReciter.id))
               }
               searchPlaceholder="ابحث باسم السورة"
               emptyMessage="لا توجد سورة بهذا الاسم."
               listLabel="قائمة السور"
+            />
+            <FavoriteButton
+              label="حفظ السورة"
+              isFavorite={isFavorite("surah", surahId)}
+              onToggle={() =>
+                toggleFavorite({
+                  type: "surah",
+                  entityId: surahId,
+                  title: surahName,
+                  subtitle: `السورة رقم ${Number(surahId).toLocaleString("ar-EG")}`,
+                  href: `/quran/surah/${surahId}`,
+                })
+              }
             />
           </div>
           <div className="reader-toolbar__field">
@@ -133,6 +192,19 @@ const QuranReaderPage = () => {
               options={reciterOptions}
               selectedReciter={selectedReciter}
               onSelect={handleReciterChange}
+            />
+            <FavoriteButton
+              label="حفظ القارئ"
+              isFavorite={isFavorite("reciter", selectedReciter.id)}
+              onToggle={() =>
+                toggleFavorite({
+                  type: "reciter",
+                  entityId: selectedReciter.id,
+                  title: selectedReciter.name,
+                  subtitle: "قارئ ورواية في مشغل القرآن",
+                  href: getReaderPath(surahId, selectedReciter.id),
+                })
+              }
             />
           </div>
           <span className="reader-toolbar__icon" aria-hidden="true">

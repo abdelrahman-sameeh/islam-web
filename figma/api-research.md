@@ -59,6 +59,15 @@ shape is `/v1/search/{encodedKeyword}/all/quran-uthmani`; validate Arabic search
 quality and response limits with real queries before making it the global
 search provider.
 
+Arabic verse search was verified again on 2026-10-12 using the documented
+public endpoint `/v1/search/{keyword}/all/quran-simple`. Both vocalized and
+unvocalized Arabic queries returned the same verse matches in the checked
+cases. The client still removes tashkeel and Quran annotation marks from the
+query before encoding it, requires at least two Arabic words or three
+characters, caps rendered results, and uses only the returned surah/ayah
+coordinates. The selected tafsir continues to come from QuranEnc, so the
+search provider never becomes the tafsir source.
+
 ## 3. QuranEnc
 
 Official documentation: https://quranenc.com/en/home/api/

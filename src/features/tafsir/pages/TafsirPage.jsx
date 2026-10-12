@@ -4,14 +4,18 @@ import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
 import SearchableSelect from "../../../components/ui/SearchableSelect";
 import SourceBadge from "../../../components/ui/SourceBadge";
+import FavoriteButton from "../../favorites/components/FavoriteButton";
+import useFavorites from "../../favorites/hooks/useFavorites";
 import { getSurahAyahs } from "../../quran/api/quranApi";
 import surahList from "../../quran/data/surahs";
+import VerseTafsirSearch from "../components/VerseTafsirSearch";
 
 const TafsirPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [ayahs, setAyahs] = useState([]);
   const [status, setStatus] = useState("loading");
   const [requestVersion, setRequestVersion] = useState(0);
+  const { isFavorite, toggleFavorite } = useFavorites();
   const requestedSurahId = searchParams.get("surah") ?? "1";
   const surahId = surahList.some(({ id }) => id === requestedSurahId)
     ? requestedSurahId
@@ -54,6 +58,11 @@ const TafsirPage = () => {
           eyebrow="المعنى والسياق"
           title="تفسير القرآن"
           description="الآية ومعناها كما وردا في التفسير الميسر، من غير اختصار أو إعادة صياغة."
+        />
+
+        <VerseTafsirSearch
+          surahId={surahId}
+          ayahNumber={selectedAyah?.number ?? 1}
         />
 
         <div className="tafsir-layout">
@@ -125,7 +134,25 @@ const TafsirPage = () => {
                   </p>
                 </article>
                 <article className="explanation-panel">
-                  <h2>التفسير</h2>
+                  <div className="explanation-panel__heading">
+                    <h2>التفسير</h2>
+                    <FavoriteButton
+                      label="حفظ التفسير"
+                      isFavorite={isFavorite(
+                        "tafsir",
+                        `${surahId}:${selectedAyah.number}`
+                      )}
+                      onToggle={() =>
+                        toggleFavorite({
+                          type: "tafsir",
+                          entityId: `${surahId}:${selectedAyah.number}`,
+                          title: `${surahName} · الآية ${selectedAyah.number.toLocaleString("ar-EG")}`,
+                          subtitle: "التفسير الميسر · QuranEnc",
+                          href: `/tafseer?surah=${surahId}&ayah=${selectedAyah.number}`,
+                        })
+                      }
+                    />
+                  </div>
                   <p>{selectedAyah.tafsir}</p>
                   <div className="source-note">
                     النص معروض كما ورد من المصدر دون تعديل أو اختصار.

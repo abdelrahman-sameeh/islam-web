@@ -5,18 +5,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-
-const normalizeSearchText = (value) =>
-  String(value ?? "")
-    .normalize("NFKD")
-    .replace(/[\u0610-\u061a\u064b-\u065f\u0670\u06d6-\u06ed]/g, "")
-    .replace(/[أإآٱ]/g, "ا")
-    .replace(/ة/g, "ه")
-    .replace(/ى/g, "ي")
-    .replace(/ؤ/g, "و")
-    .replace(/ئ/g, "ي")
-    .toLowerCase()
-    .trim();
+import normalizeArabicText from "../../lib/normalizeArabicText";
 
 const getDefaultValue = (option) => option.id;
 const getDefaultLabel = (option) => option.label;
@@ -49,11 +38,11 @@ const SearchableSelect = ({
     (option) => String(getOptionValue(option)) === String(value)
   );
   const filteredOptions = useMemo(() => {
-    const normalizedQuery = normalizeSearchText(query);
+    const normalizedQuery = normalizeArabicText(query);
     if (!normalizedQuery) return preparedOptions;
 
     return preparedOptions.filter((option) =>
-      normalizeSearchText(getSearchText(option)).includes(normalizedQuery)
+      normalizeArabicText(getSearchText(option)).includes(normalizedQuery)
     );
   }, [getSearchText, preparedOptions, query]);
 
