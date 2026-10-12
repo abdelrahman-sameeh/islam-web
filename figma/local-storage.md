@@ -75,6 +75,17 @@ Storage key: `islamona.session-content.v1`
 
 Storage key: `islamona.theme.v1`; allowed values are `light` and `dark`.
 
+## Prayer location
+
+Storage key: `islamona.prayer-location.v2`; value format is an ISO country code
+and local city key such as `EG:cairo` or `SA:makkah`.
+
+- The country controls the AlAdhan calculation method; the city controls the
+  geocoded location and timezone returned by the API.
+- If v2 is missing, a recognized value from `islamona.prayer-city.v1` migrates
+  to the matching Egyptian governorate. The legacy key remains untouched.
+- Invalid or removed locations fall back to `EG:cairo`.
+
 ## Favorites
 
 Storage key: `islamona.favorites.v1`

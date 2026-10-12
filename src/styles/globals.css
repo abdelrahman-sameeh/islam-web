@@ -813,7 +813,8 @@ body.dark-theme .error-copy {
 .reader-toolbar__field,
 .filter-panel label,
 .filter-panel__field,
-.location-bar label {
+.location-bar label,
+.location-bar__field {
   display: flex;
   flex-direction: column;
   gap: 7px;
@@ -1769,23 +1770,26 @@ body.dark-theme .favorites-tabs button.is-selected {
   margin-top: 22px;
 }
 
-.location-bar > div {
+.location-bar__summary {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.location-bar > div span {
+.location-bar__summary span {
   color: var(--neutral-500);
   font-size: 13px;
 }
 
-.location-bar > div strong {
+.location-bar__summary strong {
   font-size: 20px;
 }
 
-.location-bar label {
-  width: min(100%, 300px);
+.location-bar__selectors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: min(100%, 620px);
 }
 
 .prayer-layout {
@@ -2309,8 +2313,12 @@ body.dark-theme .favorites-tabs button.is-selected {
   }
 
   .dhikr-card__footer button,
-  .location-bar label {
+  .location-bar__selectors {
     width: 100%;
+  }
+
+  .location-bar__selectors {
+    grid-template-columns: 1fr;
   }
 
   .next-prayer-card {

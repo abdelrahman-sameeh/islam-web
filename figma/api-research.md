@@ -117,6 +117,13 @@ The documented date path format is `DD-MM-YYYY`; do not pass JavaScript's
 locale-dependent `Date.toDateString()` output. Results can differ from local
 authorities, so the chosen calculation method must be visible.
 
+The country/city expansion was re-verified on 2026-10-13 against the official
+`timingsByCity` documentation. It accepts a city plus a country name or ISO
+alpha-2 code. The app explicitly maps Egypt to method 5, Saudi Arabia to 4,
+the Gulf region to 8, Kuwait to 9, Qatar to 10, Jordan/Palestine to 23, Tunisia
+to 18, Algeria to 19, and Morocco to 21. Other included Arab countries use the
+Muslim World League method 3 until a closer documented authority is available.
+
 ## Adoption plan
 
 1. Keep MP3Quran, QuranEnc, and AlAdhan but place them behind feature API files.
