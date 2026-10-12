@@ -12,6 +12,7 @@ import {
   getReciters,
   getSurahAudioUrl,
 } from "../api/recitationsApi";
+import ReciterSelect from "../components/ReciterSelect";
 
 const getSafeSurahId = (value) => {
   const number = Number(value);
@@ -81,13 +82,19 @@ const QuranReaderPage = () => {
         selectedReciter.availableSurahs.includes(itemId)
       )
     : surahList;
+  const reciterOptions = useMemo(
+    () => [
+      DEFAULT_RECITER,
+      ...reciters.filter(
+        ({ id: reciterId }) => reciterId !== DEFAULT_RECITER.id
+      ),
+    ],
+    [reciters]
+  );
 
-  const handleReciterChange = (event) => {
-    const reciter = reciters.find(({ id: itemId }) => itemId === event.target.value);
-    if (!reciter) return;
-
+  const handleReciterChange = (reciter) => {
     setSelectedReciter(reciter);
-    if (!reciter.availableSurahs.includes(surahId)) {
+    if (reciter.availableSurahs && !reciter.availableSurahs.includes(surahId)) {
       navigate(`/quran/surah/${reciter.availableSurahs[0] ?? "1"}`);
     }
   };
@@ -117,17 +124,14 @@ const QuranReaderPage = () => {
               ))}
             </select>
           </label>
-          <label>
+          <div className="reader-toolbar__field">
             <span>القارئ والرواية</span>
-            <select value={selectedReciter.id} onChange={handleReciterChange}>
-              <option value={DEFAULT_RECITER.id}>{DEFAULT_RECITER.name}</option>
-              {reciters.map((reciter) => (
-                <option key={reciter.id} value={reciter.id}>
-                  {reciter.name}
-                </option>
-              ))}
-            </select>
-          </label>
+            <ReciterSelect
+              options={reciterOptions}
+              selectedReciter={selectedReciter}
+              onSelect={handleReciterChange}
+            />
+          </div>
           <span className="reader-toolbar__icon" aria-hidden="true">
             <FontAwesomeIcon icon={faSliders} />
           </span>

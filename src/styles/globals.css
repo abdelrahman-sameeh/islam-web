@@ -785,6 +785,7 @@ body.dark-theme .error-copy {
 }
 
 .reader-toolbar label,
+.reader-toolbar__field,
 .filter-panel label,
 .location-bar label {
   display: flex;
@@ -817,6 +818,118 @@ body.dark-theme .error-copy {
   border-radius: 12px;
   color: var(--brand-700);
   background: var(--brand-100);
+}
+
+.reciter-picker {
+  position: relative;
+  color: var(--black);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.reciter-picker__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding-inline: 14px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 12px;
+  color: var(--black);
+  background: var(--neutral-50);
+  cursor: pointer;
+  text-align: start;
+}
+
+.reciter-picker__trigger span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reciter-picker__trigger svg {
+  flex: 0 0 auto;
+  color: var(--neutral-500);
+  font-size: 12px;
+}
+
+.reciter-picker__popover {
+  position: absolute;
+  z-index: 20;
+  inset-inline: 0;
+  top: calc(100% + 8px);
+  overflow: hidden;
+  border: 1px solid var(--neutral-200);
+  border-radius: 14px;
+  background: var(--surface-elevated);
+  box-shadow: var(--floating-shadow);
+}
+
+.reciter-picker__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.reciter-picker__search svg {
+  position: absolute;
+  inset-inline-start: 26px;
+  color: var(--neutral-500);
+}
+
+.reciter-picker__search input {
+  width: 100%;
+  min-height: 44px;
+  padding-inline: 44px 12px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 10px;
+  color: var(--black);
+  background: var(--neutral-50);
+}
+
+.reciter-picker__list {
+  max-height: min(320px, 50vh);
+  overflow-y: auto;
+  padding: 6px;
+  overscroll-behavior: contain;
+}
+
+.reciter-picker__list > button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--black);
+  background: transparent;
+  cursor: pointer;
+  text-align: start;
+}
+
+.reciter-picker__list > button:hover,
+.reciter-picker__list > button:focus-visible,
+.reciter-picker__list > button.is-selected {
+  color: var(--brand-700);
+  background: var(--brand-100);
+}
+
+.reciter-picker__list > button svg {
+  flex: 0 0 auto;
+}
+
+.reciter-picker__empty {
+  margin: 0;
+  padding: 18px 12px;
+  color: var(--neutral-500);
+  text-align: center;
 }
 
 .session-passage-note {
