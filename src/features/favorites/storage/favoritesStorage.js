@@ -1,4 +1,4 @@
-import { getStoredJson, setStoredJson } from "../../../lib/browserStorage";
+import { getStoredJson, setStoredJson } from "../../../lib/deviceStorage";
 
 const FAVORITES_STORAGE_KEY = "islamona.favorites.v1";
 const FAVORITES_UPDATED_EVENT = "islamona:favorites-updated";

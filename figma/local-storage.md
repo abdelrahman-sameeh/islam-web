@@ -107,10 +107,10 @@ Storage key: `islamona.favorites.v1`
 
 - Allowed types are `surah`, `reciter`, `hadith`, and `tafsir`.
 - Store stable IDs, display labels, and internal links; do not duplicate Quran,
-  tafsir, or hadith bodies in browser storage.
-- The same localStorage boundary works in the web build and the installed
-  Android WebView. Data is device-local and may be removed when site/app data
-  is cleared or the app is uninstalled.
+  tafsir, or hadith bodies in device storage.
+- The shared device-storage boundary uses localStorage on web and Capacitor
+  Preferences on Android. Data remains device-local and may be removed when
+  site/app data is cleared or the app is uninstalled.
 - Newest items appear first. Adding the same `type + entityId` twice removes it
   rather than creating a duplicate.
 
