@@ -1,14 +1,12 @@
-# Device-only persistence
+# Browser-only persistence
 
 The current product has no server. Personal choices and lightweight progress
 stay on the user's current device and must work without an account.
 
-- Web and desktop PWA builds retain the existing `localStorage` keys so current
-  users do not lose their choices.
-- Android and iOS builds store the same keys through Capacitor Preferences,
-  backed by the platform's native lightweight preferences store.
-- `src/lib/deviceStorage.js` is the only platform boundary. Features must not
-  access either storage implementation directly.
+- Web and installed PWA builds retain the existing `localStorage` keys so
+  current users do not lose their choices.
+- `src/lib/browserStorage.js` is the storage boundary. Features must not access
+  `localStorage` directly.
 
 ## Daily session
 

@@ -12,7 +12,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { getStoredValue, setStoredValue } from "../../lib/deviceStorage";
+import { getStoredValue, setStoredValue } from "../../lib/browserStorage";
 
 const THEME_STORAGE_KEY = "islamona.theme.v1";
 

@@ -11,7 +11,7 @@ The SVG frames can be dragged directly into Figma and edited as vectors.
 - `components.md`: reusable component inventory and interaction states.
 - `flows.md`: core user journeys and navigation model.
 - `local-storage.md`: browser-only persistence contract and versioning.
-- `mobile-runtime.md`: shared web/PWA/native shell and safe-area behavior.
+- `pwa-runtime.md`: shared web/PWA shell and safe-area behavior.
 - `target-structure.md`: proposed production file structure and migration order.
 - `api-research.md`: evaluated Quran and Islamic data services.
 - `pages/*.svg`: 1440px desktop page frames, ready to import into Figma.
@@ -23,7 +23,7 @@ The SVG frames can be dragged directly into Figma and edited as vectors.
 2. Create `01 Components` from `components.md` using Auto Layout and variants.
 3. Create `02 Desktop` and drag every SVG in `pages/` into it.
 4. Create mobile frames at 360px width with a 16px gutter, the same component
-   names and tokens, and the safe areas described in `mobile-runtime.md`.
+   names and tokens, and the safe areas described in `pwa-runtime.md`.
 5. Keep layer and component names in English; keep product copy in Arabic.
 
 ## Status

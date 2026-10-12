@@ -1,8 +1,0 @@
-{
-  "appId": "com.islamona.app",
-  "appName": "إسلامنا",
-  "webDir": "build",
-  "server": {
-    "androidScheme": "https"
-  }
-}

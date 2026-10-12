@@ -11,6 +11,11 @@
 # production
 /build
 
+# native/mobile artifacts belong to the mobile/android branch
+/android
+/ios
+/releases
+
 # misc
 .DS_Store
 .env.local

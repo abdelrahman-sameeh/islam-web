@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
 import SourceBadge from "../../../components/ui/SourceBadge";
-import { getStoredValue, setStoredValue } from "../../../lib/deviceStorage";
+import { getStoredValue, setStoredValue } from "../../../lib/browserStorage";
 import { getPrayerTimes } from "../api/prayerTimesApi";
 import { EGYPTIAN_CITIES } from "../data/cities";
 

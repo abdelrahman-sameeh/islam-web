@@ -4,7 +4,7 @@ import {
   DEFAULT_SESSION_DURATION,
 } from "../data/sessionConfig";
 import { createRandomTimedPassage } from "../utils/selectTimedPassage";
-import { getStoredJson, setStoredJson } from "../../../lib/deviceStorage";
+import { getStoredJson, setStoredJson } from "../../../lib/browserStorage";
 
 const STORAGE_KEY = "islamona.daily-session.v3";
 

@@ -1,16 +1,8 @@
-import { Capacitor } from "@capacitor/core";
-import { Preferences } from "@capacitor/preferences";
-
 const canUseBrowserStorage = () =>
   typeof window !== "undefined" && window.localStorage;
 
 export const getStoredValue = async (key) => {
   try {
-    if (Capacitor.isNativePlatform()) {
-      const { value } = await Preferences.get({ key });
-      return value;
-    }
-
     return canUseBrowserStorage() ? window.localStorage.getItem(key) : null;
   } catch {
     return null;
@@ -19,14 +11,9 @@ export const getStoredValue = async (key) => {
 
 export const setStoredValue = async (key, value) => {
   try {
-    if (Capacitor.isNativePlatform()) {
-      await Preferences.set({ key, value });
-      return;
-    }
-
     if (canUseBrowserStorage()) window.localStorage.setItem(key, value);
   } catch {
-    // The current visit keeps working if device storage is unavailable or full.
+    // The current visit keeps working if browser storage is unavailable or full.
   }
 };
 

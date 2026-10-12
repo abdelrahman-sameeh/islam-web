@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getRandomHadith } from "../../hadith/api/hadithApi";
 import { getSurahAyahs } from "../../quran/api/quranApi";
-import { getStoredJson, setStoredJson } from "../../../lib/deviceStorage";
+import { getStoredJson, setStoredJson } from "../../../lib/browserStorage";
 
 const STORAGE_KEY = "islamona.session-content.v1";
 
