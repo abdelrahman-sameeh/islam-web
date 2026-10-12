@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import {
+  DAILY_PASSAGES,
   DAILY_SESSION_DURATIONS,
-  DAILY_SESSIONS,
-} from "../data/dailySessions";
+} from "../data/dailyPassages";
 
-const STORAGE_KEY = "islamona.daily-session.v1";
+const STORAGE_KEY = "islamona.daily-session.v2";
 const DEFAULT_DURATION = 5;
 
 const getLocalDateKey = () => {
@@ -23,11 +23,14 @@ const readStoredSession = () => {
   }
 };
 
-const selectRandomSession = (excludedId) => {
-  const availableSessions = DAILY_SESSIONS.filter(
-    (session) => session.id !== excludedId
+const selectRandomPassage = (duration, excludedId) => {
+  const matchingPassages = DAILY_PASSAGES.filter(
+    (passage) => passage.duration === duration
   );
-  const pool = availableSessions.length ? availableSessions : DAILY_SESSIONS;
+  const availablePassages = matchingPassages.filter(
+    (passage) => passage.id !== excludedId
+  );
+  const pool = availablePassages.length ? availablePassages : matchingPassages;
 
   return pool[Math.floor(Math.random() * pool.length)];
 };
@@ -35,27 +38,34 @@ const selectRandomSession = (excludedId) => {
 const createInitialState = () => {
   const date = getLocalDateKey();
   const storedSession = readStoredSession();
-  const isKnownSession = DAILY_SESSIONS.some(
-    (session) => session.id === storedSession?.sessionId
+  const storedPassage = DAILY_PASSAGES.find(
+    (passage) => passage.id === storedSession?.passageId
   );
   const isKnownDuration = DAILY_SESSION_DURATIONS.includes(
     storedSession?.duration
   );
 
-  if (storedSession?.date === date && isKnownSession) {
+  if (
+    storedSession?.date === date &&
+    storedPassage?.duration === storedSession?.duration &&
+    isKnownDuration
+  ) {
     return {
       date,
-      sessionId: storedSession.sessionId,
-      duration: isKnownDuration ? storedSession.duration : DEFAULT_DURATION,
+      passageId: storedPassage.id,
+      duration: storedSession.duration,
       isStarted: Boolean(storedSession.isStarted),
     };
   }
 
-  const session = selectRandomSession(storedSession?.sessionId);
+  const passage = selectRandomPassage(
+    DEFAULT_DURATION,
+    storedSession?.passageId
+  );
 
   return {
     date,
-    sessionId: session.id,
+    passageId: passage.id,
     duration: DEFAULT_DURATION,
     isStarted: false,
   };
@@ -76,22 +86,30 @@ export const useDailySession = () => {
     persistSession(state);
   }, [state]);
 
-  const session =
-    DAILY_SESSIONS.find((item) => item.id === state.sessionId) ??
-    DAILY_SESSIONS[0];
+  const passage =
+    DAILY_PASSAGES.find((item) => item.id === state.passageId) ??
+    DAILY_PASSAGES.find((item) => item.duration === state.duration);
 
   const setDuration = (duration) => {
     if (!DAILY_SESSION_DURATIONS.includes(duration)) return;
 
-    setState((currentState) => ({ ...currentState, duration }));
+    if (duration === state.duration) return;
+
+    const nextPassage = selectRandomPassage(duration);
+    setState((currentState) => ({
+      ...currentState,
+      passageId: nextPassage.id,
+      duration,
+      isStarted: false,
+    }));
   };
 
   const chooseAnotherSession = () => {
-    const nextSession = selectRandomSession(state.sessionId);
+    const nextPassage = selectRandomPassage(state.duration, state.passageId);
 
     setState((currentState) => ({
       ...currentState,
-      sessionId: nextSession.id,
+      passageId: nextPassage.id,
       isStarted: false,
     }));
   };
@@ -101,7 +119,7 @@ export const useDailySession = () => {
   };
 
   return {
-    session,
+    passage,
     duration: state.duration,
     isStarted: state.isStarted,
     setDuration,

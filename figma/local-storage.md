@@ -5,25 +5,32 @@ stay in the browser and must work without an account.
 
 ## Daily session
 
-Storage key: `islamona.daily-session.v1`
+Storage key: `islamona.daily-session.v2`
 
 ```json
 {
   "date": "YYYY-MM-DD",
-  "sessionId": "calm-heart",
+  "passageId": "al-kahf-1-10",
   "duration": 5,
   "isStarted": false
 }
 ```
 
-- Select a random session on the first visit of each local calendar day.
-- Keep that session stable across refreshes for the rest of the day.
-- Avoid yesterday's session when more than one option is available.
-- `جلسة أخرى` selects another random session and resets `isStarted`.
-- Duration supports 2, 5, and 10 minutes and persists with the daily record.
+- Select a random approved Quran passage for the chosen duration. A passage is
+  a surah ID plus a bounded `from`/`to` ayah range, never the whole surah unless
+  that short surah is itself the approved passage.
+- Keep that passage stable across refreshes for the rest of the day.
+- Avoid the previous passage when more than one option is available.
+- `جلسة أخرى` selects another passage for the same duration and resets
+  `isStarted`.
+- Changing 2/5/10 minutes immediately chooses a random passage from that
+  duration's pool and persists the new choice.
 - Invalid or unknown stored data falls back safely to a new session.
 - Religious content comes from the versioned local dataset; randomness selects
   an approved item and never generates or rewrites religious text.
+
+`islamona.daily-session.v1` is intentionally left untouched and ignored. The v2
+key changes the stored meaning from a whole-surah session to a bounded passage.
 
 ## Theme
 

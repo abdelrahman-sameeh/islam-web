@@ -40,10 +40,11 @@ labelled content type.
 
 ## Daily session
 
-Home -> receive today's random approved session -> choose 2, 5, or 10 minutes ->
-start with the linked Quran reading -> continue into sourced tafsir, hadith, and
-dhikr as those steps are implemented.
+Home -> choose 2, 5, or 10 minutes -> receive a random approved surah passage
+whose ayah range fits that duration -> open only those ayahs in the Quran reader
+-> continue into sourced tafsir, hadith, and dhikr as those steps are
+implemented.
 
-The browser stores the selected session and duration. Randomness happens once
-per local day, not on every render or refresh. `جلسة أخرى` is an explicit user
-action. No account or server is required.
+The browser stores the selected passage and duration. Randomness happens on a
+new day, an explicit duration change, or `جلسة أخرى`; never on an ordinary
+render or refresh. No account or server is required.

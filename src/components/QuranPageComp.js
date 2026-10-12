@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import SubTitle from "./utility/SubTitle";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import suwarList from "../utils/suwar";
 import { Autocomplete, Grid, TextField } from "@mui/material";
 
 const QuranPageComp = () => {
   const { id: surahId } = useParams();
+  const [searchParams] = useSearchParams();
   const [suwar, setSuwar] = useState(suwarList);
-  const [surahNum, setSurahNum] = useState(surahId);
+  const [surahNum, setSurahNum] = useState(surahId || "1");
   const [surahText, setSurahText] = useState();
   const [reciters, setReciters] = useState([]);
   const [server, setServer] = useState("https://server10.mp3quran.net/minsh/");
@@ -18,6 +19,18 @@ const QuranPageComp = () => {
 
   const surahAudioLink = useRef();
   const navigate = useNavigate();
+  const passageStart = Number(searchParams.get("from"));
+  const passageEnd = Number(searchParams.get("to"));
+  const hasPassageRange =
+    searchParams.get("session") === "1" &&
+    Number.isInteger(passageStart) &&
+    Number.isInteger(passageEnd) &&
+    passageStart > 0 &&
+    passageEnd >= passageStart;
+
+  useEffect(() => {
+    setSurahNum(surahId || "1");
+  }, [surahId]);
 
   const handleSelect = (e) => {
     setSurahNum(e.target.value);
@@ -33,7 +46,9 @@ const QuranPageComp = () => {
       } else if (surahNumber < 10) {
         surahNumber = `00${surahNumber}`;
       }
-      surahAudioLink.current.src = `${server}${surahNumber}.mp3`;
+      if (surahAudioLink.current) {
+        surahAudioLink.current.src = `${server}${surahNumber}.mp3`;
+      }
     };
     getSurahAudio(surahNum);
 
@@ -42,18 +57,26 @@ const QuranPageComp = () => {
       const res = await axios.get(
         `https://quranenc.com/api/v1/translation/sura/arabic_moyassar/${surahNumber}`
       );
-      setSurahText(res.data.result);
+      const surah = res.data.result ?? [];
+      const selectedPassage = hasPassageRange
+        ? surah.filter((ayah) => {
+            const ayahNumber = Number(ayah.aya);
+            return ayahNumber >= passageStart && ayahNumber <= passageEnd;
+          })
+        : surah;
+
+      setSurahText(selectedPassage);
     };
 
     getSurahText(surahNum);
-  }, [surahNum, server]);
+  }, [surahNum, server, hasPassageRange, passageStart, passageEnd]);
 
   const getReciters = async () => {
     try {
       const response = await axios.get(
         "https://www.mp3quran.net/api/v3/reciters?language=ar"
       );
-      if (response.status == 200) {
+      if (response.status === 200) {
         const newReciters = response?.data?.reciters?.map((reciter) => ({
           ...reciter,
           label: reciter.name,
@@ -141,18 +164,29 @@ const QuranPageComp = () => {
           </select>
         </Grid>
         <Grid item xs={12} md={6}>
-          <audio
-            style={{ width: "100%" }}
-            ref={surahAudioLink}
-            controls
-          ></audio>
+          {hasPassageRange ? (
+            <div className="session-passage-note">
+              جلسة قراءة: من الآية {passageStart.toLocaleString("ar-EG")} إلى{" "}
+              {passageEnd.toLocaleString("ar-EG")}
+            </div>
+          ) : (
+            <audio
+              style={{ width: "100%" }}
+              ref={surahAudioLink}
+              controls
+            ></audio>
+          )}
         </Grid>
       </Grid>
 
       {/* text */}
       {surahText && surahText.length ? (
         <>
-          <h2 className="text-center"> {} </h2>
+          <h2 className="text-center quran-selection-title">
+            {suwarList.find((surah) => surah.id === String(surahNum))?.label}
+            {hasPassageRange &&
+              ` · الآيات ${passageStart.toLocaleString("ar-EG")}–${passageEnd.toLocaleString("ar-EG")}`}
+          </h2>
           <div
             style={{
               backgroundColor: "var(--alt-color)",
@@ -160,7 +194,8 @@ const QuranPageComp = () => {
             }}
             className="px-2 py-3 rounded my-3 fs-5 quran-font"
           >
-            {surahNum != 9 ? (
+            {Number(surahNum) !== 9 &&
+            (!hasPassageRange || passageStart === 1) ? (
               <div className="text-center fs-3 mb-2">
                 بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ
               </div>

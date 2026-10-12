@@ -20,7 +20,7 @@
     <circle cx="248" cy="250" r="86" fill="#1F6F5B" opacity=".35"/><circle cx="290" cy="210" r="42" fill="#C49A55" opacity=".22"/>
     <text x="1256" y="188" text-anchor="end" class="ui white" font-size="15" font-weight="600">جلسة اليوم · اختيار عشوائي محفوظ على جهازك</text>
     <text x="1256" y="238" text-anchor="end" class="ui white" font-size="40" font-weight="700">خمس دقائق لسكينة القلب</text>
-    <text x="1256" y="276" text-anchor="end" class="ui white" font-size="17" opacity=".78">آيات قصيرة، معنى واضح، وذكر تختم به جلستك بهدوء.</text>
+    <text x="1256" y="276" text-anchor="end" class="ui white" font-size="17" opacity=".78">سورة الكهف · من الآية ١ إلى ١٠ · مقطع مناسب لخمس دقائق.</text>
     <g class="ui label" text-anchor="middle"><rect x="1136" y="294" width="120" height="34" rx="17" fill="#C49A55"/><text x="1196" y="316">٥ دقائق</text><rect x="1006" y="294" width="112" height="34" rx="17" fill="#fff" fill-opacity=".1"/><text x="1062" y="316" class="white">دقيقتان</text><rect x="876" y="294" width="112" height="34" rx="17" fill="#fff" fill-opacity=".1"/><text x="932" y="316" class="white">١٠ دقائق</text></g>
     <rect x="1070" y="336" width="186" height="42" rx="12" fill="#C49A55"/><text x="1163" y="363" text-anchor="middle" class="ui" font-size="15" font-weight="700">ابدأ جلسة اليوم</text>
     <text x="1044" y="363" text-anchor="end" class="ui white label">اختيار جلسة أخرى ↻</text>

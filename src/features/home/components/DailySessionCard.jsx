@@ -1,7 +1,7 @@
 import { faArrowLeft, faRotate } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import { DAILY_SESSION_DURATIONS } from "../data/dailySessions";
+import { DAILY_SESSION_DURATIONS } from "../data/dailyPassages";
 import { useDailySession } from "../hooks/useDailySession";
 
 const durationLabel = (duration) =>
@@ -11,7 +11,7 @@ const durationLabel = (duration) =>
 
 const DailySessionCard = () => {
   const {
-    session,
+    passage,
     duration,
     isStarted,
     setDuration,
@@ -23,15 +23,19 @@ const DailySessionCard = () => {
     <section className="daily-session" aria-labelledby="daily-session-title">
       <div className="daily-session__content">
         <p className="daily-session__eyebrow">
-          {session.label} · اختيار اليوم
+          جلسة اليوم · مقطع يناسب وقتك
         </p>
-        <h1 id="daily-session-title">{session.title}</h1>
-        <p className="daily-session__description">{session.description}</p>
+        <h1 id="daily-session-title">{passage.title}</h1>
+        <p className="daily-session__description">{passage.description}</p>
 
-        <blockquote className="daily-session__verse" translate="no">
-          <p>{session.verse.text}</p>
-          <cite>{session.verse.reference}</cite>
-        </blockquote>
+        <div className="daily-session__selection">
+          <strong>{passage.surah.name}</strong>
+          <span>
+            من الآية {passage.ayahs.from.toLocaleString("ar-EG")} إلى الآية{" "}
+            {passage.ayahs.to.toLocaleString("ar-EG")} · قراءة تقريبية{" "}
+            {durationLabel(duration)}
+          </span>
+        </div>
 
         <div className="daily-session__duration" aria-label="مدة الجلسة">
           {DAILY_SESSION_DURATIONS.map((item) => (
@@ -50,7 +54,7 @@ const DailySessionCard = () => {
         <div className="daily-session__actions">
           <Link
             className="primary-action"
-            to={`/quran/surah/${session.verse.surahId}`}
+            to={`/quran/surah/${passage.surah.id}?from=${passage.ayahs.from}&to=${passage.ayahs.to}&session=1`}
             onClick={markStarted}
           >
             {isStarted ? "كمّل الجلسة" : "ابدأ جلسة اليوم"}

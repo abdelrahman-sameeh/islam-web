@@ -273,6 +273,25 @@ select option {
   height: 38px;
 }
 
+.session-passage-note {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  padding-inline: 14px;
+  border-radius: 6px;
+  color: var(--brand-700);
+  background: var(--brand-100);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.quran-selection-title {
+  margin-block: 24px 8px;
+  color: var(--black);
+  font-family: "Cairo", sans-serif;
+  font-size: 20px;
+}
+
 @media (width<450px) {
 
   .quran-page select,
@@ -507,7 +526,10 @@ select option {
   line-height: 1.8;
 }
 
-.daily-session__verse {
+.daily-session__selection {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   max-width: 760px;
   margin: 22px 0 0;
   padding: 18px 20px;
@@ -516,19 +538,14 @@ select option {
   background: rgba(255, 255, 255, 0.07);
 }
 
-.daily-session__verse p {
-  margin: 0;
-  font-family: "Scheherazade", serif;
-  font-size: clamp(24px, 2.5vw, 31px);
-  line-height: 1.85;
+.daily-session__selection strong {
+  color: #fff;
+  font-size: 20px;
 }
 
-.daily-session__verse cite {
-  display: block;
-  margin-top: 4px;
+.daily-session__selection span {
   color: #e7d8bc;
-  font-size: 13px;
-  font-style: normal;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -874,12 +891,11 @@ select option {
     font-size: 32px;
   }
 
-  .daily-session__verse {
+  .daily-session__selection {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
     padding: 14px 16px;
-  }
-
-  .daily-session__verse p {
-    font-size: 25px;
   }
 
   .daily-session__actions,
