@@ -19,7 +19,7 @@
   "scripts": {
     "start": "PORT=8080 react-scripts start",
     "build": "react-scripts build",
-    "mobile:sync": "npm run build && cap sync",
+    "mobile:sync": "npm run build && cap sync android",
     "mobile:android": "npm run mobile:sync && cap open android",
     "android:apk": "npm run mobile:sync && cd android && ./gradlew assembleDebug",
     "test": "react-scripts test",
