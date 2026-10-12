@@ -21,8 +21,9 @@ move to next item. Completion is supportive, never competitive.
 
 ## Hadith
 
-Hadith -> search/filter category -> scan cards -> open detail -> view explanation,
-benefits, reference, and source. Pagination should preserve filters in the URL.
+Hadith -> run a global title/body search or browse a category -> scan cards ->
+open detail -> view explanation, benefits, reference, and source. The query and
+pagination stay in the URL so results survive refresh and browser navigation.
 
 ## Prayer times
 

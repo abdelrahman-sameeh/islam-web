@@ -56,6 +56,21 @@ export const getHadithPage = async ({ categoryId, page = 1, signal }) => {
   };
 };
 
+export const searchHadiths = async (phrase, signal) => {
+  const response = await axios.get(
+    `${HADEETH_ENC_BASE_URL}/hadeeths/search/`,
+    { params: { language: "ar", phrase }, signal }
+  );
+
+  if (!Array.isArray(response.data)) throw new Error("INVALID_SEARCH_RESPONSE");
+
+  return response.data.map((hadith) => ({
+    id: String(hadith.id),
+    title: hadith.title,
+    preview: hadith.hadith_text,
+  }));
+};
+
 export const getHadithDetails = async (hadithId, signal) => {
   const response = await axios.get(
     `${HADEETH_ENC_BASE_URL}/hadeeths/one/`,

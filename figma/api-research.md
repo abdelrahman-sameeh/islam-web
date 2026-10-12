@@ -7,6 +7,12 @@ HadeethEnc endpoints were re-verified on 2026-10-12 against the official API
 repository and live Arabic responses before implementing the redesigned hadith
 page and random daily-session hadith.
 
+The global Arabic search uses
+`/api/v1/hadeeths/search/?language=ar&phrase={query}`. It searches titles and
+hadith text across the encyclopedia and returns `id`, `title`, and
+`hadith_text`. Results are paginated in the browser because this endpoint
+returns an array rather than pagination metadata.
+
 ## Recommendation
 
 Use a small source-per-domain strategy instead of one unofficial all-in-one API:

@@ -1029,6 +1029,27 @@ body.dark-theme .error-copy {
   gap: 16px;
 }
 
+.hadith-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 10px;
+  width: 100%;
+}
+
+.hadith-search .search-field {
+  max-width: none;
+}
+
+.search-error {
+  margin: -7px 2px 0;
+  color: #b43a3a;
+  font-size: 13px;
+}
+
+body.dark-theme .search-error {
+  color: #f28b82;
+}
+
 .search-field {
   position: relative;
   display: flex;
@@ -1124,6 +1145,17 @@ body.dark-theme .filter-chips button.is-selected {
   margin: 5px 0 14px;
   font-size: 21px;
   line-height: 1.7;
+}
+
+.hadith-card__preview {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0 0 14px;
+  color: var(--neutral-700);
+  font-size: 16px;
+  line-height: 1.9;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 .hadith-details {
@@ -1814,6 +1846,14 @@ body.dark-theme .filter-chips button.is-selected {
   .hadith-card {
     grid-template-columns: 1fr;
     padding: 20px;
+  }
+
+  .hadith-search {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hadith-search .search-field {
+    grid-column: 1 / -1;
   }
 
   .hadith-card__icon {

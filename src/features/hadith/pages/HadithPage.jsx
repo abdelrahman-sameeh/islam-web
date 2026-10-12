@@ -1,6 +1,7 @@
 import { faBookOpen, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
 import SourceBadge from "../../../components/ui/SourceBadge";
@@ -8,18 +9,34 @@ import {
   getHadithCategories,
   getHadithDetails,
   getHadithPage,
+  searchHadiths,
 } from "../api/hadithApi";
 
+const RESULTS_PER_PAGE = 12;
+
+const getSafePage = (value) => {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : 1;
+};
+
 const HadithPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("q")?.trim() ?? "";
+  const categoryId = searchParams.get("category") ?? "5";
+  const page = getSafePage(searchParams.get("page"));
+  const [draftQuery, setDraftQuery] = useState(searchQuery);
+  const [queryError, setQueryError] = useState("");
   const [categories, setCategories] = useState([]);
-  const [categoryId, setCategoryId] = useState("5");
-  const [result, setResult] = useState(null);
+  const [browseResult, setBrowseResult] = useState(null);
+  const [searchItems, setSearchItems] = useState([]);
   const [status, setStatus] = useState("loading");
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState("");
   const [requestVersion, setRequestVersion] = useState(0);
   const [details, setDetails] = useState({});
   const [expandedId, setExpandedId] = useState(null);
+
+  useEffect(() => {
+    setDraftQuery(searchQuery);
+  }, [searchQuery]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -30,12 +47,14 @@ const HadithPage = () => {
   }, []);
 
   useEffect(() => {
+    if (searchQuery) return undefined;
+
     const controller = new AbortController();
     setStatus("loading");
 
     getHadithPage({ categoryId, page, signal: controller.signal })
       .then((data) => {
-        setResult(data);
+        setBrowseResult(data);
         setStatus(data.items.length ? "success" : "empty");
       })
       .catch(() => {
@@ -43,20 +62,76 @@ const HadithPage = () => {
       });
 
     return () => controller.abort();
-  }, [categoryId, page, requestVersion]);
+  }, [categoryId, page, requestVersion, searchQuery]);
 
-  const visibleItems = useMemo(() => {
-    const normalizedQuery = query.trim();
-    if (!normalizedQuery) return result?.items ?? [];
-    return (result?.items ?? []).filter(({ title }) =>
-      title.includes(normalizedQuery)
+  useEffect(() => {
+    if (!searchQuery) return undefined;
+
+    const controller = new AbortController();
+    setStatus("loading");
+
+    searchHadiths(searchQuery, controller.signal)
+      .then((items) => {
+        setSearchItems(items);
+        setStatus(items.length ? "success" : "empty");
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setStatus("error");
+      });
+
+    return () => controller.abort();
+  }, [requestVersion, searchQuery]);
+
+  const isSearchMode = Boolean(searchQuery);
+  const totalItems = isSearchMode
+    ? searchItems.length
+    : browseResult?.totalItems ?? 0;
+  const lastPage = isSearchMode
+    ? Math.max(1, Math.ceil(searchItems.length / RESULTS_PER_PAGE))
+    : browseResult?.lastPage ?? 1;
+  const displayedPage = Math.min(page, lastPage);
+  const visibleItems = isSearchMode
+    ? searchItems.slice(
+        (displayedPage - 1) * RESULTS_PER_PAGE,
+        displayedPage * RESULTS_PER_PAGE
+      )
+    : browseResult?.items ?? [];
+
+  const setPage = (nextPage) => {
+    setSearchParams(
+      isSearchMode
+        ? { q: searchQuery, page: String(nextPage) }
+        : { category: categoryId, page: String(nextPage) }
     );
-  }, [query, result]);
+    setExpandedId(null);
+  };
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const phrase = draftQuery.trim();
+
+    if (phrase.length < 2) {
+      setQueryError("اكتب حرفين على الأقل أو عبارة من الحديث.");
+      return;
+    }
+
+    setQueryError("");
+    setExpandedId(null);
+    setSearchParams({ q: phrase, page: "1" });
+  };
+
+  const handleClearSearch = () => {
+    setDraftQuery("");
+    setQueryError("");
+    setExpandedId(null);
+    setSearchParams({ category: categoryId, page: "1" });
+  };
 
   const handleCategoryChange = (nextCategoryId) => {
-    setCategoryId(nextCategoryId);
-    setPage(1);
+    setDraftQuery("");
+    setQueryError("");
     setExpandedId(null);
+    setSearchParams({ category: nextCategoryId, page: "1" });
   };
 
   const handleToggleDetails = async (hadithId) => {
@@ -92,26 +167,53 @@ const HadithPage = () => {
         <PageHeader
           eyebrow="نص وشرح ومصدر"
           title="الأحاديث النبوية"
-          description="أحاديث موثّقة مع الدرجة والشرح والفوائد والمراجع."
+          description="ابحث في جميع أحاديث الموسوعة، أو تصفّحها حسب الموضوع."
         />
 
-        <section className="hadith-filters" aria-label="فلترة الأحاديث">
-          <label className="search-field">
-            <FontAwesomeIcon icon={faSearch} aria-hidden="true" />
-            <span className="visually-hidden">ابحث في النتائج الحالية</span>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="ابحث في عناوين الصفحة الحالية"
-            />
-          </label>
+        <section className="hadith-filters" aria-label="بحث وتصنيف الأحاديث">
+          <form className="hadith-search" role="search" onSubmit={handleSearch}>
+            <label className="search-field">
+              <FontAwesomeIcon icon={faSearch} aria-hidden="true" />
+              <span className="visually-hidden">ابحث في جميع الأحاديث</span>
+              <input
+                value={draftQuery}
+                onChange={(event) => {
+                  setDraftQuery(event.target.value);
+                  setQueryError("");
+                }}
+                placeholder="ابحث بكلمة من نص الحديث أو عنوانه"
+                aria-describedby={queryError ? "hadith-search-error" : undefined}
+              />
+            </label>
+            <button className="primary-button" type="submit">
+              بحث عام
+            </button>
+            {isSearchMode && (
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={handleClearSearch}
+              >
+                مسح البحث
+              </button>
+            )}
+          </form>
+          {queryError && (
+            <p className="search-error" id="hadith-search-error" role="alert">
+              {queryError}
+            </p>
+          )}
           <div className="filter-chips" aria-label="تصنيف الحديث">
             {categories.map((category) => (
               <button
                 key={category.id}
                 type="button"
-                className={category.id === categoryId ? "is-selected" : ""}
-                aria-pressed={category.id === categoryId}
+                className={
+                  !isSearchMode && category.id === categoryId
+                    ? "is-selected"
+                    : ""
+                }
+                aria-pressed={!isSearchMode && category.id === categoryId}
                 onClick={() => handleCategoryChange(category.id)}
               >
                 {category.title}
@@ -121,26 +223,38 @@ const HadithPage = () => {
         </section>
 
         <div className="results-heading">
-          <h2>نتائج مختارة</h2>
-          {result && (
-            <span>{result.totalItems.toLocaleString("ar-EG")} حديثًا</span>
+          <h2>
+            {isSearchMode
+              ? `نتائج البحث عن «${searchQuery}»`
+              : "نتائج مختارة"}
+          </h2>
+          {status === "success" && (
+            <span>{totalItems.toLocaleString("ar-EG")} حديثًا</span>
           )}
         </div>
 
-        {status === "loading" && <FeedbackState title="جاري تحميل الأحاديث..." />}
+        {status === "loading" && (
+          <FeedbackState
+            title={isSearchMode ? "جاري البحث في الموسوعة..." : "جاري تحميل الأحاديث..."}
+          />
+        )}
         {status === "error" && (
           <FeedbackState
             type="error"
-            title="تعذّر تحميل الأحاديث"
+            title={isSearchMode ? "تعذّر تنفيذ البحث" : "تعذّر تحميل الأحاديث"}
             message="لم نتمكن من الوصول للمصدر الآن."
             onRetry={() => setRequestVersion((value) => value + 1)}
           />
         )}
-        {(status === "empty" || (status === "success" && !visibleItems.length)) && (
+        {status === "empty" && (
           <FeedbackState
             type="empty"
             title="لا توجد نتائج"
-            message="جرّب كلمة أخرى أو اختر تصنيفًا مختلفًا."
+            message={
+              isSearchMode
+                ? "جرّب كلمة أو عبارة أخرى من متن الحديث."
+                : "اختر تصنيفًا مختلفًا."
+            }
           />
         )}
 
@@ -157,13 +271,16 @@ const HadithPage = () => {
                   </div>
                   <div className="hadith-card__body">
                     <h3>{item.title}</h3>
+                    {item.preview && (
+                      <p className="hadith-card__preview">{item.preview}</p>
+                    )}
                     <button
                       type="button"
                       className="inline-action"
                       aria-expanded={isExpanded}
                       onClick={() => handleToggleDetails(item.id)}
                     >
-                      {isExpanded ? "إخفاء التفاصيل" : "عرض النص والشرح والفوائد"}
+                      {isExpanded ? "إخفاء التفاصيل" : "عرض الشرح والفوائد"}
                     </button>
 
                     {isExpanded && detailState?.status === "loading" && (
@@ -174,7 +291,9 @@ const HadithPage = () => {
                     )}
                     {isExpanded && detailState?.status === "success" && (
                       <div className="hadith-details">
-                        <p className="hadith-details__text">{detailState.hadith.text}</p>
+                        <p className="hadith-details__text">
+                          {detailState.hadith.text}
+                        </p>
                         <div className="hadith-meta">
                           {detailState.hadith.grade && (
                             <span>{detailState.hadith.grade}</span>
@@ -209,30 +328,30 @@ const HadithPage = () => {
           </div>
         )}
 
-        {result && result.lastPage > 1 && (
+        {status === "success" && lastPage > 1 && (
           <nav className="simple-pagination" aria-label="صفحات الأحاديث">
             <button
               type="button"
-              disabled={page <= 1}
-              onClick={() => setPage((value) => value - 1)}
+              disabled={displayedPage <= 1}
+              onClick={() => setPage(displayedPage - 1)}
             >
               السابق
             </button>
             <span>
-              صفحة {page.toLocaleString("ar-EG")} من{" "}
-              {result.lastPage.toLocaleString("ar-EG")}
+              صفحة {displayedPage.toLocaleString("ar-EG")} من{" "}
+              {lastPage.toLocaleString("ar-EG")}
             </span>
             <button
               type="button"
-              disabled={page >= result.lastPage}
-              onClick={() => setPage((value) => value + 1)}
+              disabled={displayedPage >= lastPage}
+              onClick={() => setPage(displayedPage + 1)}
             >
               التالي
             </button>
           </nav>
         )}
         <div className="page-source">
-          <SourceBadge>HadeethEnc.com</SourceBadge>
+          <SourceBadge>HadeethEnc.com · بحث في العنوان والمتن</SourceBadge>
         </div>
       </div>
     </main>
