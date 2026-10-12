@@ -1,8 +1,8 @@
 # Mobile runtime handoff
 
 Islamona ships from one responsive React source. The desktop website and
-installable PWA remain first-class surfaces; Capacitor adds Android and iOS
-shells around the same production build.
+installable PWA remain first-class surfaces; Capacitor adds the current Android
+shell around the same production build and keeps an iOS shell possible later.
 
 ## Shell
 

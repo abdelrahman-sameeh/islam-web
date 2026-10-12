@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">إسلامنا</string>
+    <string name="title_activity_main">إسلامنا</string>
+    <string name="package_name">com.islamona.app</string>
+    <string name="custom_url_scheme">com.islamona.app</string>
+</resources>

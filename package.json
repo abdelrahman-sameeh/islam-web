@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "mobile:sync": "npm run build && cap sync",
     "mobile:android": "npm run mobile:sync && cap open android",
-    "mobile:ios": "npm run mobile:sync && cap open ios",
+    "android:apk": "npm run mobile:sync && cd android && ./gradlew assembleDebug",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -44,8 +44,6 @@
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.3",
-    "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^8.5.3",
-    "@capacitor/ios": "^8.5.3"
+    "@capacitor/cli": "^8.5.3"
   }
 }
