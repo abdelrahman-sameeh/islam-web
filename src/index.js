@@ -5,7 +5,6 @@ import 'normalize.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter } from 'react-router-dom';
 import './index.css'
-import './functions.js'
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

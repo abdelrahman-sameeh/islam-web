@@ -37,3 +37,13 @@ release can add Quran verse search through AlQuran Cloud with an explicit Arabic
 edition. Phase 2 moves advanced Quran search to Quran Foundation through a
 backend proxy. Phase 3 can add sourced hadith results as a separate, clearly
 labelled content type.
+
+## Daily session
+
+Home -> receive today's random approved session -> choose 2, 5, or 10 minutes ->
+start with the linked Quran reading -> continue into sourced tafsir, hadith, and
+dhikr as those steps are implemented.
+
+The browser stores the selected session and duration. Randomness happens once
+per local day, not on every render or refresh. `جلسة أخرى` is an explicit user
+action. No account or server is required.

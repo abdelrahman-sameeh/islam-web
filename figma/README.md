@@ -10,6 +10,7 @@ The SVG frames can be dragged directly into Figma and edited as vectors.
 - `foundations.md`: brand idea, typography, color, layout, and accessibility.
 - `components.md`: reusable component inventory and interaction states.
 - `flows.md`: core user journeys and navigation model.
+- `local-storage.md`: browser-only persistence contract and versioning.
 - `target-structure.md`: proposed production file structure and migration order.
 - `api-research.md`: evaluated Quran and Islamic data services.
 - `pages/*.svg`: 1440px desktop page frames, ready to import into Figma.
@@ -27,7 +28,8 @@ The SVG frames can be dragged directly into Figma and edited as vectors.
 ## Status
 
 This is a design baseline, not production code. No file under `src/` is changed
-by this design phase.
+by the initial design phase. Implementation work starts from the approved
+frames on the `redesign/v2` branch.
 
 The moodboard was generated with the built-in image generation tool using a
 `ui-mockup` brief. It intentionally contains no readable text; the SVG frames
