@@ -5,32 +5,41 @@ stay in the browser and must work without an account.
 
 ## Daily session
 
-Storage key: `islamona.daily-session.v2`
+Storage key: `islamona.daily-session.v3`
 
 ```json
 {
   "date": "YYYY-MM-DD",
-  "passageId": "al-kahf-1-10",
   "duration": 5,
+  "passage": {
+    "surahId": "18",
+    "surahName": "سورة الكهف",
+    "fromAyah": 1,
+    "toAyah": 10,
+    "wordCount": 325
+  },
   "isStarted": false
 }
 ```
 
-- Select a random approved Quran passage for the chosen duration. A passage is
-  a surah ID plus a bounded `from`/`to` ayah range, never the whole surah unless
-  that short surah is itself the approved passage.
+- Select a surah randomly from all 114 surahs, fetch its sourced Arabic ayahs,
+  then calculate a contiguous range near the chosen reading time. There are no
+  fixed duration-to-passage lists.
+- Estimate the range from its real word count at 65 words per minute. Retry with
+  another random surah when the selected surah is too short for the duration.
 - Keep that passage stable across refreshes for the rest of the day.
-- Avoid the previous passage when more than one option is available.
+- Avoid the exact previous surah/range when another session is requested.
 - `جلسة أخرى` selects another passage for the same duration and resets
   `isStarted`.
-- Changing 2/5/10 minutes immediately chooses a random passage from that
-  duration's pool and persists the new choice.
+- Changing 2/5/10 minutes calculates a fresh random passage for that duration
+  and persists the successful result.
 - Invalid or unknown stored data falls back safely to a new session.
-- Religious content comes from the versioned local dataset; randomness selects
-  an approved item and never generates or rewrites religious text.
+- Religious text is fetched unchanged from QuranEnc. The app only counts words
+  and chooses ayah boundaries; it never generates or rewrites Quran text.
 
-`islamona.daily-session.v1` is intentionally left untouched and ignored. The v2
-key changes the stored meaning from a whole-surah session to a bounded passage.
+`islamona.daily-session.v1` and `islamona.daily-session.v2` are intentionally
+left untouched and ignored. The v3 key stores the calculated passage rather
+than an ID from the removed fixed list.
 
 ## Theme
 

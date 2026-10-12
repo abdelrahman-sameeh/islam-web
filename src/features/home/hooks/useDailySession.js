@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  DAILY_PASSAGES,
   DAILY_SESSION_DURATIONS,
-} from "../data/dailyPassages";
+  DEFAULT_SESSION_DURATION,
+} from "../data/sessionConfig";
+import { createRandomTimedPassage } from "../utils/selectTimedPassage";
 
-const STORAGE_KEY = "islamona.daily-session.v2";
-const DEFAULT_DURATION = 5;
+const STORAGE_KEY = "islamona.daily-session.v3";
 
 const getLocalDateKey = () => {
   const today = new Date();
@@ -23,94 +23,167 @@ const readStoredSession = () => {
   }
 };
 
-const selectRandomPassage = (duration, excludedId) => {
-  const matchingPassages = DAILY_PASSAGES.filter(
-    (passage) => passage.duration === duration
-  );
-  const availablePassages = matchingPassages.filter(
-    (passage) => passage.id !== excludedId
-  );
-  const pool = availablePassages.length ? availablePassages : matchingPassages;
+const isValidPassage = (passage) => {
+  const surahId = Number(passage?.surahId);
 
-  return pool[Math.floor(Math.random() * pool.length)];
+  return (
+    passage &&
+    Number.isInteger(surahId) &&
+    surahId >= 1 &&
+    surahId <= 114 &&
+    typeof passage.surahName === "string" &&
+    passage.surahName.trim().length > 0 &&
+    Number.isInteger(passage.fromAyah) &&
+    Number.isInteger(passage.toAyah) &&
+    passage.fromAyah > 0 &&
+    passage.toAyah >= passage.fromAyah &&
+    Number.isInteger(passage.wordCount) &&
+    passage.wordCount > 0
+  );
 };
 
 const createInitialState = () => {
   const date = getLocalDateKey();
   const storedSession = readStoredSession();
-  const storedPassage = DAILY_PASSAGES.find(
-    (passage) => passage.id === storedSession?.passageId
-  );
   const isKnownDuration = DAILY_SESSION_DURATIONS.includes(
     storedSession?.duration
   );
 
   if (
     storedSession?.date === date &&
-    storedPassage?.duration === storedSession?.duration &&
-    isKnownDuration
+    isKnownDuration &&
+    isValidPassage(storedSession.passage)
   ) {
     return {
       date,
-      passageId: storedPassage.id,
       duration: storedSession.duration,
+      passage: storedSession.passage,
+      excludedPassage: null,
       isStarted: Boolean(storedSession.isStarted),
+      requestVersion: 0,
     };
   }
 
-  const passage = selectRandomPassage(
-    DEFAULT_DURATION,
-    storedSession?.passageId
-  );
-
   return {
     date,
-    passageId: passage.id,
-    duration: DEFAULT_DURATION,
+    duration: DEFAULT_SESSION_DURATION,
+    passage: null,
+    excludedPassage: null,
     isStarted: false,
+    requestVersion: 0,
   };
 };
 
-const persistSession = (state) => {
+const persistSession = ({ date, duration, passage, isStarted }) => {
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ date, duration, passage, isStarted })
+    );
   } catch {
-    // The experience still works when storage is unavailable or full.
+    // The session still works when browser storage is unavailable or full.
   }
 };
 
 export const useDailySession = () => {
   const [state, setState] = useState(createInitialState);
+  const [status, setStatus] = useState(
+    state.passage ? "success" : "idle"
+  );
+  const [error, setError] = useState(null);
+  const requestController = useRef(null);
 
   useEffect(() => {
-    persistSession(state);
-  }, [state]);
+    if (state.passage) {
+      persistSession({
+        date: state.date,
+        duration: state.duration,
+        passage: state.passage,
+        isStarted: state.isStarted,
+      });
+    }
+  }, [state.date, state.duration, state.isStarted, state.passage]);
 
-  const passage =
-    DAILY_PASSAGES.find((item) => item.id === state.passageId) ??
-    DAILY_PASSAGES.find((item) => item.duration === state.duration);
+  useEffect(() => {
+    if (state.passage) return undefined;
+
+    requestController.current?.abort();
+    const controller = new AbortController();
+    requestController.current = controller;
+    const requestedDuration = state.duration;
+    const requestedVersion = state.requestVersion;
+
+    setStatus("loading");
+    setError(null);
+
+    createRandomTimedPassage({
+      duration: requestedDuration,
+      signal: controller.signal,
+      excludedPassage: state.excludedPassage,
+    })
+      .then((passage) => {
+        if (controller.signal.aborted || !passage) return;
+
+        setState((currentState) => {
+          if (
+            currentState.duration !== requestedDuration ||
+            currentState.requestVersion !== requestedVersion
+          ) {
+            return currentState;
+          }
+
+          return {
+            ...currentState,
+            passage,
+            excludedPassage: null,
+          };
+        });
+        setStatus("success");
+      })
+      .catch(() => {
+        if (controller.signal.aborted) return;
+
+        setStatus("error");
+        setError("تعذّر اختيار المقطع الآن. تأكد من الاتصال وحاول مرة أخرى.");
+      });
+
+    return () => controller.abort();
+  }, [state.duration, state.excludedPassage, state.passage, state.requestVersion]);
 
   const setDuration = (duration) => {
-    if (!DAILY_SESSION_DURATIONS.includes(duration)) return;
+    if (
+      !DAILY_SESSION_DURATIONS.includes(duration) ||
+      duration === state.duration
+    ) {
+      return;
+    }
 
-    if (duration === state.duration) return;
-
-    const nextPassage = selectRandomPassage(duration);
     setState((currentState) => ({
       ...currentState,
-      passageId: nextPassage.id,
+      date: getLocalDateKey(),
       duration,
+      passage: null,
+      excludedPassage: null,
       isStarted: false,
+      requestVersion: currentState.requestVersion + 1,
     }));
   };
 
   const chooseAnotherSession = () => {
-    const nextPassage = selectRandomPassage(state.duration, state.passageId);
-
     setState((currentState) => ({
       ...currentState,
-      passageId: nextPassage.id,
+      date: getLocalDateKey(),
+      passage: null,
+      excludedPassage: currentState.passage,
       isStarted: false,
+      requestVersion: currentState.requestVersion + 1,
+    }));
+  };
+
+  const retry = () => {
+    setState((currentState) => ({
+      ...currentState,
+      requestVersion: currentState.requestVersion + 1,
     }));
   };
 
@@ -119,11 +192,14 @@ export const useDailySession = () => {
   };
 
   return {
-    passage,
+    passage: state.passage,
     duration: state.duration,
     isStarted: state.isStarted,
+    status,
+    error,
     setDuration,
     chooseAnotherSession,
+    retry,
     markStarted,
   };
 };

@@ -549,6 +549,12 @@ select option {
   font-weight: 600;
 }
 
+.daily-session__feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
 .daily-session__duration {
   display: flex;
   flex-wrap: wrap;
@@ -592,11 +598,18 @@ select option {
   color: #17211f;
   background: #c49a55;
   font-weight: 700;
+  border: 0;
+  cursor: pointer;
 }
 
 .primary-action:hover {
   color: #17211f;
   background: #d4ac68;
+}
+
+.primary-action:disabled {
+  cursor: wait;
+  opacity: 0.68;
 }
 
 .text-action {
