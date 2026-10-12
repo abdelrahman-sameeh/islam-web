@@ -1,25 +1,86 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "id": "/",
+  "short_name": "إسلامنا",
+  "name": "إسلامنا — رفيقك اليومي",
+  "description": "القرآن والتفسير والأذكار والأحاديث ومواقيت الصلاة في تجربة عربية هادئة.",
+  "lang": "ar",
+  "dir": "rtl",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "icons/icon-48.png",
+      "type": "image/png",
+      "sizes": "48x48",
+      "purpose": "any"
     },
     {
-      "src": "logo192.png",
+      "src": "icons/icon-72.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "72x72",
+      "purpose": "any"
     },
     {
-      "src": "logo512.png",
+      "src": "icons/icon-96.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "96x96",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-128.png",
+      "type": "image/png",
+      "sizes": "128x128",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-256.png",
+      "type": "image/png",
+      "sizes": "256x256",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "any",
+  "theme_color": "#123b35",
+  "background_color": "#f7f3ea",
+  "categories": [
+    "lifestyle",
+    "education",
+    "books"
+  ],
+  "shortcuts": [
+    {
+      "name": "جلسة اليوم",
+      "short_name": "جلسة اليوم",
+      "url": "/session"
+    },
+    {
+      "name": "القرآن الكريم",
+      "short_name": "القرآن",
+      "url": "/quran"
+    },
+    {
+      "name": "الأذكار",
+      "short_name": "الأذكار",
+      "url": "/azkar"
+    }
+  ]
 }

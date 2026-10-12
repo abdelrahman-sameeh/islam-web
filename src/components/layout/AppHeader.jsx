@@ -12,6 +12,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { getStoredValue, setStoredValue } from "../../lib/deviceStorage";
 
 const THEME_STORAGE_KEY = "islamona.theme.v1";
 
@@ -36,17 +37,38 @@ const getInitialTheme = () => {
 
 const AppHeader = () => {
   const [theme, setTheme] = useState(getInitialTheme);
+  const [isThemeReady, setIsThemeReady] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    let isActive = true;
+
+    Promise.all([
+      getStoredValue(THEME_STORAGE_KEY),
+      getStoredValue("mode"),
+    ]).then(([savedTheme, legacyTheme]) => {
+      if (!isActive) return;
+
+      if (savedTheme === "dark" || savedTheme === "light") {
+        setTheme(savedTheme);
+      } else if (legacyTheme === "dark") {
+        setTheme("dark");
+      }
+
+      setIsThemeReady(true);
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   useEffect(() => {
     document.body.classList.toggle("dark-theme", theme === "dark");
     document.body.classList.remove("light-theme");
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch {
-      // The theme still works for the current visit when storage is unavailable.
-    }
-  }, [theme]);
+
+    if (isThemeReady) void setStoredValue(THEME_STORAGE_KEY, theme);
+  }, [isThemeReady, theme]);
 
   const toggleTheme = () => {
     setTheme((currentTheme) =>

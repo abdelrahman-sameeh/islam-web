@@ -77,7 +77,13 @@ body {
   background-color: var(--main-color);
   color: var(--black);
   min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
   transition: background-color 180ms ease, color 180ms ease;
 }
 

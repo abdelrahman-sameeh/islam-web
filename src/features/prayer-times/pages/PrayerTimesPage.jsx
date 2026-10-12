@@ -4,22 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
 import SourceBadge from "../../../components/ui/SourceBadge";
+import { getStoredValue, setStoredValue } from "../../../lib/deviceStorage";
 import { getPrayerTimes } from "../api/prayerTimesApi";
 import { EGYPTIAN_CITIES } from "../data/cities";
 
 const CITY_STORAGE_KEY = "islamona.prayer-city.v1";
 const PRAYER_KEYS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
-
-const getInitialCity = () => {
-  try {
-    const storedCity = window.localStorage.getItem(CITY_STORAGE_KEY);
-    return EGYPTIAN_CITIES.some(({ id }) => id === storedCity)
-      ? storedCity
-      : "Cairo";
-  } catch {
-    return "Cairo";
-  }
-};
 
 const timeToMinutes = (time) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -79,12 +69,29 @@ const formatRemaining = (minutes) => {
 };
 
 const PrayerTimesPage = () => {
-  const [city, setCity] = useState(getInitialCity);
+  const [city, setCity] = useState(null);
   const [data, setData] = useState(null);
   const [status, setStatus] = useState("loading");
   const [requestVersion, setRequestVersion] = useState(0);
 
   useEffect(() => {
+    let isActive = true;
+
+    getStoredValue(CITY_STORAGE_KEY).then((storedCity) => {
+      if (!isActive) return;
+
+      const isKnownCity = EGYPTIAN_CITIES.some(({ id }) => id === storedCity);
+      setCity(isKnownCity ? storedCity : "Cairo");
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!city) return undefined;
+
     const controller = new AbortController();
     setStatus("loading");
 
@@ -97,11 +104,7 @@ const PrayerTimesPage = () => {
         if (!controller.signal.aborted) setStatus("error");
       });
 
-    try {
-      window.localStorage.setItem(CITY_STORAGE_KEY, city);
-    } catch {
-      // The selected city still works for the current visit.
-    }
+    void setStoredValue(CITY_STORAGE_KEY, city);
 
     return () => controller.abort();
   }, [city, requestVersion]);

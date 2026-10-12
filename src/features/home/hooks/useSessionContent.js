@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getRandomHadith } from "../../hadith/api/hadithApi";
 import { getSurahAyahs } from "../../quran/api/quranApi";
+import { getStoredJson, setStoredJson } from "../../../lib/deviceStorage";
 
 const STORAGE_KEY = "islamona.session-content.v1";
 
@@ -8,28 +9,6 @@ const getPassageSignature = (passage) =>
   passage
     ? `${passage.surahId}:${passage.fromAyah}-${passage.toAyah}`
     : null;
-
-const readStoredHadith = (signature) => {
-  try {
-    const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY));
-    return stored?.signature === signature && stored?.hadith?.text
-      ? stored.hadith
-      : null;
-  } catch {
-    return null;
-  }
-};
-
-const persistHadith = (signature, hadith) => {
-  try {
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ signature, hadith })
-    );
-  } catch {
-    // The content remains available for the current visit.
-  }
-};
 
 export const useSessionContent = (passage) => {
   const [ayahState, setAyahState] = useState({ status: "idle", data: [] });
@@ -73,27 +52,45 @@ export const useSessionContent = (passage) => {
       return undefined;
     }
 
-    const storedHadith = readStoredHadith(signature);
-    if (storedHadith && hadithRequestVersion === 0) {
-      setHadithState({ status: "success", data: storedHadith });
-      return undefined;
-    }
-
     const controller = new AbortController();
-    setHadithState({ status: "loading", data: null });
+    let isActive = true;
 
-    getRandomHadith(controller.signal)
-      .then((hadith) => {
-        persistHadith(signature, hadith);
+    const loadHadith = async () => {
+      if (hadithRequestVersion === 0) {
+        const stored = await getStoredJson(STORAGE_KEY);
+        const storedHadith =
+          stored?.signature === signature && stored?.hadith?.text
+            ? stored.hadith
+            : null;
+
+        if (!isActive) return;
+        if (storedHadith) {
+          setHadithState({ status: "success", data: storedHadith });
+          return;
+        }
+      }
+
+      setHadithState({ status: "loading", data: null });
+
+      try {
+        const hadith = await getRandomHadith(controller.signal);
+        if (!isActive) return;
+
+        void setStoredJson(STORAGE_KEY, { signature, hadith });
         setHadithState({ status: "success", data: hadith });
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) {
+      } catch {
+        if (!controller.signal.aborted && isActive) {
           setHadithState({ status: "error", data: null });
         }
-      });
+      }
+    };
 
-    return () => controller.abort();
+    void loadHadith();
+
+    return () => {
+      isActive = false;
+      controller.abort();
+    };
   }, [hadithRequestVersion, signature]);
 
   return {

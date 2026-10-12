@@ -4,6 +4,7 @@ import {
   DEFAULT_SESSION_DURATION,
 } from "../data/sessionConfig";
 import { createRandomTimedPassage } from "../utils/selectTimedPassage";
+import { getStoredJson, setStoredJson } from "../../../lib/deviceStorage";
 
 const STORAGE_KEY = "islamona.daily-session.v3";
 
@@ -13,14 +14,6 @@ const getLocalDateKey = () => {
   const day = String(today.getDate()).padStart(2, "0");
 
   return `${today.getFullYear()}-${month}-${day}`;
-};
-
-const readStoredSession = () => {
-  try {
-    return JSON.parse(window.localStorage.getItem(STORAGE_KEY));
-  } catch {
-    return null;
-  }
 };
 
 const isValidPassage = (passage) => {
@@ -42,9 +35,17 @@ const isValidPassage = (passage) => {
   );
 };
 
-const createInitialState = () => {
+const createEmptyState = () => ({
+  date: getLocalDateKey(),
+  duration: DEFAULT_SESSION_DURATION,
+  passage: null,
+  excludedPassage: null,
+  isStarted: false,
+  requestVersion: 0,
+});
+
+const createStateFromStoredSession = (storedSession) => {
   const date = getLocalDateKey();
-  const storedSession = readStoredSession();
   const isKnownDuration = DAILY_SESSION_DURATIONS.includes(
     storedSession?.duration
   );
@@ -64,48 +65,46 @@ const createInitialState = () => {
     };
   }
 
-  return {
-    date,
-    duration: DEFAULT_SESSION_DURATION,
-    passage: null,
-    excludedPassage: null,
-    isStarted: false,
-    requestVersion: 0,
-  };
-};
-
-const persistSession = ({ date, duration, passage, isStarted }) => {
-  try {
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ date, duration, passage, isStarted })
-    );
-  } catch {
-    // The session still works when browser storage is unavailable or full.
-  }
+  return createEmptyState();
 };
 
 export const useDailySession = () => {
-  const [state, setState] = useState(createInitialState);
-  const [status, setStatus] = useState(
-    state.passage ? "success" : "idle"
-  );
+  const [state, setState] = useState(createEmptyState);
+  const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
+  const [isStorageReady, setIsStorageReady] = useState(false);
   const requestController = useRef(null);
 
   useEffect(() => {
-    if (state.passage) {
-      persistSession({
+    let isActive = true;
+
+    getStoredJson(STORAGE_KEY).then((storedSession) => {
+      if (!isActive) return;
+
+      const storedState = createStateFromStoredSession(storedSession);
+      setState(storedState);
+      if (storedState.passage) setStatus("success");
+      setIsStorageReady(true);
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isStorageReady && state.passage) {
+      void setStoredJson(STORAGE_KEY, {
         date: state.date,
         duration: state.duration,
         passage: state.passage,
         isStarted: state.isStarted,
       });
     }
-  }, [state.date, state.duration, state.isStarted, state.passage]);
+  }, [isStorageReady, state.date, state.duration, state.isStarted, state.passage]);
 
   useEffect(() => {
-    if (state.passage) return undefined;
+    if (!isStorageReady || state.passage) return undefined;
 
     requestController.current?.abort();
     const controller = new AbortController();
@@ -148,10 +147,17 @@ export const useDailySession = () => {
       });
 
     return () => controller.abort();
-  }, [state.duration, state.excludedPassage, state.passage, state.requestVersion]);
+  }, [
+    isStorageReady,
+    state.duration,
+    state.excludedPassage,
+    state.passage,
+    state.requestVersion,
+  ]);
 
   const setDuration = (duration) => {
     if (
+      !isStorageReady ||
       !DAILY_SESSION_DURATIONS.includes(duration) ||
       duration === state.duration
     ) {
@@ -170,6 +176,8 @@ export const useDailySession = () => {
   };
 
   const chooseAnotherSession = () => {
+    if (!isStorageReady) return;
+
     setState((currentState) => ({
       ...currentState,
       date: getLocalDateKey(),
@@ -181,6 +189,8 @@ export const useDailySession = () => {
   };
 
   const retry = () => {
+    if (!isStorageReady) return;
+
     setState((currentState) => ({
       ...currentState,
       requestVersion: currentState.requestVersion + 1,
@@ -188,6 +198,7 @@ export const useDailySession = () => {
   };
 
   const markStarted = () => {
+    if (!isStorageReady) return;
     setState((currentState) => ({ ...currentState, isStarted: true }));
   };
 
