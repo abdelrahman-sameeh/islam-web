@@ -120,3 +120,11 @@ authorities, so the chosen calculation method must be visible.
 6. Define a provider-neutral app model and an optional fallback per critical
    reading surface. Never mix verse data from providers without explicit
    identifiers and validation.
+
+## Adhkar response normalization
+
+The pinned dataset serializes 39 Quranic and prophetic supplications as a
+Python-style list inside the `content` string. The adapter removes only that
+list wrapper, literal `\\n` entries, quotes, and the duplicated bracketed
+reference. It preserves the supplication between the quotes exactly; the
+original `reference` field remains visible separately on the card.
