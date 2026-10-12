@@ -17,11 +17,19 @@ const formatApiDate = (date) => {
   return `${day}-${month}-${date.getFullYear()}`;
 };
 
-export const getPrayerTimes = async (city, signal) => {
+export const getPrayerTimes = async (location, signal) => {
+  if (!location?.country || !location?.city) {
+    throw new Error("INVALID_PRAYER_LOCATION");
+  }
+
   const response = await axios.get(
     `${PRAYER_TIMES_URL}/${formatApiDate(new Date())}`,
     {
-      params: { city, country: "Egypt", method: 5 },
+      params: {
+        city: location.city.apiName,
+        country: location.country.id,
+        method: location.country.method,
+      },
       signal,
     }
   );

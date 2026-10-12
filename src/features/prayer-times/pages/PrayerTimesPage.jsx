@@ -3,12 +3,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useMemo, useState } from "react";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
+import SearchableSelect from "../../../components/ui/SearchableSelect";
 import SourceBadge from "../../../components/ui/SourceBadge";
 import { getStoredValue, setStoredValue } from "../../../lib/browserStorage";
 import { getPrayerTimes } from "../api/prayerTimesApi";
-import { EGYPTIAN_CITIES } from "../data/cities";
+import {
+  DEFAULT_LOCATION_ID,
+  PRAYER_COUNTRIES,
+  getLegacyEgyptLocation,
+  getLocationId,
+  getPrayerLocation,
+} from "../data/prayerLocations";
 
-const CITY_STORAGE_KEY = "islamona.prayer-city.v1";
+const LOCATION_STORAGE_KEY = "islamona.prayer-location.v2";
+const LEGACY_CITY_STORAGE_KEY = "islamona.prayer-city.v1";
 const PRAYER_KEYS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
 const timeToMinutes = (time) => {
@@ -69,7 +77,7 @@ const formatRemaining = (minutes) => {
 };
 
 const PrayerTimesPage = () => {
-  const [city, setCity] = useState(null);
+  const [locationId, setLocationId] = useState(null);
   const [data, setData] = useState(null);
   const [status, setStatus] = useState("loading");
   const [requestVersion, setRequestVersion] = useState(0);
@@ -77,11 +85,16 @@ const PrayerTimesPage = () => {
   useEffect(() => {
     let isActive = true;
 
-    getStoredValue(CITY_STORAGE_KEY).then((storedCity) => {
+    Promise.all([
+      getStoredValue(LOCATION_STORAGE_KEY),
+      getStoredValue(LEGACY_CITY_STORAGE_KEY),
+    ]).then(([storedLocationId, legacyCity]) => {
       if (!isActive) return;
 
-      const isKnownCity = EGYPTIAN_CITIES.some(({ id }) => id === storedCity);
-      setCity(isKnownCity ? storedCity : "Cairo");
+      const nextLocationId = getPrayerLocation(storedLocationId)
+        ? storedLocationId
+        : getLegacyEgyptLocation(legacyCity) ?? DEFAULT_LOCATION_ID;
+      setLocationId(nextLocationId);
     });
 
     return () => {
@@ -90,12 +103,13 @@ const PrayerTimesPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!city) return undefined;
+    const location = getPrayerLocation(locationId);
+    if (!location) return undefined;
 
     const controller = new AbortController();
     setStatus("loading");
 
-    getPrayerTimes(city, controller.signal)
+    getPrayerTimes(location, controller.signal)
       .then((result) => {
         setData(result);
         setStatus(result.prayers.length ? "success" : "empty");
@@ -104,16 +118,28 @@ const PrayerTimesPage = () => {
         if (!controller.signal.aborted) setStatus("error");
       });
 
-    void setStoredValue(CITY_STORAGE_KEY, city);
+    void setStoredValue(LOCATION_STORAGE_KEY, locationId);
 
     return () => controller.abort();
-  }, [city, requestVersion]);
+  }, [locationId, requestVersion]);
 
-  const selectedCity = EGYPTIAN_CITIES.find(({ id }) => id === city);
+  const selectedLocation = getPrayerLocation(locationId);
+  const selectedCountry = selectedLocation?.country ?? PRAYER_COUNTRIES[0];
+  const selectedCity = selectedLocation?.city ?? selectedCountry.cities[0];
   const nextPrayer = useMemo(
     () => (data ? getNextPrayer(data.prayers, data.timezone) : null),
     [data]
   );
+
+  const handleCountryChange = (country) => {
+    setStatus("loading");
+    setLocationId(getLocationId(country.id, country.cities[0].id));
+  };
+
+  const handleCityChange = (city) => {
+    setStatus("loading");
+    setLocationId(getLocationId(selectedCountry.id, city.id));
+  };
 
   return (
     <main className="page content-page">
@@ -121,7 +147,7 @@ const PrayerTimesPage = () => {
         <PageHeader
           eyebrow="يومك حول الصلاة"
           title="مواقيت الصلاة"
-          description="مواقيت اليوم حسب المدينة وطريقة الحساب الظاهرة أدناه."
+          description="مواقيت اليوم حسب الدولة والمحافظة أو المدينة وطريقة الحساب الظاهرة أدناه."
         />
 
         {status === "loading" && <FeedbackState title="جاري حساب المواقيت..." />}
@@ -138,39 +164,65 @@ const PrayerTimesPage = () => {
         )}
 
         {status === "success" && data && nextPrayer && (
-          <>
-            <section className="next-prayer-card">
-              <div>
-                <p>{nextPrayer.isTomorrow ? "أول صلاة غدًا" : "الصلاة القادمة"}</p>
-                <h2>
-                  {nextPrayer.name} · {formatPrayerTime(nextPrayer.time)}
-                </h2>
-                <span>{formatRemaining(nextPrayer.remaining)}</span>
-              </div>
-              <span className="next-prayer-card__clock" aria-hidden="true">
-                <FontAwesomeIcon icon={faClock} />
+          <section className="next-prayer-card">
+            <div>
+              <p>{nextPrayer.isTomorrow ? "أول صلاة غدًا" : "الصلاة القادمة"}</p>
+              <h2>
+                {nextPrayer.name} · {formatPrayerTime(nextPrayer.time)}
+              </h2>
+              <span>{formatRemaining(nextPrayer.remaining)}</span>
+            </div>
+            <span className="next-prayer-card__clock" aria-hidden="true">
+              <FontAwesomeIcon icon={faClock} />
+            </span>
+          </section>
+        )}
+
+        {selectedLocation && (
+          <section className="location-bar">
+            <div className="location-bar__summary">
+              <span>
+                <FontAwesomeIcon icon={faLocationDot} /> الموقع
               </span>
-            </section>
-
-            <section className="location-bar">
-              <div>
-                <span>
-                  <FontAwesomeIcon icon={faLocationDot} /> الموقع
-                </span>
-                <strong>{selectedCity?.name}، مصر</strong>
+              <strong>
+                {selectedCity.name}، {selectedCountry.name}
+              </strong>
+            </div>
+            <div className="location-bar__selectors">
+              <div className="location-bar__field">
+                <span>الدولة</span>
+                <SearchableSelect
+                  options={PRAYER_COUNTRIES}
+                  value={selectedCountry.id}
+                  onChange={handleCountryChange}
+                  getOptionLabel={(country) => country.name}
+                  searchPlaceholder="ابحث باسم الدولة"
+                  emptyMessage="لا توجد دولة بهذا الاسم."
+                  listLabel="قائمة الدول"
+                />
               </div>
-              <label>
-                <span>تغيير المدينة</span>
-                <select value={city} onChange={(event) => setCity(event.target.value)}>
-                  {EGYPTIAN_CITIES.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </section>
+              <div className="location-bar__field">
+                <span>{selectedCountry.id === "EG" ? "المحافظة" : "المدينة"}</span>
+                <SearchableSelect
+                  options={selectedCountry.cities}
+                  value={selectedCity.id}
+                  onChange={handleCityChange}
+                  getOptionLabel={(city) => city.name}
+                  searchPlaceholder={
+                    selectedCountry.id === "EG"
+                      ? "ابحث باسم المحافظة"
+                      : "ابحث باسم المدينة"
+                  }
+                  emptyMessage="لا يوجد موقع بهذا الاسم."
+                  listLabel="قائمة المدن والمحافظات"
+                />
+              </div>
+            </div>
+          </section>
+        )}
 
+        {status === "success" && data && nextPrayer && (
+          <>
             <div className="prayer-layout">
               <section className="prayer-table-card">
                 <div className="results-heading">
