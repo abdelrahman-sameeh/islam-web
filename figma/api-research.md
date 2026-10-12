@@ -3,6 +3,10 @@
 Research date: 2026-10-12. Re-check terms, access, and response formats before
 implementation because third-party services can change.
 
+HadeethEnc endpoints were re-verified on 2026-10-12 against the official API
+repository and live Arabic responses before implementing the redesigned hadith
+page and random daily-session hadith.
+
 ## Recommendation
 
 Use a small source-per-domain strategy instead of one unofficial all-in-one API:

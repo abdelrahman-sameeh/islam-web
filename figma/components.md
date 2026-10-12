@@ -29,6 +29,9 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
 - `DhikrCard`: content, remaining-count button, reset action, source.
 - `PrayerRow`: prayer name, time, current/next status.
 - `SourceBadge`: publisher/source and edition where applicable.
+- `SessionStep`: numbered stage, source badge, religious content, and an
+  independent loading/error state. The fixed order is Quran, random hadith,
+  then sourced tafsir.
 
 ## Audio
 

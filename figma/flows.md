@@ -42,10 +42,15 @@ labelled content type.
 
 Home -> choose 2, 5, or 10 minutes -> select a random surah from all 114 -> fetch
 its sourced ayahs -> calculate a contiguous range from the actual word count ->
-open only those ayahs in the Quran reader -> continue into sourced tafsir,
-hadith, and dhikr as those steps are implemented.
+open a guided session containing those Quran ayahs -> show one independently
+random HadeethEnc hadith -> show the sourced simplified tafsir for each selected
+ayah.
 
 The browser stores the selected passage and duration. Randomness happens on a
 new day, an explicit duration change, or `جلسة أخرى`; never on an ordinary
 render or refresh. A short random surah is skipped when it cannot fill the
 chosen duration. No account or server is required.
+
+The Quran passage and random hadith remain stable on refresh. Requesting another
+session changes both. A failure in the hadith service never hides the Quran or
+tafsir steps; each remote section has its own retry action.

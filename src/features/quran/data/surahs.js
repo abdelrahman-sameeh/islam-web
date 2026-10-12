@@ -1,4 +1,4 @@
-const suwar = [
+const surahs = [
   { id: "1", label: "سورة الفاتحة" },
   { id: "2", label: "سورة البقرة" },
   { id: "3", label: "سورة آل عمران" },
@@ -115,4 +115,4 @@ const suwar = [
   { id: "114", label: "سورة الناس" },
 ];
 
-export default suwar
+export default surahs;

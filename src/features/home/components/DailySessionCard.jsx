@@ -81,7 +81,7 @@ const DailySessionCard = () => {
             <>
               <Link
                 className="primary-action"
-                to={`/quran/surah/${passage.surahId}?from=${passage.fromAyah}&to=${passage.toAyah}&session=1`}
+                to="/session"
                 onClick={markStarted}
               >
                 {isStarted ? "كمّل الجلسة" : "ابدأ جلسة اليوم"}

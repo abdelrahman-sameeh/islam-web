@@ -34,6 +34,15 @@ Body text on warm backgrounds uses Neutral 900. Primary buttons use Brand 700
 with white text. Gold is never used for body text because its contrast is too
 weak.
 
+### Dark theme
+
+Dark mode uses a near-black neutral page (`#0B1211`) and charcoal-green cards
+(`#141C1A`) instead of covering every surface in green. Elevated reading cards
+use `#1A2421`, borders use `#2A3834`, primary text uses `#F1F5F3`, and muted
+text uses `#9EACA7`. The brighter green (`#7BC8AD`) is reserved for actions and
+active states; gold (`#DCB36B`) remains rare emphasis. The session and prayer
+heroes use the deeper `#102A25` so they remain visually distinct from cards.
+
 ## Typography
 
 - UI and explanatory content: Cairo, 400/600/700.

@@ -41,6 +41,29 @@ Storage key: `islamona.daily-session.v3`
 left untouched and ignored. The v3 key stores the calculated passage rather
 than an ID from the removed fixed list.
 
+## Session content
+
+Storage key: `islamona.session-content.v1`
+
+```json
+{
+  "signature": "18:1-10",
+  "hadith": {
+    "id": "66511",
+    "title": "إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى",
+    "text": "...",
+    "grade": "صحيح",
+    "attribution": "..."
+  }
+}
+```
+
+- The signature links the random hadith to the current Quran passage.
+- Keep the same sourced hadith on refresh; a new passage gets a new random
+  hadith.
+- Quran and tafsir text are fetched from QuranEnc and are not duplicated in
+  storage.
+
 ## Theme
 
 Storage key: `islamona.theme.v1`; allowed values are `light` and `dark`.

@@ -1,5 +1,5 @@
-import suwarList from "../../../utils/suwar";
-import { getSurahAyahs } from "../api/dailySessionApi";
+import surahList from "../../quran/data/surahs";
+import { getSurahAyahs } from "../../quran/api/quranApi";
 import {
   ESTIMATED_WORDS_PER_MINUTE,
   MAX_RANDOM_SURAH_ATTEMPTS,
@@ -92,7 +92,7 @@ export const createRandomTimedPassage = async ({
   signal,
   excludedPassage,
 }) => {
-  const availableSurahs = [...suwarList];
+  const availableSurahs = [...surahList];
 
   for (
     let attempt = 0;
@@ -114,6 +114,6 @@ export const createRandomTimedPassage = async ({
 
   // These early long surahs guarantee a timed range when every first pick is
   // too short. Both the fallback surah and its starting position stay random.
-  const randomLongSurah = randomItem(suwarList.slice(1, 12));
+  const randomLongSurah = randomItem(surahList.slice(1, 12));
   return selectFromSurah(randomLongSurah, duration, signal, excludedPassage);
 };
