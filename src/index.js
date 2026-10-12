@@ -5,6 +5,7 @@ import 'normalize.css'
 import { BrowserRouter } from 'react-router-dom';
 import './styles/globals.css'
 import { registerServiceWorker } from './app/registerServiceWorker';
+import { registerAndroidBackButton } from './app/registerAndroidBackButton';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -15,3 +16,4 @@ root.render(
 );
 
 registerServiceWorker();
+registerAndroidBackButton();

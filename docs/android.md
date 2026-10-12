@@ -29,3 +29,10 @@ to `releases/`; that directory keeps its README in Git but ignores APK files.
 Web and desktop continue to use the existing `localStorage` keys. Android uses
 Capacitor Preferences for the same lightweight theme, city, and daily-session
 values. Removing the Android app clears its native stored values.
+
+## Android back button
+
+The native back button follows the React Router history. It returns to the
+previous page when one exists and exits the app only from the first history
+entry. Keep this behavior in `src/app/registerAndroidBackButton.js`; page
+components must not register competing native back listeners.
