@@ -82,7 +82,8 @@ and local city key such as `EG:cairo` or `SA:makkah`.
   geocoded location and timezone returned by the API.
 - If v2 is missing, a recognized value from `islamona.prayer-city.v1` migrates
   to the matching Egyptian governorate. The legacy key remains untouched.
-- Invalid or removed locations fall back to `EG:cairo`.
+- Invalid or removed locations fall back to `EG:monufia`. A valid saved choice
+  always wins, so existing users keep their selected location.
 
 ## Favorites
 

@@ -7,6 +7,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DailySessionCard from "../components/DailySessionCard";
 import FeatureCard from "../components/FeatureCard";
+import HomeInspiration from "../components/HomeInspiration";
+import HomePrayerTimes from "../components/HomePrayerTimes";
 
 const FEATURES = [
   {
@@ -45,6 +47,10 @@ const HomePage = () => (
   <main className="home-page page">
     <div className="app-container">
       <DailySessionCard />
+
+      <HomePrayerTimes />
+
+      <HomeInspiration />
 
       <section className="home-values" aria-label="مبادئ التجربة">
         <div>
