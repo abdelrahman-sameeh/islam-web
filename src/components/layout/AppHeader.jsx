@@ -13,6 +13,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { APP_NAME } from "../../app/appMetadata";
 import { getStoredValue, setStoredValue } from "../../lib/browserStorage";
 
 const THEME_STORAGE_KEY = "islamona.theme.v1";
@@ -84,7 +85,7 @@ const AppHeader = () => {
           <span className="brand__mark" aria-hidden="true">
             <FontAwesomeIcon icon={faBookQuran} />
           </span>
-          <span>إسلامنا</span>
+          <span>{APP_NAME}</span>
         </Link>
 
         <nav

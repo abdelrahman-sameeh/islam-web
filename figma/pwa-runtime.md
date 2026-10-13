@@ -1,11 +1,11 @@
 # Web and PWA runtime handoff
 
-Islamona ships as one responsive React website. Desktop, mobile browsers, and
+Daqaeq Noor ships as one responsive React website. Desktop, mobile browsers, and
 the installable Progressive Web App all use the same production build.
 
 ## Shell
 
-- App name: `إسلامنا`
+- App name: `دقائق نور`
 - Web output: `build/`
 - Default orientation: any
 - Reading direction: RTL

@@ -9,7 +9,7 @@
   <rect width="1440" height="1024" fill="#F7F3EA"/>
   <g id="AppHeader" filter="url(#shadow)">
     <rect x="120" y="28" width="1200" height="72" rx="18" fill="#fff" stroke="#E8E1D5"/>
-    <g id="Brand"><rect x="1218" y="42" width="44" height="44" rx="13" fill="#123B35"/><path d="M1230 57q10-9 20 0v16q-10-7-20 0Z" fill="none" stroke="#F1E6D3" stroke-width="2"/><text x="1202" y="73" text-anchor="end" class="ui card-title">إسلامنا</text></g>
+    <g id="Brand"><rect x="1218" y="42" width="44" height="44" rx="13" fill="#123B35"/><path d="M1230 57q10-9 20 0v16q-10-7-20 0Z" fill="none" stroke="#F1E6D3" stroke-width="2"/><text x="1202" y="73" text-anchor="end" class="ui card-title">دقائق نور</text></g>
     <g class="ui label" text-anchor="middle"><text x="1090" y="72" fill="#1F6F5B">الرئيسية</text><text x="1005" y="72">القرآن</text><text x="920" y="72">التفسير</text><text x="835" y="72">الأذكار</text><text x="750" y="72">الحديث</text><text x="648" y="72">مواقيت الصلاة</text></g>
     <rect x="164" y="42" width="180" height="44" rx="12" fill="#FCFAF5" stroke="#E8E1D5"/><circle cx="188" cy="64" r="7" fill="none" stroke="#3D4743" stroke-width="2"/><path d="m193 69 6 6" stroke="#3D4743" stroke-width="2"/><text x="324" y="70" text-anchor="end" class="ui label muted">ابحث في القرآن</text>
     <circle cx="382" cy="64" r="22" fill="#DCEBE5"/><path d="M374 64h16M382 56v16" stroke="#1F6F5B" stroke-width="2"/>

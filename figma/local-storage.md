@@ -3,6 +3,10 @@
 The current product has no server. Personal choices and lightweight progress
 stay on the user's current device and must work without an account.
 
+The visible product name is `دقائق نور`. Existing `islamona.*` storage keys
+remain unchanged as stable technical identifiers so the rename never discards
+saved preferences, sessions, or favorites.
+
 - Web and installed PWA builds retain the existing `localStorage` keys so
   current users do not lose their choices.
 - `src/lib/browserStorage.js` is the storage boundary. Features must not access

@@ -7,7 +7,7 @@
   <g id="AppHeader" filter="url(#shadow)">
     <rect x="120" y="28" width="1200" height="72" rx="18" fill="#fff" stroke="#E8E1D5"/>
     <rect x="1218" y="42" width="44" height="44" rx="13" fill="#123B35"/>
-    <text x="1202" y="73" text-anchor="end" class="ui" font-size="20" font-weight="700">إسلامنا</text>
+    <text x="1202" y="73" text-anchor="end" class="ui" font-size="20" font-weight="700">دقائق نور</text>
     <text x="182" y="72" class="ui label green">العودة للرئيسية</text>
   </g>
   <g id="PageHeader">

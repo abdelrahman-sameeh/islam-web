@@ -387,6 +387,11 @@ select option {
   font-size: 12px;
 }
 
+.home-prayer-card__times strong {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
 .home-prayer-card__times > div.is-next {
   color: var(--brand-700);
   background: var(--brand-100);
@@ -1008,6 +1013,10 @@ body.dark-theme .error-copy {
   font-weight: 700;
 }
 
+.reader-toolbar__field {
+  min-width: 0;
+}
+
 .reader-toolbar select,
 .filter-panel select,
 .location-bar select,
@@ -1037,6 +1046,9 @@ body.dark-theme .error-copy {
 
 .searchable-select {
   position: relative;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   color: var(--black);
   font-size: 14px;
   font-weight: 600;
@@ -1048,6 +1060,8 @@ body.dark-theme .error-copy {
   justify-content: space-between;
   gap: 12px;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   min-height: 48px;
   padding-inline: 14px;
   border: 1px solid var(--neutral-200);
@@ -1059,6 +1073,8 @@ body.dark-theme .error-copy {
 }
 
 .searchable-select__trigger span {
+  flex: 1 1 auto;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

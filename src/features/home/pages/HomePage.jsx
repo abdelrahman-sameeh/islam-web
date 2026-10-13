@@ -5,6 +5,7 @@ import {
   faQuoteRight,
   faSeedling,
 } from "@fortawesome/free-solid-svg-icons";
+import { APP_NAME } from "../../../app/appMetadata";
 import DailySessionCard from "../components/DailySessionCard";
 import FeatureCard from "../components/FeatureCard";
 import HomeInspiration from "../components/HomeInspiration";
@@ -70,7 +71,7 @@ const HomePage = () => (
       <section className="home-features" aria-labelledby="features-title">
         <div className="section-heading">
           <div>
-            <p>استكشف إسلامنا</p>
+            <p>استكشف {APP_NAME}</p>
             <h2 id="features-title">كل ما تحتاجه في مكان هادئ</h2>
           </div>
           <p>اختر القسم المناسب لك، وارجع في أي وقت من نفس المكان.</p>

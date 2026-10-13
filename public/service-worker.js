@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const SHELL_CACHE = `islamona-shell-${CACHE_VERSION}`;
 const CONTENT_CACHE = `islamona-content-${CACHE_VERSION}`;
 const FONT_CACHE = `islamona-fonts-${CACHE_VERSION}`;
