@@ -1,0 +1,7 @@
+export const DAILY_SESSION_DURATIONS = [2, 5, 10];
+
+export const DEFAULT_SESSION_DURATION = 5;
+
+export const ESTIMATED_WORDS_PER_MINUTE = 65;
+
+export const MAX_RANDOM_SURAH_ATTEMPTS = 7;

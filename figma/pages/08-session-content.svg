@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1600" viewBox="0 0 1440 1600">
+  <defs>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#123B35" flood-opacity=".08"/></filter>
+    <style>.ui{font-family:Cairo,Arial,sans-serif;fill:#17211F}.quran{font-family:'Scheherazade New',serif;fill:#17211F}.muted{fill:#6F7874}.label{font-size:14px;font-weight:600}.body{font-size:17px}.title{font-size:32px;font-weight:700}.white{fill:#fff}.gold{fill:#A97A35}.green{fill:#1F6F5B}</style>
+  </defs>
+  <rect width="1440" height="1600" fill="#F7F3EA"/>
+  <g id="AppHeader" filter="url(#shadow)">
+    <rect x="120" y="28" width="1200" height="72" rx="18" fill="#fff" stroke="#E8E1D5"/>
+    <rect x="1218" y="42" width="44" height="44" rx="13" fill="#123B35"/>
+    <text x="1202" y="73" text-anchor="end" class="ui" font-size="20" font-weight="700">إسلامنا</text>
+    <text x="182" y="72" class="ui label green">العودة للرئيسية</text>
+  </g>
+  <g id="PageHeader">
+    <text x="1320" y="154" text-anchor="end" class="ui label gold">جلسة هادئة · ٥ دقائق</text>
+    <text x="1320" y="198" text-anchor="end" class="ui title">جلسة اليوم</text>
+    <text x="1320" y="230" text-anchor="end" class="ui body muted">ابدأ بالقرآن، ثم حديث عشوائي موثّق، واختم بالتفسير الميسر للآيات.</text>
+  </g>
+  <g id="Summary">
+    <rect x="120" y="266" width="1200" height="142" rx="20" fill="#123B35"/>
+    <text x="1276" y="306" text-anchor="end" class="ui label" fill="#E7D8BC">المقطع المختار عشوائيًا</text>
+    <text x="1276" y="350" text-anchor="end" class="ui white" font-size="27" font-weight="700">سورة الكهف</text>
+    <text x="1276" y="382" text-anchor="end" class="ui body" fill="#DCEBE5">من الآية ١ إلى الآية ١٠ · قراءة تقريبية ٥ دقائق</text>
+  </g>
+  <g id="QuranStep" filter="url(#shadow)">
+    <rect x="260" y="440" width="920" height="330" rx="18" fill="#fff"/>
+    <rect x="1100" y="468" width="48" height="48" rx="14" fill="#DCEBE5"/>
+    <text x="1124" y="499" text-anchor="middle" class="ui green" font-size="18" font-weight="700">١</text>
+    <text x="1078" y="484" text-anchor="end" class="ui label gold">ابدأ هنا</text>
+    <text x="1078" y="514" text-anchor="end" class="ui" font-size="22" font-weight="700">القرآن الكريم</text>
+    <rect x="306" y="476" width="140" height="30" rx="15" fill="#DCEBE5"/>
+    <text x="376" y="496" text-anchor="middle" class="ui label green">المصدر: QuranEnc</text>
+    <line x1="292" y1="540" x2="1148" y2="540" stroke="#E8E1D5"/>
+    <text x="1128" y="596" text-anchor="end" class="quran" font-size="28">الْحَمْدُ لِلَّهِ الَّذِي أَنزَلَ عَلَىٰ عَبْدِهِ الْكِتَابَ وَلَمْ يَجْعَل لَّهُ عِوَجًا</text>
+    <text x="1128" y="650" text-anchor="end" class="quran" font-size="28">قَيِّمًا لِّيُنذِرَ بَأْسًا شَدِيدًا مِّن لَّدُنْهُ وَيُبَشِّرَ الْمُؤْمِنِينَ</text>
+    <text x="1128" y="704" text-anchor="end" class="quran" font-size="28">الَّذِينَ يَعْمَلُونَ الصَّالِحَاتِ أَنَّ لَهُمْ أَجْرًا حَسَنًا</text>
+  </g>
+  <g id="HadithStep" filter="url(#shadow)">
+    <rect x="260" y="796" width="920" height="330" rx="18" fill="#fff"/>
+    <rect x="1100" y="824" width="48" height="48" rx="14" fill="#DCEBE5"/>
+    <text x="1124" y="855" text-anchor="middle" class="ui green" font-size="18" font-weight="700">٢</text>
+    <text x="1078" y="840" text-anchor="end" class="ui label gold">وقفة قصيرة</text>
+    <text x="1078" y="870" text-anchor="end" class="ui" font-size="22" font-weight="700">حديث عشوائي</text>
+    <rect x="306" y="832" width="184" height="30" rx="15" fill="#DCEBE5"/>
+    <text x="398" y="852" text-anchor="middle" class="ui label green">المصدر: HadeethEnc.com</text>
+    <line x1="292" y1="896" x2="1148" y2="896" stroke="#E8E1D5"/>
+    <text x="1128" y="944" text-anchor="end" class="ui" font-size="21" font-weight="700">إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى</text>
+    <text x="1128" y="990" text-anchor="end" class="ui body">عن عمر بن الخطاب رضي الله عنه قال: سمعت رسول الله ﷺ يقول: إنما الأعمال بالنيات...</text>
+    <rect x="1030" y="1032" width="98" height="30" rx="15" fill="#DCEBE5"/>
+    <text x="1079" y="1052" text-anchor="middle" class="ui label green">صحيح</text>
+    <text x="1008" y="1052" text-anchor="end" class="ui label muted">رواه البخاري ومسلم</text>
+  </g>
+  <g id="TafsirStep" filter="url(#shadow)">
+    <rect x="260" y="1152" width="920" height="328" rx="18" fill="#fff"/>
+    <rect x="1100" y="1180" width="48" height="48" rx="14" fill="#DCEBE5"/>
+    <text x="1124" y="1211" text-anchor="middle" class="ui green" font-size="18" font-weight="700">٣</text>
+    <text x="1078" y="1196" text-anchor="end" class="ui label gold">افهم ما قرأت</text>
+    <text x="1078" y="1226" text-anchor="end" class="ui" font-size="22" font-weight="700">التفسير الميسر</text>
+    <rect x="306" y="1188" width="210" height="30" rx="15" fill="#DCEBE5"/>
+    <text x="411" y="1208" text-anchor="middle" class="ui label green">QuranEnc · التفسير الميسر</text>
+    <line x1="292" y1="1252" x2="1148" y2="1252" stroke="#E8E1D5"/>
+    <text x="1128" y="1300" text-anchor="end" class="ui" font-size="18" font-weight="700" fill="#1F6F5B">تفسير الآية ١</text>
+    <text x="1128" y="1344" text-anchor="end" class="ui body">الثناء على الله بصفاته التي كلُّها أوصاف كمال، وبنعمه الظاهرة والباطنة...</text>
+    <line x1="292" y1="1382" x2="1148" y2="1382" stroke="#E8E1D5"/>
+    <text x="1128" y="1426" text-anchor="end" class="ui" font-size="18" font-weight="700" fill="#1F6F5B">تفسير الآية ٢ +</text>
+  </g>
+  <text x="720" y="1550" text-anchor="middle" class="ui label muted">الجلسة محفوظة على هذا الجهاز · كل قسم يعالج فشل المصدر بشكل مستقل</text>
+</svg>
