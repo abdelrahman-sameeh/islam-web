@@ -44,6 +44,10 @@ const VerseTafsirSearch = ({ surahId, ayahNumber }) => {
         </button>
       </form>
 
+      <p className="search-hint">
+        يبدأ البحث تلقائيًا بعد التوقف عن الكتابة، ويمكنك الضغط على Enter للبحث فورًا.
+      </p>
+
       {validationError && (
         <p className="search-error" id="verse-search-error" role="alert">
           {validationError}

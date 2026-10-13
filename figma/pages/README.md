@@ -5,15 +5,15 @@ All frames are 1440 × 1024 SVG files and can be dragged into Figma.
 | File | Primary UX decision |
 | --- | --- |
 | `01-home.svg` | Saved-location prayer times plus a fresh random verse and dhikr appear before discovery cards |
-| `02-quran-reader.svg` | Reading, tafsir, and persistent audio share one focused view |
+| `02-quran-reader.svg` | Compact reader padding and a calm text measure keep reading focused |
 | `03-adhkar.svg` | Category, progress, source, and count action stay explicit |
-| `04-hadith.svg` | Search/category filters and source quality replace blind pagination |
+| `04-hadith.svg` | Debounced general search, category filters, and source quality replace blind pagination |
 | `05-tafsir.svg` | Verse context remains visible beside the explanation |
 | `06-prayer-times.svg` | Next prayer, country/city selectors, and local calculation method are always visible |
 | `07-daily-session.svg` | A local-first 2/5/10-minute guided session with explicit sources |
 | `08-session-content.svg` | Quran, random sourced hadith, then simplified tafsir in one guided flow |
 | `09-favorites.svg` | One local-only library groups saved surahs, reciters, hadiths, and tafsir references |
-| `10-tafsir-search.svg` | Global verse-text search ignores tashkeel, then opens the selected sourced tafsir |
+| `10-tafsir-search.svg` | Debounced verse-text search ignores tashkeel, then opens the selected sourced tafsir |
 
 ## Required states during implementation
 

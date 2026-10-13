@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import useDebouncedValue from "../../../hooks/useDebouncedValue";
 import { stripArabicMarks } from "../../../lib/normalizeArabicText";
 import { searchQuranAyahs } from "../api/quranSearchApi";
+
+const SEARCH_DELAY = 500;
 
 const useVerseSearch = ({ surahId, ayahNumber }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -11,10 +14,43 @@ const useVerseSearch = ({ surahId, ayahNumber }) => {
   const [status, setStatus] = useState("idle");
   const [validationError, setValidationError] = useState("");
   const [requestVersion, setRequestVersion] = useState(0);
+  const debouncedQuery = useDebouncedValue(draftQuery, SEARCH_DELAY);
+  const isDraftDirty = useRef(false);
+  const shouldPreserveDraft = useRef(false);
 
   useEffect(() => {
-    setDraftQuery(verseQuery);
+    if (shouldPreserveDraft.current) {
+      shouldPreserveDraft.current = false;
+      return;
+    }
+
+    if (!isDraftDirty.current) setDraftQuery(verseQuery);
   }, [verseQuery]);
+
+  useEffect(() => {
+    if (!isDraftDirty.current) return;
+
+    const phrase = debouncedQuery.trim();
+    if (phrase && stripArabicMarks(phrase).length < 3) {
+      if (verseQuery) {
+        shouldPreserveDraft.current = true;
+        setSearchParams(
+          { surah: surahId, ayah: String(ayahNumber) },
+          { replace: true }
+        );
+      }
+      return;
+    }
+
+    isDraftDirty.current = false;
+    setValidationError("");
+    setSearchParams(
+      phrase
+        ? { surah: surahId, ayah: String(ayahNumber), q: phrase }
+        : { surah: surahId, ayah: String(ayahNumber) },
+      { replace: true }
+    );
+  }, [ayahNumber, debouncedQuery, setSearchParams, surahId, verseQuery]);
 
   useEffect(() => {
     if (!verseQuery) {
@@ -39,6 +75,7 @@ const useVerseSearch = ({ surahId, ayahNumber }) => {
   }, [requestVersion, verseQuery]);
 
   const changeDraftQuery = (value) => {
+    isDraftDirty.current = true;
     setDraftQuery(value);
     setValidationError("");
   };
@@ -52,6 +89,7 @@ const useVerseSearch = ({ surahId, ayahNumber }) => {
     }
 
     setValidationError("");
+    isDraftDirty.current = false;
     setSearchParams({
       surah: surahId,
       ayah: String(ayahNumber),

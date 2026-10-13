@@ -12,7 +12,9 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
 
 ## Inputs
 
-- `SearchField`: default, focused, populated, loading, no-results.
+- `SearchField`: default, focused, populated, loading, no-results. Tafsir and
+  hadith search wait 500 ms after typing before requesting results; Enter keeps
+  an immediate-search path for keyboard users.
 - `SelectField`: label always visible; do not depend on placeholder alone.
 - `SegmentedControl`: compact choices such as text/tafsir.
 - `FilterChip`: default, selected, disabled.
@@ -58,3 +60,5 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
 - Do not hide core actions behind hover-only behavior.
 - Use `aria-current` for active navigation and current prayer/verse where useful.
 - Keep religious text immutable; counters and highlights are separate UI layers.
+- Keep the Quran reader card aligned with the 1200px app container, while its
+  text column stays near 860px with compact card padding and a calm line height.
