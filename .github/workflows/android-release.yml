@@ -45,16 +45,21 @@ jobs:
 
       - name: Prepare release files
         run: |
+          release_version="${GITHUB_REF_NAME#redesign-android-v}"
+          artifact_name="daqaeq-noor-android-v${release_version}.apk"
           mkdir -p release-output
-          cp android/app/build/outputs/apk/debug/app-debug.apk "release-output/islamona-android-v1.2.4.apk"
-          sha256sum "release-output/islamona-android-v1.2.4.apk" > "release-output/islamona-android-v1.2.4.apk.sha256"
+          cp android/app/build/outputs/apk/debug/app-debug.apk "release-output/$artifact_name"
+          sha256sum "release-output/$artifact_name" > "release-output/$artifact_name.sha256"
+          echo "RELEASE_VERSION=$release_version" >> "$GITHUB_ENV"
+          echo "APK_PATH=release-output/$artifact_name" >> "$GITHUB_ENV"
+          echo "CHECKSUM_PATH=release-output/$artifact_name.sha256" >> "$GITHUB_ENV"
 
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
-            release-output/islamona-android-v1.2.4.apk \
-            release-output/islamona-android-v1.2.4.apk.sha256 \
-            --title "إسلامنا Android 1.2.4" \
-            --notes "نسخة Android قابلة للتثبيت مباشرة. تتضمن البحث المؤجل في التفسير والحديث وتحسين صفحة قراءة القرآن. الحد الأدنى Android 7.0."
+            "$APK_PATH" \
+            "$CHECKSUM_PATH" \
+            --title "دقائق نور Android $RELEASE_VERSION" \
+            --notes "نسخة Android قابلة للتثبيت مباشرة. تتضمن الهوية الجديدة دقائق نور، وإصلاح عرض مواقيت الصلاة وأسماء القرّاء الطويلة على الهاتف. الحد الأدنى Android 7.0."
