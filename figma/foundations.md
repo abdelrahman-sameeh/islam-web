@@ -1,8 +1,8 @@
-# Visual identity: Islamona
+# Visual identity: Daqaeq Noor
 
 ## Brand idea
 
-**Quiet guidance.** Islamona should feel like a calm reading place, not a busy
+**Quiet guidance.** Daqaeq Noor should feel like a calm reading place, not a busy
 content portal. The product supports focused worship and study through reliable
 content, legible Arabic, and predictable navigation.
 
@@ -15,7 +15,7 @@ clip art, tiny religious text, and gamification that creates guilt.
 
 Use a simple geometric mark derived from an open book and a mihrab arch. Keep it
 flat and recognizable at 24px. Do not use generated calligraphy as a final logo.
-The wordmark is `إسلامنا` in Cairo SemiBold. A vector logo should be drawn and
+The wordmark is `دقائق نور` in Cairo SemiBold. A vector logo should be drawn and
 approved separately before production replacement.
 
 ## Color roles

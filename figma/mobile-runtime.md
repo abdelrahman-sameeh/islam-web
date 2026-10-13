@@ -1,12 +1,12 @@
 # Mobile runtime handoff
 
-Islamona ships from one responsive React source. The desktop website and
+Daqaeq Noor ships from one responsive React source. The desktop website and
 installable PWA remain first-class surfaces; Capacitor adds the current Android
 shell around the same production build and keeps an iOS shell possible later.
 
 ## Shell
 
-- App name: `إسلامنا`
+- App name: `دقائق نور`
 - App identifier: `com.islamona.app`
 - Web output: `build/`
 - Default orientation: any

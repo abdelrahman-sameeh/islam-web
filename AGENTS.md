@@ -1,4 +1,4 @@
-# Islamona project rules
+# Daqaeq Noor project rules
 
 These rules apply to the entire repository. The product is an Arabic-first,
 RTL Islamic reading and worship companion. Correct content, calm reading, and

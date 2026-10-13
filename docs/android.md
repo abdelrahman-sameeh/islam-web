@@ -1,6 +1,6 @@
 # Android workflow
 
-Islamona uses Capacitor to package the same responsive React production build
+Daqaeq Noor uses Capacitor to package the same responsive React production build
 used by the desktop website. Android is additive; `npm start` and `npm run
 build` keep working as before.
 

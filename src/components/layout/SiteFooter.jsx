@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
+import { APP_NAME, APP_TAGLINE } from "../../app/appMetadata";
 
 const SiteFooter = () => {
   return (
     <footer className="site-footer">
       <div className="app-container site-footer__inner">
         <div className="site-footer__brand">
-          <Link to="/">إسلامنا</Link>
-          <p>عبادة وفهم، على قد وقتك.</p>
+          <Link to="/">{APP_NAME}</Link>
+          <p>{APP_TAGLINE}</p>
         </div>
         <div className="site-footer__links">
           <strong>المحتوى</strong>
@@ -32,7 +33,7 @@ const SiteFooter = () => {
       </div>
       <div className="app-container site-footer__bottom">
         <span>المصادر موضّحة داخل كل قسم.</span>
-        <span>إسلامنا · تجربة عربية هادئة للعبادة والفهم</span>
+        <span>{APP_NAME} · تجربة عربية هادئة للعبادة والفهم</span>
       </div>
     </footer>
   );

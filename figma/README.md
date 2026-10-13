@@ -1,6 +1,6 @@
-# Islamona design handoff
+# Daqaeq Noor design handoff
 
-This folder is the pre-implementation design source for the Islamona redesign.
+This folder is the pre-implementation design source for the Daqaeq Noor redesign.
 The SVG frames can be dragged directly into Figma and edited as vectors.
 
 ## Files

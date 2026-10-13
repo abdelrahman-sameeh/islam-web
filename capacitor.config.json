@@ -1,6 +1,6 @@
 {
   "appId": "com.islamona.app",
-  "appName": "إسلامنا",
+  "appName": "دقائق نور",
   "webDir": "build",
   "server": {
     "androidScheme": "https"
