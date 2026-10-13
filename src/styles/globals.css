@@ -990,6 +990,7 @@ body.dark-theme .error-copy {
   grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
   align-items: end;
   gap: 16px;
+  padding: 18px 20px;
 }
 
 .reader-toolbar label,
@@ -1167,8 +1168,8 @@ body.dark-theme .error-copy {
 
 .reading-card {
   width: 100%;
-  margin: 24px 0 110px;
-  padding: 34px clamp(22px, 5vw, 58px);
+  margin: 18px 0 104px;
+  padding: 24px clamp(18px, 3vw, 36px);
   border: 1px solid var(--neutral-200);
   border-radius: 18px;
   background: var(--secondary-color);
@@ -1180,7 +1181,7 @@ body.dark-theme .error-copy {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding-bottom: 22px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--neutral-200);
 }
 
@@ -1190,8 +1191,8 @@ body.dark-theme .error-copy {
 }
 
 .quran-bismillah {
-  max-width: 920px;
-  margin: 26px auto 0;
+  max-width: 860px;
+  margin: 18px auto 0;
   color: var(--brand-700);
   font-family: "Scheherazade", serif;
   font-size: clamp(28px, 4vw, 38px);
@@ -1212,16 +1213,16 @@ body.dark-theme .error-copy {
 
 .quran-text,
 .session-quran {
-  padding-block: 26px;
+  padding-block: 18px;
   color: var(--black);
   font-family: "Scheherazade", serif;
-  font-size: clamp(25px, 3vw, 31px);
-  line-height: 2.2;
+  font-size: clamp(25px, 2.6vw, 30px);
+  line-height: 2.05;
   text-align: justify;
 }
 
 .reading-card .quran-text {
-  max-width: 920px;
+  max-width: 860px;
   margin-inline: auto;
 }
 
@@ -1304,6 +1305,13 @@ body.dark-theme .error-copy {
 
 .verse-search-panel .search-error {
   margin-top: 10px;
+}
+
+.search-hint {
+  margin: 9px 2px 0;
+  color: var(--neutral-500);
+  font-size: 12px;
+  line-height: 1.7;
 }
 
 .verse-search-message {
@@ -2486,7 +2494,7 @@ body.dark-theme .favorites-tabs button.is-selected {
 
   .reading-card {
     margin-bottom: 150px;
-    padding-inline: 18px;
+    padding: 18px 14px;
   }
 
   .reading-card__header {

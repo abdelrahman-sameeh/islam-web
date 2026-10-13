@@ -1,10 +1,11 @@
 import { faBookOpen, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
 import SourceBadge from "../../../components/ui/SourceBadge";
+import useDebouncedValue from "../../../hooks/useDebouncedValue";
 import FavoriteButton from "../../favorites/components/FavoriteButton";
 import useFavorites from "../../favorites/hooks/useFavorites";
 import {
@@ -15,6 +16,7 @@ import {
 } from "../api/hadithApi";
 
 const RESULTS_PER_PAGE = 12;
+const SEARCH_DELAY = 500;
 
 const getSafePage = (value) => {
   const page = Number(value);
@@ -40,11 +42,45 @@ const HadithPage = () => {
   const [details, setDetails] = useState({});
   const [expandedId, setExpandedId] = useState(null);
   const [directHadith, setDirectHadith] = useState(null);
+  const debouncedQuery = useDebouncedValue(draftQuery, SEARCH_DELAY);
+  const isDraftDirty = useRef(false);
+  const shouldPreserveDraft = useRef(false);
   const { isFavorite, toggleFavorite } = useFavorites();
 
   useEffect(() => {
-    setDraftQuery(searchQuery);
-  }, [searchQuery]);
+    if (shouldPreserveDraft.current) {
+      shouldPreserveDraft.current = false;
+      return;
+    }
+
+    if (!isDraftDirty.current) setDraftQuery(searchQuery);
+  }, [directHadithId, searchQuery]);
+
+  useEffect(() => {
+    if (!isDraftDirty.current) return;
+
+    const phrase = debouncedQuery.trim();
+    if (phrase && phrase.length < 2) {
+      if (searchQuery || directHadithId) {
+        shouldPreserveDraft.current = true;
+        setSearchParams(
+          { category: categoryId, page: "1" },
+          { replace: true }
+        );
+      }
+      return;
+    }
+
+    isDraftDirty.current = false;
+    setQueryError("");
+    setExpandedId(null);
+    setSearchParams(
+      phrase
+        ? { q: phrase, page: "1" }
+        : { category: categoryId, page: "1" },
+      { replace: true }
+    );
+  }, [categoryId, debouncedQuery, directHadithId, searchQuery, setSearchParams]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -167,11 +203,13 @@ const HadithPage = () => {
     }
 
     setQueryError("");
+    isDraftDirty.current = false;
     setExpandedId(null);
     setSearchParams({ q: phrase, page: "1" });
   };
 
   const handleClearSearch = () => {
+    isDraftDirty.current = false;
     setDraftQuery("");
     setQueryError("");
     setExpandedId(null);
@@ -179,6 +217,7 @@ const HadithPage = () => {
   };
 
   const handleCategoryChange = (nextCategoryId) => {
+    isDraftDirty.current = false;
     setDraftQuery("");
     setQueryError("");
     setExpandedId(null);
@@ -229,6 +268,7 @@ const HadithPage = () => {
               <input
                 value={draftQuery}
                 onChange={(event) => {
+                  isDraftDirty.current = true;
                   setDraftQuery(event.target.value);
                   setQueryError("");
                 }}
@@ -249,6 +289,9 @@ const HadithPage = () => {
               </button>
             )}
           </form>
+          <p className="search-hint">
+            تظهر النتائج تلقائيًا بعد التوقف عن الكتابة، أو اضغط Enter للبحث فورًا.
+          </p>
           {queryError && (
             <p className="search-error" id="hadith-search-error" role="alert">
               {queryError}
