@@ -33,7 +33,9 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
 - `SourceBadge`: publisher/source and edition where applicable.
 - `SessionStep`: numbered stage, source badge, religious content, and an
   independent loading/error state. The fixed order is Quran, random hadith,
-  then sourced tafsir.
+  then sourced tafsir. Hadith explanation is collapsed by default. Each tafsir
+  summary shows the sourced verse text, not only its number, and expands to the
+  corresponding explanation.
 
 ## Audio
 
@@ -41,6 +43,10 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
 - Desktop: sticky bottom card within content width.
 - Mobile: persistent mini-player above bottom navigation; expands to a sheet.
 - Preserve playback when navigating between Quran routes.
+- Cache a recitation after the user starts it and label whether it is being
+  saved, already available offline, or could not be saved. Keep only a bounded
+  number of recent recitations so automatic offline support cannot grow without
+  limit.
 
 ## Feedback states
 

@@ -8,6 +8,7 @@ import SourceBadge from "../../../components/ui/SourceBadge";
 import useDebouncedValue from "../../../hooks/useDebouncedValue";
 import FavoriteButton from "../../favorites/components/FavoriteButton";
 import useFavorites from "../../favorites/hooks/useFavorites";
+import { getStoredJson, setStoredJson } from "../../../lib/browserStorage";
 import {
   getHadithCategories,
   getHadithDetails,
@@ -17,6 +18,7 @@ import {
 
 const RESULTS_PER_PAGE = 12;
 const SEARCH_DELAY = 500;
+const HADITH_PREFERENCES_KEY = "islamona.hadith-view.v1";
 
 const getSafePage = (value) => {
   const page = Number(value);
@@ -39,13 +41,61 @@ const HadithPage = () => {
   const [searchItems, setSearchItems] = useState([]);
   const [status, setStatus] = useState("loading");
   const [requestVersion, setRequestVersion] = useState(0);
+  const [isPreferencesReady, setIsPreferencesReady] = useState(false);
   const [details, setDetails] = useState({});
   const [expandedId, setExpandedId] = useState(null);
   const [directHadith, setDirectHadith] = useState(null);
   const debouncedQuery = useDebouncedValue(draftQuery, SEARCH_DELAY);
   const isDraftDirty = useRef(false);
   const shouldPreserveDraft = useRef(false);
+  const hasInitialView = useRef(
+    ["q", "hadith", "category", "page"].some((key) =>
+      searchParams.has(key)
+    )
+  );
   const { isFavorite, toggleFavorite } = useFavorites();
+
+  useEffect(() => {
+    let isActive = true;
+
+    const restorePreferences = async () => {
+      const stored = await getStoredJson(HADITH_PREFERENCES_KEY);
+      if (!isActive) return;
+
+      if (!hasInitialView.current && stored) {
+        if (stored.mode === "direct" && /^\d+$/.test(stored.hadithId ?? "")) {
+          setSearchParams({ hadith: stored.hadithId }, { replace: true });
+        } else if (
+          stored.mode === "search" &&
+          typeof stored.query === "string" &&
+          stored.query.trim().length >= 2
+        ) {
+          setSearchParams(
+            { q: stored.query.trim(), page: String(getSafePage(stored.page)) },
+            { replace: true }
+          );
+        } else if (
+          stored.mode === "browse" &&
+          /^\d+$/.test(stored.categoryId ?? "")
+        ) {
+          setSearchParams(
+            {
+              category: stored.categoryId,
+              page: String(getSafePage(stored.page)),
+            },
+            { replace: true }
+          );
+        }
+      }
+
+      setIsPreferencesReady(true);
+    };
+
+    void restorePreferences();
+    return () => {
+      isActive = false;
+    };
+  }, [setSearchParams]);
 
   useEffect(() => {
     if (shouldPreserveDraft.current) {
@@ -91,7 +141,7 @@ const HadithPage = () => {
   }, []);
 
   useEffect(() => {
-    if (searchQuery || directHadithId) return undefined;
+    if (!isPreferencesReady || searchQuery || directHadithId) return undefined;
 
     const controller = new AbortController();
     setStatus("loading");
@@ -106,10 +156,10 @@ const HadithPage = () => {
       });
 
     return () => controller.abort();
-  }, [categoryId, directHadithId, page, requestVersion, searchQuery]);
+  }, [categoryId, directHadithId, isPreferencesReady, page, requestVersion, searchQuery]);
 
   useEffect(() => {
-    if (!searchQuery || directHadithId) return undefined;
+    if (!isPreferencesReady || !searchQuery || directHadithId) return undefined;
 
     const controller = new AbortController();
     setStatus("loading");
@@ -124,9 +174,11 @@ const HadithPage = () => {
       });
 
     return () => controller.abort();
-  }, [directHadithId, requestVersion, searchQuery]);
+  }, [directHadithId, isPreferencesReady, requestVersion, searchQuery]);
 
   useEffect(() => {
+    if (!isPreferencesReady) return undefined;
+
     if (!directHadithId) {
       setDirectHadith(null);
       return undefined;
@@ -150,7 +202,7 @@ const HadithPage = () => {
       });
 
     return () => controller.abort();
-  }, [directHadithId, requestVersion]);
+  }, [directHadithId, isPreferencesReady, requestVersion]);
 
   const isDirectMode = Boolean(directHadithId);
   const isSearchMode = Boolean(searchQuery) && !isDirectMode;
@@ -183,6 +235,26 @@ const HadithPage = () => {
         displayedPage * RESULTS_PER_PAGE
       )
     : browseResult?.items ?? [];
+
+  useEffect(() => {
+    if (!isPreferencesReady) return;
+
+    const storedView = isDirectMode
+      ? { mode: "direct", hadithId: directHadithId }
+      : isSearchMode
+      ? { mode: "search", query: searchQuery, page }
+      : { mode: "browse", categoryId, page };
+
+    void setStoredJson(HADITH_PREFERENCES_KEY, storedView);
+  }, [
+    categoryId,
+    directHadithId,
+    isDirectMode,
+    isPreferencesReady,
+    isSearchMode,
+    page,
+    searchQuery,
+  ]);
 
   const setPage = (nextPage) => {
     setSearchParams(
@@ -338,7 +410,7 @@ const HadithPage = () => {
           <FeedbackState
             type="error"
             title={isSearchMode ? "تعذّر تنفيذ البحث" : "تعذّر تحميل الأحاديث"}
-            message="لم نتمكن من الوصول للمصدر الآن."
+            message="تعذّر الاتصال ولم نجد نسخة محفوظة لهذا المحتوى على الجهاز."
             onRetry={() => setRequestVersion((value) => value + 1)}
           />
         )}

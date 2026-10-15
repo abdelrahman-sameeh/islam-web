@@ -23,9 +23,16 @@ mark inside the central safe zone so it remains legible on supported launchers.
 ## Offline behavior
 
 The web build precaches the app shell, icon, and manifest. Successfully loaded
-Quran, hadith, adhkar, prayer-time, reciter, and font responses are cached by
-exact request URL for later use. Audio is intentionally not cached because it
-can consume significant browser storage.
+Quran, hadith, tafsir search, adhkar, prayer-time, reciter, and font responses
+are cached for later use. Religious content opened by the user is also stored
+in a bounded IndexedDB cache so the same behavior works in the web PWA and
+Android WebView, where the service worker is disabled.
+
+A Quran recitation is saved only after the user starts playing it. The three
+most recent recitations are retained as audio blobs; older ones are evicted so
+automatic offline support cannot consume storage without limit. If saving is
+blocked by quota or network policy, playback continues and the player exposes a
+non-blocking Arabic status message.
 
 Remote religious content needs a first successful network request. No bundled
 copy may silently replace or alter the named upstream source.

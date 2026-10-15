@@ -1295,6 +1295,12 @@ body.dark-theme .error-copy {
   color: var(--hero-muted);
 }
 
+.audio-player .audio-player__offline {
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .audio-player audio {
   width: 100%;
 }
@@ -2200,6 +2206,55 @@ body.dark-theme .favorites-tabs button.is-selected {
   color: var(--neutral-500);
 }
 
+.session-explanation {
+  margin-top: 20px;
+  border-top: 1px solid var(--neutral-200);
+}
+
+.session-explanation summary,
+.session-tafsir summary {
+  position: relative;
+  min-height: 56px;
+  padding-block: 16px;
+  padding-inline-end: 42px;
+  color: var(--brand-700);
+  font-weight: 700;
+  list-style: none;
+  cursor: pointer;
+}
+
+.session-explanation summary::-webkit-details-marker,
+.session-tafsir summary::-webkit-details-marker {
+  display: none;
+}
+
+.session-explanation summary::after,
+.session-tafsir summary::after {
+  content: "+";
+  position: absolute;
+  inset-inline-end: 4px;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--brand-100);
+  transform: translateY(-50%);
+}
+
+.session-explanation[open] summary::after,
+.session-tafsir details[open] summary::after {
+  content: "−";
+}
+
+.session-explanation > p {
+  margin: 0;
+  padding: 0 18px 20px;
+  font-size: 16px;
+  line-height: 2;
+}
+
 .session-tafsir {
   padding-top: 12px;
 }
@@ -2209,14 +2264,29 @@ body.dark-theme .favorites-tabs button.is-selected {
 }
 
 .session-tafsir summary {
-  min-height: 56px;
-  padding-block: 16px;
-  color: var(--brand-700);
-  font-weight: 700;
-  cursor: pointer;
+  display: grid;
+  gap: 5px;
 }
 
-.session-tafsir details p {
+.session-tafsir summary span {
+  font-size: 13px;
+}
+
+.session-tafsir summary strong {
+  color: var(--black);
+  font-size: 23px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+
+.session-tafsir__explanation h3 {
+  margin: 0;
+  padding-inline: 18px;
+  color: var(--accent-600);
+  font-size: 14px;
+}
+
+.session-tafsir__explanation p {
   margin: 0;
   padding: 0 18px 20px;
   font-size: 17px;

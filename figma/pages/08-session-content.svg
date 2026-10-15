@@ -17,9 +17,9 @@
   </g>
   <g id="Summary">
     <rect x="120" y="266" width="1200" height="142" rx="20" fill="#123B35"/>
-    <text x="1276" y="306" text-anchor="end" class="ui label" fill="#E7D8BC">المقطع المختار عشوائيًا</text>
+    <text x="1276" y="306" text-anchor="end" class="ui label" style="fill:#E7D8BC">المقطع المختار عشوائيًا</text>
     <text x="1276" y="350" text-anchor="end" class="ui white" font-size="27" font-weight="700">سورة الكهف</text>
-    <text x="1276" y="382" text-anchor="end" class="ui body" fill="#DCEBE5">من الآية ١ إلى الآية ١٠ · قراءة تقريبية ٥ دقائق</text>
+    <text x="1276" y="382" text-anchor="end" class="ui body" style="fill:#DCEBE5">من الآية ١ إلى الآية ١٠ · قراءة تقريبية ٥ دقائق</text>
   </g>
   <g id="QuranStep" filter="url(#shadow)">
     <rect x="260" y="440" width="920" height="330" rx="18" fill="#fff"/>
@@ -48,6 +48,9 @@
     <rect x="1030" y="1032" width="98" height="30" rx="15" fill="#DCEBE5"/>
     <text x="1079" y="1052" text-anchor="middle" class="ui label green">صحيح</text>
     <text x="1008" y="1052" text-anchor="end" class="ui label muted">رواه البخاري ومسلم</text>
+    <line x1="292" y1="1080" x2="1148" y2="1080" stroke="#E8E1D5"/>
+    <text x="1128" y="1108" text-anchor="end" class="ui label green">شرح الحديث</text>
+    <text x="306" y="1108" class="ui" font-size="18" fill="#1F6F5B">+</text>
   </g>
   <g id="TafsirStep" filter="url(#shadow)">
     <rect x="260" y="1152" width="920" height="328" rx="18" fill="#fff"/>
@@ -58,10 +61,13 @@
     <rect x="306" y="1188" width="210" height="30" rx="15" fill="#DCEBE5"/>
     <text x="411" y="1208" text-anchor="middle" class="ui label green">QuranEnc · التفسير الميسر</text>
     <line x1="292" y1="1252" x2="1148" y2="1252" stroke="#E8E1D5"/>
-    <text x="1128" y="1300" text-anchor="end" class="ui" font-size="18" font-weight="700" fill="#1F6F5B">تفسير الآية ١</text>
-    <text x="1128" y="1344" text-anchor="end" class="ui body">الثناء على الله بصفاته التي كلُّها أوصاف كمال، وبنعمه الظاهرة والباطنة...</text>
-    <line x1="292" y1="1382" x2="1148" y2="1382" stroke="#E8E1D5"/>
-    <text x="1128" y="1426" text-anchor="end" class="ui" font-size="18" font-weight="700" fill="#1F6F5B">تفسير الآية ٢ +</text>
+    <text x="1128" y="1290" text-anchor="end" class="ui label green">الآية ١</text>
+    <text x="1128" y="1328" text-anchor="end" class="quran" font-size="23">الْحَمْدُ لِلَّهِ الَّذِي أَنزَلَ عَلَىٰ عَبْدِهِ الْكِتَابَ</text>
+    <text x="306" y="1312" class="ui" font-size="18" fill="#1F6F5B">+</text>
+    <line x1="292" y1="1352" x2="1148" y2="1352" stroke="#E8E1D5"/>
+    <text x="1128" y="1390" text-anchor="end" class="ui label green">الآية ٢</text>
+    <text x="1128" y="1428" text-anchor="end" class="quran" font-size="23">قَيِّمًا لِّيُنذِرَ بَأْسًا شَدِيدًا مِّن لَّدُنْهُ</text>
+    <text x="306" y="1412" class="ui" font-size="18" fill="#1F6F5B">+</text>
   </g>
   <text x="720" y="1550" text-anchor="middle" class="ui label muted">الجلسة محفوظة على هذا الجهاز · كل قسم يعالج فشل المصدر بشكل مستقل</text>
 </svg>

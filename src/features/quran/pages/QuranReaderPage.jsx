@@ -1,6 +1,6 @@
 import { faHeadphones, faSliders } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
@@ -8,6 +8,7 @@ import SearchableSelect from "../../../components/ui/SearchableSelect";
 import SourceBadge from "../../../components/ui/SourceBadge";
 import FavoriteButton from "../../favorites/components/FavoriteButton";
 import useFavorites from "../../favorites/hooks/useFavorites";
+import { getStoredJson, setStoredJson } from "../../../lib/browserStorage";
 import surahList from "../data/surahs";
 import { getSurahAyahs } from "../api/quranApi";
 import {
@@ -16,10 +17,16 @@ import {
   getSurahAudioUrl,
 } from "../api/recitationsApi";
 import ReciterSelect from "../components/ReciterSelect";
+import useOfflineQuranAudio from "../hooks/useOfflineQuranAudio";
 import {
   BISMILLAH,
   shouldShowStandaloneBismillah,
 } from "../utils/bismillah";
+
+const QURAN_PREFERENCES_KEY = "islamona.quran-reader.v1";
+
+const isValidSurahId = (value) =>
+  surahList.some(({ id }) => id === String(value));
 
 const getSafeSurahId = (value) => {
   const number = Number(value);
@@ -46,6 +53,12 @@ const QuranReaderPage = () => {
   const [requestVersion, setRequestVersion] = useState(0);
   const [reciters, setReciters] = useState([]);
   const [selectedReciter, setSelectedReciter] = useState(DEFAULT_RECITER);
+  const [isPreferencesReady, setIsPreferencesReady] = useState(false);
+  const initialSelection = useRef({
+    surahId: id,
+    reciterId: requestedReciterId,
+    isSessionPassage: searchParams.get("session") === "1",
+  });
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const passageStart = Number(searchParams.get("from"));
@@ -58,6 +71,49 @@ const QuranReaderPage = () => {
     passageEnd >= passageStart;
 
   useEffect(() => {
+    let isActive = true;
+
+    const restorePreferences = async () => {
+      const stored = await getStoredJson(QURAN_PREFERENCES_KEY);
+      if (!isActive) return;
+
+      const initialSurahId = isValidSurahId(initialSelection.current.surahId)
+        ? String(initialSelection.current.surahId)
+        : isValidSurahId(stored?.surahId)
+        ? String(stored.surahId)
+        : "1";
+      const storedReciterId =
+        !initialSelection.current.isSessionPassage &&
+        typeof stored?.reciterId === "string"
+          ? stored.reciterId
+          : null;
+      const initialReciterId =
+        initialSelection.current.reciterId ||
+        storedReciterId ||
+        DEFAULT_RECITER.id;
+
+      if (
+        !isValidSurahId(initialSelection.current.surahId) ||
+        (!initialSelection.current.reciterId &&
+          initialReciterId !== DEFAULT_RECITER.id)
+      ) {
+        navigate(getReaderPath(initialSurahId, initialReciterId), {
+          replace: true,
+        });
+      }
+
+      setIsPreferencesReady(true);
+    };
+
+    void restorePreferences();
+    return () => {
+      isActive = false;
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!isPreferencesReady) return undefined;
+
     const controller = new AbortController();
     setStatus("loading");
 
@@ -71,7 +127,7 @@ const QuranReaderPage = () => {
       });
 
     return () => controller.abort();
-  }, [surahId, requestVersion]);
+  }, [isPreferencesReady, surahId, requestVersion]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -109,6 +165,8 @@ const QuranReaderPage = () => {
   );
 
   useEffect(() => {
+    if (!isPreferencesReady) return;
+
     if (!requestedReciterId) {
       setSelectedReciter(DEFAULT_RECITER);
       return;
@@ -138,7 +196,19 @@ const QuranReaderPage = () => {
         ? currentReciter
         : requestedReciter
     );
-  }, [navigate, reciterOptions, requestedReciterId, surahId]);
+  }, [isPreferencesReady, navigate, reciterOptions, requestedReciterId, surahId]);
+
+  useEffect(() => {
+    if (!isPreferencesReady) return;
+
+    const activeReciterId = requestedReciterId ?? DEFAULT_RECITER.id;
+    if (selectedReciter.id !== activeReciterId) return;
+
+    void setStoredJson(QURAN_PREFERENCES_KEY, {
+      surahId,
+      reciterId: activeReciterId,
+    });
+  }, [isPreferencesReady, requestedReciterId, selectedReciter.id, surahId]);
 
   const handleReciterChange = (reciter) => {
     setSelectedReciter(reciter);
@@ -147,8 +217,32 @@ const QuranReaderPage = () => {
         ? reciter.availableSurahs[0] ?? "1"
         : surahId;
 
+    void setStoredJson(QURAN_PREFERENCES_KEY, {
+      surahId: nextSurahId,
+      reciterId: reciter.id,
+    });
     navigate(getReaderPath(nextSurahId, reciter.id));
   };
+
+  const handleSurahChange = (surah) => {
+    void setStoredJson(QURAN_PREFERENCES_KEY, {
+      surahId: surah.id,
+      reciterId: selectedReciter.id,
+    });
+    navigate(getReaderPath(surah.id, selectedReciter.id));
+  };
+
+  const audioUrl = hasPassageRange
+    ? null
+    : getSurahAudioUrl(selectedReciter.server, surahId);
+  const {
+    source: audioSource,
+    statusMessage: audioStatusMessage,
+    playbackError,
+    saveForOffline,
+    clearPlaybackError,
+    handlePlaybackError,
+  } = useOfflineQuranAudio(audioUrl);
 
   return (
     <main className="page content-page">
@@ -165,9 +259,7 @@ const QuranReaderPage = () => {
             <SearchableSelect
               options={availableSurahs}
               value={surahId}
-              onChange={(surah) =>
-                navigate(getReaderPath(surah.id, selectedReciter.id))
-              }
+              onChange={handleSurahChange}
               searchPlaceholder="ابحث باسم السورة"
               emptyMessage="لا توجد سورة بهذا الاسم."
               listLabel="قائمة السور"
@@ -272,11 +364,18 @@ const QuranReaderPage = () => {
             <div>
               <strong>{surahName}</strong>
               <small>{selectedReciter.name}</small>
+              <small className="audio-player__offline" role="status">
+                {playbackError || audioStatusMessage}
+              </small>
             </div>
             <audio
-              key={`${selectedReciter.server}-${surahId}`}
+              key={audioSource}
               controls
-              src={getSurahAudioUrl(selectedReciter.server, surahId)}
+              preload="metadata"
+              src={audioSource}
+              onPlay={saveForOffline}
+              onPlaying={clearPlaybackError}
+              onError={handlePlaybackError}
             />
           </div>
         )}

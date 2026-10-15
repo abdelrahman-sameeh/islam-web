@@ -1,4 +1,4 @@
-# Browser-only persistence
+# Device-local persistence
 
 The current product has no server. Personal choices and lightweight progress
 stay on the user's current device and must work without an account.
@@ -9,8 +9,35 @@ saved preferences, sessions, or favorites.
 
 - Web and installed PWA builds retain the existing `localStorage` keys so
   current users do not lose their choices.
-- `src/lib/browserStorage.js` is the storage boundary. Features must not access
-  `localStorage` directly.
+- `src/lib/browserStorage.js` is the web storage boundary; the Android branch
+  exposes the same API through Capacitor Preferences. Features must not access
+  either storage engine directly.
+- Larger sourced content and audio use the versioned IndexedDB database
+  `daqaeq-noor-offline-v1`. Cached records are bounded by content group and are
+  never treated as a different religious source.
+
+## Last-opened views
+
+- `islamona.quran-reader.v1`: last surah and reciter IDs. A direct URL still
+  wins; otherwise both choices reopen as the defaults until the user changes
+  them.
+- `islamona.tafsir-view.v1`: last surah, ayah, and active verse-search phrase.
+- `islamona.hadith-view.v1`: last category/page, search phrase, or direct
+  hadith ID.
+- `islamona.adhkar-view.v1`: last category and counter progress.
+
+The preferences above are small device-local values and use the existing
+storage boundary. Invalid stored choices fall back to the current safe
+defaults.
+
+## Offline content
+
+IndexedDB records keep their original normalized API models and source
+attribution. The cache is network-first and falls back only after the remote
+request fails. Groups have explicit limits: recent Quran surahs, hadith lists,
+searches and details, the current adhkar collection, reciter metadata, and the
+three most recently played recitations. Audio is saved as the unchanged
+response blob after playback begins.
 
 ## Daily session
 
@@ -61,6 +88,7 @@ Storage key: `islamona.session-content.v1`
     "id": "66511",
     "title": "إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى",
     "text": "...",
+    "explanation": "...",
     "grade": "صحيح",
     "attribution": "..."
   }
@@ -70,8 +98,9 @@ Storage key: `islamona.session-content.v1`
 - The signature links the random hadith to the current Quran passage.
 - Keep the same sourced hadith on refresh; a new passage gets a new random
   hadith.
-- Quran and tafsir text are fetched from QuranEnc and are not duplicated in
-  storage.
+- Quran and tafsir text are fetched from QuranEnc. Recently opened surahs are
+  duplicated in the bounded offline-content cache so their text and sourced
+  tafsir can be reopened without a connection.
 
 ## Theme
 
