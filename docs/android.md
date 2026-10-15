@@ -28,7 +28,9 @@ to `releases/`; that directory keeps its README in Git but ignores APK files.
 
 Web and desktop continue to use the existing `localStorage` keys. Android uses
 Capacitor Preferences for the same lightweight theme, city, and daily-session
-values. Removing the Android app clears its native stored values.
+values. Larger religious content and the three most recently played Quran
+recitations use bounded IndexedDB storage inside the WebView. Removing the
+Android app clears both stores.
 
 ## Android back button
 
