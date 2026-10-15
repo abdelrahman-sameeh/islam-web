@@ -11,8 +11,8 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { APP_NAME } from "../../app/appMetadata";
 import { getStoredValue, setStoredValue } from "../../lib/deviceStorage";
 
@@ -38,9 +38,11 @@ const getInitialTheme = () => {
 };
 
 const AppHeader = () => {
+  const location = useLocation();
   const [theme, setTheme] = useState(getInitialTheme);
   const [isThemeReady, setIsThemeReady] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const headerRef = useRef(null);
 
   useEffect(() => {
     let isActive = true;
@@ -72,6 +74,28 @@ const AppHeader = () => {
     if (isThemeReady) void setStoredValue(THEME_STORAGE_KEY, theme);
   }, [isThemeReady, theme]);
 
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    if (!isMenuOpen) return undefined;
+
+    const handleOutsidePress = (event) => {
+      if (!headerRef.current?.contains(event.target)) setIsMenuOpen(false);
+    };
+    const handleEscape = (event) => {
+      if (event.key === "Escape") setIsMenuOpen(false);
+    };
+
+    document.addEventListener("pointerdown", handleOutsidePress);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("pointerdown", handleOutsidePress);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isMenuOpen]);
+
   const toggleTheme = () => {
     setTheme((currentTheme) =>
       currentTheme === "light" ? "dark" : "light"
@@ -79,7 +103,7 @@ const AppHeader = () => {
   };
 
   return (
-    <header className="app-navbar">
+    <header className="app-navbar" ref={headerRef}>
       <div className="app-container app-navbar__inner">
         <Link to="/" className="brand" onClick={() => setIsMenuOpen(false)}>
           <span className="brand__mark" aria-hidden="true">
