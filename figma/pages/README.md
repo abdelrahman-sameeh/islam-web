@@ -14,6 +14,7 @@ All frames are 1440 × 1024 SVG files and can be dragged into Figma.
 | `08-session-content.svg` | Quran, a sourced random hadith with collapsible explanation, then collapsed verse-and-tafsir rows |
 | `09-favorites.svg` | One local-only library groups saved surahs, reciters, hadiths, and tafsir references |
 | `10-tafsir-search.svg` | Debounced verse-text search ignores tashkeel, then opens the selected sourced tafsir |
+| `11-quran-downloads.svg` | Explicit Quran downloads stay until removal, show storage use, and remain separate from the three-item playback cache |
 
 ## Required states during implementation
 

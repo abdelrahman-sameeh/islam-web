@@ -17,7 +17,8 @@ saved preferences, sessions, or favorites.
   `daqaeq-noor-offline-v1`. Web audio uses the same database; Android audio uses
   private native app storage so saving can continue while the screen is locked.
   Cached records are bounded by content group and are never treated as a
-  different religious source.
+  different religious source. Quran audio explicitly downloaded by the user is
+  kept separately and is removed only by the user or when app data is cleared.
 
 ## Last-opened views
 
@@ -43,6 +44,11 @@ request fails. Groups have explicit limits: recent Quran surahs, hadith lists,
 searches and details, the current adhkar collection, reciter metadata, and the
 three most recently played recitations. Audio is saved unchanged after
 playback begins: as a blob on web and as a private native file on Android.
+
+An explicit `حفظ على الجهاز` action promotes that recitation out of the
+three-item playback cache into the downloaded-recitation library. Downloads
+have no silent item-count eviction: the user can review their total size, open
+the matching surah and reciter, or remove an individual download.
 
 ## Daily session
 

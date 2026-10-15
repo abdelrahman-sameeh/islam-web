@@ -50,7 +50,13 @@ export const getOfflineResource = async (key) => {
   }
 };
 
-export const setOfflineResource = async ({ key, group, value, limit }) => {
+export const setOfflineResource = async ({
+  key,
+  group,
+  value,
+  limit,
+  metadata,
+}) => {
   try {
     const database = await openDatabase();
     if (!database) return false;
@@ -60,7 +66,7 @@ export const setOfflineResource = async ({ key, group, value, limit }) => {
       const store = transaction.objectStore(RESOURCE_STORE);
       const savedAt = Date.now();
 
-      store.put({ key, group, value, savedAt });
+      store.put({ key, group, value, savedAt, metadata });
 
       if (Number.isInteger(limit) && limit > 0) {
         const groupRequest = store.index(GROUP_INDEX).getAll(group);
@@ -72,6 +78,44 @@ export const setOfflineResource = async ({ key, group, value, limit }) => {
         };
       }
 
+      transaction.oncomplete = () => resolve(true);
+      transaction.onerror = () => resolve(false);
+      transaction.onabort = () => resolve(false);
+    });
+  } catch {
+    return false;
+  }
+};
+
+export const getOfflineResourcesByGroup = async (group) => {
+  try {
+    const database = await openDatabase();
+    if (!database) return [];
+
+    return await new Promise((resolve) => {
+      const transaction = database.transaction(RESOURCE_STORE, "readonly");
+      const request = transaction
+        .objectStore(RESOURCE_STORE)
+        .index(GROUP_INDEX)
+        .getAll(group);
+
+      request.onsuccess = () => resolve(request.result ?? []);
+      request.onerror = () => resolve([]);
+      transaction.onabort = () => resolve([]);
+    });
+  } catch {
+    return [];
+  }
+};
+
+export const deleteOfflineResource = async (key) => {
+  try {
+    const database = await openDatabase();
+    if (!database) return false;
+
+    return await new Promise((resolve) => {
+      const transaction = database.transaction(RESOURCE_STORE, "readwrite");
+      transaction.objectStore(RESOURCE_STORE).delete(key);
       transaction.oncomplete = () => resolve(true);
       transaction.onerror = () => resolve(false);
       transaction.onabort = () => resolve(false);

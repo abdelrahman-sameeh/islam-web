@@ -1,6 +1,8 @@
 package com.islamona.app;
 
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import androidx.core.content.ContextCompat;
 import androidx.media3.common.C;
@@ -10,6 +12,7 @@ import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
+import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -18,10 +21,18 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 @CapacitorPlugin(name = "QuranAudio")
 public class QuranAudioPlugin extends Plugin {
+
+    private static final String DOWNLOAD_PREFERENCES = "quran_audio_downloads";
+    private static final String PLAYER_PREFERENCES = "quran_audio_player";
+    private static final String VOLUME_KEY = "volume";
 
     private ListenableFuture<MediaController> controllerFuture;
     private MediaController controller;
@@ -119,6 +130,106 @@ public class QuranAudioPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void setVolume(PluginCall call) {
+        Double volume = call.getDouble("volume");
+        if (volume == null || volume < 0 || volume > 1) {
+            call.reject("Volume must be between zero and one");
+            return;
+        }
+
+        withController(call, mediaController -> {
+            mediaController.setVolume(volume.floatValue());
+            getContext()
+                .getSharedPreferences(PLAYER_PREFERENCES, Context.MODE_PRIVATE)
+                .edit()
+                .putFloat(VOLUME_KEY, volume.floatValue())
+                .apply();
+            call.resolve(createState(null));
+            notifyState();
+        });
+    }
+
+    @PluginMethod
+    public void saveForOffline(PluginCall call) {
+        String url = call.getString("url");
+        if (!isValidHttpsUrl(url)) {
+            call.reject("A valid HTTPS audio URL is required");
+            return;
+        }
+
+        QuranAudioCache.savePermanently(getContext(), url, isSaved ->
+            mainExecutor.execute(() -> {
+                if (!isSaved) {
+                    call.reject("Could not save recitation");
+                    return;
+                }
+
+                saveDownloadMetadata(call, url);
+                call.resolve(createState(url));
+                notifyState();
+            })
+        );
+    }
+
+    @PluginMethod
+    public void listDownloads(PluginCall call) {
+        SharedPreferences preferences = getContext().getSharedPreferences(
+            DOWNLOAD_PREFERENCES,
+            Context.MODE_PRIVATE
+        );
+        List<JSObject> downloads = new ArrayList<>();
+
+        for (Map.Entry<String, ?> entry : preferences.getAll().entrySet()) {
+            String url = entry.getKey();
+            long size = QuranAudioCache.getSavedSize(getContext(), url);
+            if (size <= 0 || !(entry.getValue() instanceof String)) {
+                preferences.edit().remove(url).apply();
+                continue;
+            }
+
+            try {
+                JSObject item = new JSObject((String) entry.getValue());
+                item.put("size", size);
+                downloads.add(item);
+            } catch (Exception ignored) {
+                preferences.edit().remove(url).apply();
+            }
+        }
+
+        downloads.sort(Comparator.comparingLong(item -> -item.optLong("savedAt", 0)));
+        JSArray items = new JSArray();
+        for (JSObject item : downloads) items.put(item);
+
+        JSObject result = new JSObject();
+        result.put("items", items);
+        call.resolve(result);
+    }
+
+    @PluginMethod
+    public void removeDownload(PluginCall call) {
+        String url = call.getString("url");
+        if (!isValidHttpsUrl(url)) {
+            call.reject("A valid HTTPS audio URL is required");
+            return;
+        }
+
+        if (!QuranAudioCache.removeSaved(getContext(), url)) {
+            call.reject("Could not remove recitation");
+            return;
+        }
+
+        getContext()
+            .getSharedPreferences(DOWNLOAD_PREFERENCES, Context.MODE_PRIVATE)
+            .edit()
+            .remove(url)
+            .apply();
+        JSObject result = new JSObject();
+        result.put("removed", true);
+        call.resolve(result);
+        notifyState();
+    }
+
+    @PluginMethod
     public void getState(PluginCall call) {
         String requestedUrl = call.getString("url");
         withController(call, mediaController -> call.resolve(createState(requestedUrl)));
@@ -134,6 +245,10 @@ public class QuranAudioPlugin extends Plugin {
     private void attachController() {
         try {
             controller = controllerFuture.get();
+            float savedVolume = getContext()
+                .getSharedPreferences(PLAYER_PREFERENCES, Context.MODE_PRIVATE)
+                .getFloat(VOLUME_KEY, 1f);
+            controller.setVolume(savedVolume);
             controller.addListener(playerListener);
             notifyState();
         } catch (Exception ignored) {
@@ -170,8 +285,26 @@ public class QuranAudioPlugin extends Plugin {
         state.put("duration", controller == null ? 0 : getDuration(controller));
         state.put("playbackState", controller == null ? "idle" : getPlaybackState(controller));
         state.put("cacheStatus", QuranAudioCache.getStatus(getContext(), cacheUrl));
+        state.put("volume", controller == null ? 1 : controller.getVolume());
         state.put("error", playbackError == null ? "" : playbackError);
         return state;
+    }
+
+    private void saveDownloadMetadata(PluginCall call, String url) {
+        JSObject metadata = new JSObject();
+        metadata.put("audioUrl", url);
+        metadata.put("surahId", call.getString("surahId", "1"));
+        metadata.put("surahName", call.getString("title", "القرآن الكريم"));
+        metadata.put("reciterId", call.getString("reciterId", ""));
+        metadata.put("reciterName", call.getString("artist", "دقائق نور"));
+        metadata.put("savedAt", System.currentTimeMillis());
+        metadata.put("size", QuranAudioCache.getSavedSize(getContext(), url));
+
+        getContext()
+            .getSharedPreferences(DOWNLOAD_PREFERENCES, Context.MODE_PRIVATE)
+            .edit()
+            .putString(url, metadata.toString())
+            .apply();
     }
 
     private String getCurrentUrl() {

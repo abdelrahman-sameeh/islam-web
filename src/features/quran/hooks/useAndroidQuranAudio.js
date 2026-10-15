@@ -8,12 +8,20 @@ const INITIAL_STATE = {
   duration: 0,
   playbackState: "idle",
   cacheStatus: "remote",
+  volume: 1,
   error: "",
 };
 
-const useAndroidQuranAudio = ({ audioUrl, title, artist }) => {
+const useAndroidQuranAudio = ({
+  audioUrl,
+  title,
+  artist,
+  surahId,
+  reciterId,
+}) => {
   const [playerState, setPlayerState] = useState(INITIAL_STATE);
   const [actionError, setActionError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const previousAudioUrl = useRef(audioUrl);
 
   const syncState = useCallback(async () => {
@@ -91,12 +99,50 @@ const useAndroidQuranAudio = ({ audioUrl, title, artist }) => {
     }
   };
 
+  const setVolume = async (volume) => {
+    setPlayerState((currentState) => ({ ...currentState, volume }));
+    try {
+      const nextState = await QuranAudio.setVolume({ volume });
+      setPlayerState(nextState);
+    } catch {
+      setActionError("تعذّر تغيير مستوى الصوت.");
+    }
+  };
+
+  const saveForOffline = async () => {
+    if (isSaving || playerState.cacheStatus === "saved") return;
+
+    setIsSaving(true);
+    setActionError("");
+    try {
+      const nextState = await QuranAudio.saveForOffline({
+        url: audioUrl,
+        title,
+        artist,
+        surahId,
+        reciterId,
+      });
+      setPlayerState(nextState);
+    } catch {
+      setActionError(
+        navigator.onLine === false
+          ? "يلزم الاتصال بالإنترنت لتحميل هذه التلاوة أول مرة."
+          : "تعذّر حفظ التلاوة على الجهاز. حاول مرة أخرى."
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return {
     ...playerState,
     isCurrentAudio,
     displayError: actionError || (playerState.error ? "تعذّر تشغيل التلاوة الآن." : ""),
+    isSaving,
     togglePlayback,
     seekTo,
+    setVolume,
+    saveForOffline,
   };
 };
 

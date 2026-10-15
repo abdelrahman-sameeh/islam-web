@@ -1307,10 +1307,10 @@ body.dark-theme .error-copy {
 
 .native-audio-controls {
   display: grid !important;
-  grid-template-columns: 44px minmax(0, 1fr);
-  grid-template-rows: auto auto;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
   align-items: center;
-  gap: 4px 12px;
+  gap: 6px 12px;
 }
 
 .native-audio-controls__toggle {
@@ -1328,6 +1328,7 @@ body.dark-theme .error-copy {
 }
 
 .native-audio-controls input[type="range"] {
+  grid-column: 2 / 4;
   width: 100%;
   min-height: 24px;
   margin: 0;
@@ -1344,6 +1345,132 @@ body.dark-theme .error-copy {
   color: var(--hero-muted);
   font-size: 11px;
   text-align: end;
+}
+
+.native-audio-controls__volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--hero-muted);
+}
+
+.native-audio-controls__volume input[type="range"] {
+  grid-column: auto;
+  width: 112px;
+}
+
+.native-audio-controls__save {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-inline: 14px;
+  border: 1px solid color-mix(in srgb, var(--hero-muted) 35%, transparent);
+  border-radius: 12px;
+  color: var(--hero-text);
+  background: color-mix(in srgb, var(--hero-text) 9%, transparent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.native-audio-controls__save:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.surah-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 920px;
+  margin: 0 auto 18px;
+}
+
+.surah-navigation button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 160px;
+  min-height: 44px;
+  padding-inline: 16px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 12px;
+  color: var(--brand-800);
+  background: var(--secondary-color);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.surah-navigation button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.downloads-summary {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 22px;
+  padding: 22px;
+  border-radius: 18px;
+  color: var(--hero-text);
+  background: var(--hero-surface);
+  box-shadow: var(--card-shadow);
+}
+
+.downloads-summary strong {
+  font-size: 21px;
+}
+
+.downloads-summary small {
+  color: var(--hero-muted);
+  line-height: 1.7;
+}
+
+.downloads-list {
+  display: grid;
+  gap: 14px;
+}
+
+.download-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 22px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 18px;
+  background: var(--secondary-color);
+  box-shadow: var(--card-shadow);
+}
+
+.download-card span {
+  color: var(--brand-700);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.download-card h2 {
+  margin: 6px 0;
+  color: var(--black);
+  font-size: 19px;
+}
+
+.download-card p {
+  margin: 0;
+  color: var(--neutral-500);
+}
+
+.download-card__actions {
+  display: flex;
+  gap: 10px;
+  flex: 0 0 auto;
 }
 
 /* Tafsir */
@@ -2646,6 +2773,44 @@ body.dark-theme .favorites-tabs button.is-selected {
 
   .audio-player--native .native-audio-controls {
     grid-column: 1 / -1;
+  }
+
+  .native-audio-controls {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .native-audio-controls input[type="range"] {
+    grid-column: 2;
+  }
+
+  .native-audio-controls__volume {
+    grid-column: 1 / -1;
+  }
+
+  .native-audio-controls__volume input[type="range"] {
+    width: 100%;
+  }
+
+  .surah-navigation button {
+    min-width: 0;
+    flex: 1;
+    padding-inline: 10px;
+  }
+
+  .surah-navigation button span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .download-card,
+  .download-card__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .download-card__actions > * {
+    width: 100%;
   }
 
   .tafsir-content,

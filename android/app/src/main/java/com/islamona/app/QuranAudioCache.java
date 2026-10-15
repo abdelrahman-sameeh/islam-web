@@ -4,6 +4,7 @@ import android.content.Context;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +20,8 @@ import javax.net.ssl.HttpsURLConnection;
 final class QuranAudioCache {
 
     private static final int CACHE_LIMIT = 3;
+    private static final String RECENT_DIRECTORY = "quran-audio";
+    private static final String SAVED_DIRECTORY = "quran-audio-saved";
     private static final int CONNECT_TIMEOUT_MS = 15_000;
     private static final int READ_TIMEOUT_MS = 30_000;
     private static final ExecutorService DOWNLOAD_EXECUTOR = Executors.newSingleThreadExecutor();
@@ -30,7 +33,10 @@ final class QuranAudioCache {
     static File getCachedFile(Context context, String url) {
         if (url == null || url.isBlank()) return null;
 
-        File file = new File(getCacheDirectory(context), getFileName(url));
+        File savedFile = getSavedFile(context, url);
+        if (savedFile.isFile() && savedFile.length() > 0) return savedFile;
+
+        File file = new File(getRecentDirectory(context), getFileName(url));
         if (!file.isFile() || file.length() == 0) return null;
 
         // The file timestamp is the cache's simple least-recently-used marker.
@@ -40,6 +46,8 @@ final class QuranAudioCache {
 
     static String getStatus(Context context, String url) {
         if (url == null || url.isBlank()) return "remote";
+        File savedFile = getSavedFile(context, url);
+        if (savedFile.isFile() && savedFile.length() > 0) return "saved";
         if (getCachedFile(context, url) != null) return "cached";
         if (ACTIVE_DOWNLOADS.contains(url)) return "saving";
         return FAILED_DOWNLOADS.contains(url) ? "error" : "remote";
@@ -52,7 +60,7 @@ final class QuranAudioCache {
         Context appContext = context.getApplicationContext();
         DOWNLOAD_EXECUTOR.execute(() -> {
             try {
-                download(appContext, url);
+                download(appContext, url, getRecentDirectory(appContext));
                 trim(appContext);
             } catch (Exception ignored) {
                 FAILED_DOWNLOADS.add(url);
@@ -64,16 +72,50 @@ final class QuranAudioCache {
         });
     }
 
-    private static void download(Context context, String urlValue) throws Exception {
+    static void savePermanently(Context context, String url, SaveCallback callback) {
+        File savedFile = getSavedFile(context, url);
+        if (savedFile.isFile() && savedFile.length() > 0) {
+            callback.onFinished(true);
+            return;
+        }
+
+        Context appContext = context.getApplicationContext();
+        DOWNLOAD_EXECUTOR.execute(() -> {
+            boolean isSaved = false;
+            try {
+                File recentFile = new File(getRecentDirectory(appContext), getFileName(url));
+                ensureDirectory(getSavedDirectory(appContext));
+                if (recentFile.isFile() && recentFile.length() > 0) {
+                    moveFile(recentFile, getSavedFile(appContext, url));
+                } else {
+                    download(appContext, url, getSavedDirectory(appContext));
+                }
+                FAILED_DOWNLOADS.remove(url);
+                isSaved = true;
+            } catch (Exception ignored) {
+                FAILED_DOWNLOADS.add(url);
+            }
+            callback.onFinished(isSaved);
+        });
+    }
+
+    static boolean removeSaved(Context context, String url) {
+        File file = getSavedFile(context, url);
+        return !file.exists() || file.delete();
+    }
+
+    static long getSavedSize(Context context, String url) {
+        File file = getSavedFile(context, url);
+        return file.isFile() ? file.length() : 0;
+    }
+
+    private static void download(Context context, String urlValue, File directory) throws Exception {
         URL url = new URL(urlValue);
         if (!"https".equalsIgnoreCase(url.getProtocol())) {
             throw new IllegalArgumentException("Only HTTPS audio sources are allowed");
         }
 
-        File directory = getCacheDirectory(context);
-        if (!directory.exists() && !directory.mkdirs()) {
-            throw new IllegalStateException("Could not create audio cache directory");
-        }
+        ensureDirectory(directory);
 
         File destination = new File(directory, getFileName(urlValue));
         File partial = new File(directory, destination.getName() + ".part");
@@ -111,7 +153,7 @@ final class QuranAudioCache {
     }
 
     private static void trim(Context context) {
-        File[] files = getCacheDirectory(context).listFiles(
+        File[] files = getRecentDirectory(context).listFiles(
             file -> file.isFile() && !file.getName().endsWith(".part")
         );
         if (files == null || files.length <= CACHE_LIMIT) return;
@@ -122,8 +164,42 @@ final class QuranAudioCache {
         }
     }
 
-    private static File getCacheDirectory(Context context) {
-        return new File(context.getNoBackupFilesDir(), "quran-audio");
+    private static File getRecentDirectory(Context context) {
+        return new File(context.getNoBackupFilesDir(), RECENT_DIRECTORY);
+    }
+
+    private static File getSavedDirectory(Context context) {
+        return new File(context.getNoBackupFilesDir(), SAVED_DIRECTORY);
+    }
+
+    private static File getSavedFile(Context context, String url) {
+        return new File(getSavedDirectory(context), getFileName(url));
+    }
+
+    private static void ensureDirectory(File directory) {
+        if (!directory.exists() && !directory.mkdirs()) {
+            throw new IllegalStateException("Could not create audio directory");
+        }
+    }
+
+    private static void moveFile(File source, File destination) throws Exception {
+        if (source.renameTo(destination)) return;
+
+        try (
+            BufferedInputStream input = new BufferedInputStream(new FileInputStream(source));
+            BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(destination))
+        ) {
+            byte[] buffer = new byte[16 * 1024];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+        }
+
+        if (destination.length() == 0 || !source.delete()) {
+            destination.delete();
+            throw new IllegalStateException("Could not move cached audio");
+        }
     }
 
     private static String getFileName(String url) {
@@ -136,5 +212,9 @@ final class QuranAudioCache {
         } catch (Exception error) {
             throw new IllegalStateException("Could not create audio cache key", error);
         }
+    }
+
+    interface SaveCallback {
+        void onFinished(boolean isSaved);
     }
 }

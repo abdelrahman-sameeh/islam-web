@@ -1,7 +1,12 @@
 import { faHeadphones, faSliders } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
 import SearchableSelect from "../../../components/ui/SearchableSelect";
@@ -18,12 +23,14 @@ import {
 } from "../api/recitationsApi";
 import ReciterSelect from "../components/ReciterSelect";
 import AndroidQuranAudioPlayer from "../components/AndroidQuranAudioPlayer";
+import SurahNavigation from "../components/SurahNavigation";
 import useOfflineQuranAudio from "../hooks/useOfflineQuranAudio";
 import { isAndroidNativeRuntime } from "../native/quranAudioPlugin";
 import {
   BISMILLAH,
   shouldShowStandaloneBismillah,
 } from "../utils/bismillah";
+import getReaderPath from "../utils/getReaderPath";
 
 const QURAN_PREFERENCES_KEY = "islamona.quran-reader.v1";
 const DEFAULT_SURAH_ID = "1";
@@ -36,13 +43,6 @@ const getSafeSurahId = (value) => {
   return Number.isInteger(number) && number >= 1 && number <= 114
     ? String(number)
     : DEFAULT_SURAH_ID;
-};
-
-const getReaderPath = (surahId, reciterId) => {
-  const path = `/quran/surah/${surahId}`;
-  return reciterId && reciterId !== DEFAULT_RECITER.id
-    ? `${path}?reciter=${encodeURIComponent(reciterId)}`
-    : path;
 };
 
 const QuranReaderPage = () => {
@@ -156,6 +156,15 @@ const QuranReaderPage = () => {
         selectedReciter.availableSurahs.includes(itemId)
       )
     : surahList;
+  const currentSurahIndex = availableSurahs.findIndex(
+    ({ id: itemId }) => itemId === surahId
+  );
+  const previousSurah =
+    currentSurahIndex > 0 ? availableSurahs[currentSurahIndex - 1] : null;
+  const nextSurah =
+    currentSurahIndex >= 0 && currentSurahIndex < availableSurahs.length - 1
+      ? availableSurahs[currentSurahIndex + 1]
+      : null;
   const reciterOptions = useMemo(
     () => [
       DEFAULT_RECITER,
@@ -237,6 +246,11 @@ const QuranReaderPage = () => {
           eyebrow="قراءة واستماع"
           title="القرآن الكريم"
           description="مساحة قراءة هادئة مع تلاوات متعددة ونص واضح."
+          action={
+            <Link className="secondary-button" to="/quran/downloads">
+              التلاوات المحمّلة
+            </Link>
+          }
         />
 
         <section className="reader-toolbar" aria-label="إعدادات القراءة">
@@ -297,6 +311,14 @@ const QuranReaderPage = () => {
           </div>
         )}
 
+        {!hasPassageRange && (
+          <SurahNavigation
+            previousSurah={previousSurah}
+            nextSurah={nextSurah}
+            onSelect={handleSurahChange}
+          />
+        )}
+
         {status === "loading" && (
           <FeedbackState title="جاري تجهيز السورة..." message="نحمّل النص من مصدره." />
         )}
@@ -345,7 +367,9 @@ const QuranReaderPage = () => {
         {!hasPassageRange && isAndroidNative && (
           <AndroidQuranAudioPlayer
             audioUrl={audioUrl}
+            surahId={surahId}
             surahName={surahName}
+            reciterId={selectedReciter.id}
             reciterName={selectedReciter.name}
           />
         )}
