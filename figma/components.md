@@ -39,14 +39,13 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
 
 ## Audio
 
-- `AudioPlayer`: play/pause, seek, elapsed/remaining time, reciter, speed, volume.
+- `AudioPlayer`: play/pause, seek, elapsed/remaining time, reciter, explicit download, and a direct link to saved recitations. Android volume stays with the system controls.
 - Desktop: sticky bottom card within content width.
 - Mobile: persistent mini-player above bottom navigation; expands to a sheet.
 - Preserve playback when navigating between Quran routes.
-- Cache a recitation after the user starts it and label whether it is being
-  saved, already available offline, or could not be saved. Keep only a bounded
-  number of recent recitations so automatic offline support cannot grow without
-  limit.
+- Web may cache a bounded number of recent recitations after playback starts.
+  Android never caches audio automatically: only the explicit download action
+  writes an audio file, and the saved-recitation page owns removal.
 - Android uses native media controls and a foreground playback notification so
   recitation continues when the screen is locked. Play/pause and seeking remain
   available from the app and the system media surface.

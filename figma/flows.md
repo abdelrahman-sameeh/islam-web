@@ -22,7 +22,7 @@ current browser or installed-app device and do not require an account.
 Home/Quran list -> select or search surah -> reader -> choose reciter -> play ->
 open tafsir for a verse -> return without losing reading position.
 
-URL owns the selected surah and verse. Local preference owns reciter, volume,
+URL owns the selected surah and verse. Local preference owns the reciter,
 playback speed, font size, and theme.
 
 ## Adhkar

@@ -49,8 +49,9 @@ const QuranReaderPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const surahId = getSafeSurahId(id);
+  const routeSurahId = getSafeSurahId(id);
   const requestedReciterId = searchParams.get("reciter");
+  const [surahId, setSurahId] = useState(routeSurahId);
   const [ayahs, setAyahs] = useState([]);
   const [status, setStatus] = useState("loading");
   const [requestVersion, setRequestVersion] = useState(0);
@@ -63,6 +64,10 @@ const QuranReaderPage = () => {
     isSessionPassage: searchParams.get("session") === "1",
   });
   const { isFavorite, toggleFavorite } = useFavorites();
+
+  useEffect(() => {
+    setSurahId(routeSurahId);
+  }, [routeSurahId]);
 
   const passageStart = Number(searchParams.get("from"));
   const passageEnd = Number(searchParams.get("to"));
@@ -192,11 +197,10 @@ const QuranReaderPage = () => {
       requestedReciter.availableSurahs &&
       !requestedReciter.availableSurahs.includes(surahId)
     ) {
+      const firstAvailableSurahId = requestedReciter.availableSurahs[0] ?? "1";
+      setSurahId(firstAvailableSurahId);
       navigate(
-        getReaderPath(
-          requestedReciter.availableSurahs[0] ?? "1",
-          requestedReciter.id
-        ),
+        getReaderPath(firstAvailableSurahId, requestedReciter.id),
         { replace: true }
       );
       return;
@@ -216,6 +220,7 @@ const QuranReaderPage = () => {
         ? reciter.availableSurahs[0] ?? "1"
         : surahId;
 
+    setSurahId(nextSurahId);
     void setStoredJson(QURAN_PREFERENCES_KEY, {
       reciterId: reciter.id,
     });
@@ -223,7 +228,9 @@ const QuranReaderPage = () => {
   };
 
   const handleSurahChange = (surah) => {
-    navigate(getReaderPath(surah.id, selectedReciter.id));
+    const nextSurahId = String(surah.id);
+    setSurahId(nextSurahId);
+    navigate(getReaderPath(nextSurahId, selectedReciter.id));
   };
 
   const audioUrl = hasPassageRange
@@ -248,7 +255,7 @@ const QuranReaderPage = () => {
           description="مساحة قراءة هادئة مع تلاوات متعددة ونص واضح."
           action={
             <Link className="secondary-button" to="/quran/downloads">
-              التلاوات المحمّلة
+              التلاوات المحفوظة
             </Link>
           }
         />

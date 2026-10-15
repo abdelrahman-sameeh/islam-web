@@ -8,7 +8,6 @@ const INITIAL_STATE = {
   duration: 0,
   playbackState: "idle",
   cacheStatus: "remote",
-  volume: 1,
   error: "",
 };
 
@@ -99,16 +98,6 @@ const useAndroidQuranAudio = ({
     }
   };
 
-  const setVolume = async (volume) => {
-    setPlayerState((currentState) => ({ ...currentState, volume }));
-    try {
-      const nextState = await QuranAudio.setVolume({ volume });
-      setPlayerState(nextState);
-    } catch {
-      setActionError("تعذّر تغيير مستوى الصوت.");
-    }
-  };
-
   const saveForOffline = async () => {
     if (isSaving || playerState.cacheStatus === "saved") return;
 
@@ -141,7 +130,6 @@ const useAndroidQuranAudio = ({
     isSaving,
     togglePlayback,
     seekTo,
-    setVolume,
     saveForOffline,
   };
 };

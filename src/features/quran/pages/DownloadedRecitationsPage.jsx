@@ -69,7 +69,7 @@ const DownloadedRecitationsPage = () => {
       <div className="app-container">
         <PageHeader
           eyebrow="استماع دون إنترنت"
-          title="التلاوات المحمّلة"
+          title="التلاوات المحفوظة"
           description="تظل هذه التلاوات محفوظة على جهازك حتى تحذفها بنفسك."
           action={
             <Link className="secondary-button" to="/quran">
@@ -89,12 +89,12 @@ const DownloadedRecitationsPage = () => {
         </section>
 
         {status === "loading" && (
-          <FeedbackState title="جاري قراءة التلاوات المحمّلة..." />
+          <FeedbackState title="جاري قراءة التلاوات المحفوظة..." />
         )}
         {status === "error" && (
           <FeedbackState
             type="error"
-            title="تعذّر فتح التلاوات المحمّلة"
+            title="تعذّر فتح التلاوات المحفوظة"
             message="حاول مرة أخرى، ولن تُحذف أي تلاوة محفوظة."
             onRetry={loadDownloads}
           />

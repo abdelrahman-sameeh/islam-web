@@ -31,8 +31,6 @@ import java.util.concurrent.Executor;
 public class QuranAudioPlugin extends Plugin {
 
     private static final String DOWNLOAD_PREFERENCES = "quran_audio_downloads";
-    private static final String PLAYER_PREFERENCES = "quran_audio_player";
-    private static final String VOLUME_KEY = "volume";
 
     private ListenableFuture<MediaController> controllerFuture;
     private MediaController controller;
@@ -122,26 +120,6 @@ public class QuranAudioPlugin extends Plugin {
         withController(call, mediaController -> {
             long duration = getDuration(mediaController);
             mediaController.seekTo(duration > 0 ? Math.min(position, duration) : position);
-            call.resolve(createState(null));
-            notifyState();
-        });
-    }
-
-    @PluginMethod
-    public void setVolume(PluginCall call) {
-        Double volume = call.getDouble("volume");
-        if (volume == null || volume < 0 || volume > 1) {
-            call.reject("Volume must be between zero and one");
-            return;
-        }
-
-        withController(call, mediaController -> {
-            mediaController.setVolume(volume.floatValue());
-            getContext()
-                .getSharedPreferences(PLAYER_PREFERENCES, Context.MODE_PRIVATE)
-                .edit()
-                .putFloat(VOLUME_KEY, volume.floatValue())
-                .apply();
             call.resolve(createState(null));
             notifyState();
         });
@@ -243,10 +221,6 @@ public class QuranAudioPlugin extends Plugin {
     private void attachController() {
         try {
             controller = controllerFuture.get();
-            float savedVolume = getContext()
-                .getSharedPreferences(PLAYER_PREFERENCES, Context.MODE_PRIVATE)
-                .getFloat(VOLUME_KEY, 1f);
-            controller.setVolume(savedVolume);
             controller.addListener(playerListener);
             notifyState();
         } catch (Exception ignored) {
@@ -283,7 +257,6 @@ public class QuranAudioPlugin extends Plugin {
         state.put("duration", controller == null ? 0 : getDuration(controller));
         state.put("playbackState", controller == null ? "idle" : getPlaybackState(controller));
         state.put("cacheStatus", QuranAudioCache.getStatus(getContext(), cacheUrl));
-        state.put("volume", controller == null ? 1 : controller.getVolume());
         state.put("error", playbackError == null ? "" : playbackError);
         return state;
     }

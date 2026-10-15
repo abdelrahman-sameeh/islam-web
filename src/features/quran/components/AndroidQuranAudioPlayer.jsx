@@ -4,10 +4,10 @@ import {
   faHeadphones,
   faPause,
   faPlay,
-  faVolumeHigh,
-  faVolumeXmark,
+  faFolderOpen,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 import useAndroidQuranAudio from "../hooks/useAndroidQuranAudio";
 
 const formatTime = (milliseconds) => {
@@ -82,39 +82,28 @@ const AndroidQuranAudioPlayer = ({
         <span className="native-audio-controls__time" dir="ltr">
           {formatTime(position)} / {formatTime(duration)}
         </span>
-        <label className="native-audio-controls__volume">
-          <FontAwesomeIcon
-            icon={player.volume === 0 ? faVolumeXmark : faVolumeHigh}
-            aria-hidden="true"
-          />
-          <span className="visually-hidden">مستوى الصوت</span>
-          <input
-            type="range"
-            dir="ltr"
-            min="0"
-            max="1"
-            step="0.05"
-            value={player.volume}
-            aria-label="مستوى الصوت"
-            onChange={(event) => player.setVolume(Number(event.target.value))}
-          />
-        </label>
-        <button
-          type="button"
-          className="native-audio-controls__save"
-          disabled={player.isSaving || player.cacheStatus === "saved"}
-          onClick={player.saveForOffline}
-        >
-          <FontAwesomeIcon
-            icon={player.cacheStatus === "saved" ? faCheck : faDownload}
-            aria-hidden="true"
-          />
-          {player.cacheStatus === "saved"
-            ? "محفوظة"
-            : player.isSaving
-            ? "جاري الحفظ..."
-            : "حفظ على الجهاز"}
-        </button>
+        <div className="native-audio-controls__actions">
+          <button
+            type="button"
+            className="native-audio-controls__save"
+            disabled={player.isSaving || player.cacheStatus === "saved"}
+            onClick={player.saveForOffline}
+          >
+            <FontAwesomeIcon
+              icon={player.cacheStatus === "saved" ? faCheck : faDownload}
+              aria-hidden="true"
+            />
+            {player.cacheStatus === "saved"
+              ? "محفوظة"
+              : player.isSaving
+              ? "جاري الحفظ..."
+              : "حفظ على الجهاز"}
+          </button>
+          <Link className="native-audio-controls__save" to="/quran/downloads">
+            <FontAwesomeIcon icon={faFolderOpen} aria-hidden="true" />
+            التلاوات المحفوظة
+          </Link>
+        </div>
       </div>
     </div>
   );

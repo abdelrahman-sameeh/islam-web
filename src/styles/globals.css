@@ -1307,7 +1307,7 @@ body.dark-theme .error-copy {
 
 .native-audio-controls {
   display: grid !important;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-columns: 44px minmax(0, 1fr);
   grid-template-rows: auto auto auto;
   align-items: center;
   gap: 6px 12px;
@@ -1328,7 +1328,7 @@ body.dark-theme .error-copy {
 }
 
 .native-audio-controls input[type="range"] {
-  grid-column: 2 / 4;
+  grid-column: 2;
   width: 100%;
   min-height: 24px;
   margin: 0;
@@ -1347,21 +1347,14 @@ body.dark-theme .error-copy {
   text-align: end;
 }
 
-.native-audio-controls__volume {
-  display: flex;
-  align-items: center;
+.native-audio-controls__actions {
+  grid-column: 1 / -1;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
-  min-height: 44px;
-  color: var(--hero-muted);
-}
-
-.native-audio-controls__volume input[type="range"] {
-  grid-column: auto;
-  width: 112px;
 }
 
 .native-audio-controls__save {
-  grid-column: 1 / -1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1373,7 +1366,9 @@ body.dark-theme .error-copy {
   color: var(--hero-text);
   background: color-mix(in srgb, var(--hero-text) 9%, transparent);
   font: inherit;
+  font-size: 13px;
   font-weight: 700;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -2783,12 +2778,8 @@ body.dark-theme .favorites-tabs button.is-selected {
     grid-column: 2;
   }
 
-  .native-audio-controls__volume {
-    grid-column: 1 / -1;
-  }
-
-  .native-audio-controls__volume input[type="range"] {
-    width: 100%;
+  .native-audio-controls__actions {
+    grid-template-columns: 1fr;
   }
 
   .surah-navigation button {
