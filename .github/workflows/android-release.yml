@@ -49,7 +49,7 @@ jobs:
           artifact_name="daqaeq-noor-android-v${release_version}.apk"
           mkdir -p release-output
           cp android/app/build/outputs/apk/debug/app-debug.apk "release-output/$artifact_name"
-          sha256sum "release-output/$artifact_name" > "release-output/$artifact_name.sha256"
+          (cd release-output && sha256sum "$artifact_name" > "$artifact_name.sha256")
           echo "RELEASE_VERSION=$release_version" >> "$GITHUB_ENV"
           echo "APK_PATH=release-output/$artifact_name" >> "$GITHUB_ENV"
           echo "CHECKSUM_PATH=release-output/$artifact_name.sha256" >> "$GITHUB_ENV"
