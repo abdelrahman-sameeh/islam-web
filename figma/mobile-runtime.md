@@ -33,11 +33,12 @@ generated from the same source to prevent visual drift.
 
 ## Offline behavior
 
-The web build precaches the app shell, icon, and manifest. Successfully loaded
-Quran, hadith, adhkar, prayer-time, reciter, and font responses are cached by
-exact request URL for later use. Audio is intentionally not cached because it
-can consume significant device storage.
+The native shell always contains the built interface. Recently opened Quran,
+hadith, tafsir-search, adhkar, and reciter data is stored in a bounded IndexedDB
+cache shared by the React code, so Android can reopen the same sourced content
+without relying on a service worker.
 
-The native shell always contains the built interface. Remote religious content
-still needs a first successful network request; no bundled copy may silently
-replace or alter the named upstream source.
+A Quran recitation is saved after playback starts. The three most recent audio
+blobs are retained and older ones are evicted. Remote religious content still
+needs one successful request before it becomes available offline; no bundled
+copy may silently replace or alter the named upstream source.

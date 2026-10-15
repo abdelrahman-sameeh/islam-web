@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const SHELL_CACHE = `islamona-shell-${CACHE_VERSION}`;
 const CONTENT_CACHE = `islamona-content-${CACHE_VERSION}`;
 const FONT_CACHE = `islamona-fonts-${CACHE_VERSION}`;
@@ -15,6 +15,7 @@ const APP_SHELL = [
 
 const CONTENT_HOSTS = new Set([
   "api.aladhan.com",
+  "api.alquran.cloud",
   "hadeethenc.com",
   "quranenc.com",
   "raw.githubusercontent.com",

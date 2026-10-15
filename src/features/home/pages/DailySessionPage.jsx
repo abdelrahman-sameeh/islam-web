@@ -130,6 +130,12 @@ const DailySessionPage = () => {
                       )}
                       <small>{hadithState.data.attribution}</small>
                     </div>
+                    {hadithState.data.explanation && (
+                      <details className="session-explanation">
+                        <summary>شرح الحديث</summary>
+                        <p>{hadithState.data.explanation}</p>
+                      </details>
+                    )}
                   </article>
                 )}
               </section>
@@ -155,12 +161,20 @@ const DailySessionPage = () => {
                 )}
                 {ayahState.status === "success" && (
                   <div className="session-tafsir">
-                    {ayahState.data.map((ayah, index) => (
-                      <details key={ayah.id} open={index === 0}>
+                    {ayahState.data.map((ayah) => (
+                      <details key={ayah.id}>
                         <summary>
-                          تفسير الآية {ayah.number.toLocaleString("ar-EG")}
+                          <span>
+                            الآية {ayah.number.toLocaleString("ar-EG")}
+                          </span>
+                          <strong className="quran-font" translate="no">
+                            {ayah.text}
+                          </strong>
                         </summary>
-                        <p>{ayah.tafsir}</p>
+                        <div className="session-tafsir__explanation">
+                          <h3>التفسير الميسر</h3>
+                          <p>{ayah.tafsir}</p>
+                        </div>
                       </details>
                     ))}
                   </div>

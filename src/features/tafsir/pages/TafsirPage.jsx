@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
@@ -6,15 +6,27 @@ import SearchableSelect from "../../../components/ui/SearchableSelect";
 import SourceBadge from "../../../components/ui/SourceBadge";
 import FavoriteButton from "../../favorites/components/FavoriteButton";
 import useFavorites from "../../favorites/hooks/useFavorites";
+import { getStoredJson, setStoredJson } from "../../../lib/deviceStorage";
 import { getSurahAyahs } from "../../quran/api/quranApi";
 import surahList from "../../quran/data/surahs";
 import VerseTafsirSearch from "../components/VerseTafsirSearch";
+
+const TAFSIR_PREFERENCES_KEY = "islamona.tafsir-view.v1";
+
+const isValidSurahId = (value) =>
+  surahList.some(({ id }) => id === String(value));
 
 const TafsirPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [ayahs, setAyahs] = useState([]);
   const [status, setStatus] = useState("loading");
   const [requestVersion, setRequestVersion] = useState(0);
+  const [isPreferencesReady, setIsPreferencesReady] = useState(false);
+  const hasInitialSelection = useRef(
+    searchParams.has("surah") ||
+      searchParams.has("ayah") ||
+      searchParams.has("q")
+  );
   const { isFavorite, toggleFavorite } = useFavorites();
   const requestedSurahId = searchParams.get("surah") ?? "1";
   const surahId = surahList.some(({ id }) => id === requestedSurahId)
@@ -23,6 +35,41 @@ const TafsirPage = () => {
   const requestedAyah = Number(searchParams.get("ayah") ?? 1);
 
   useEffect(() => {
+    let isActive = true;
+
+    const restorePreferences = async () => {
+      const stored = await getStoredJson(TAFSIR_PREFERENCES_KEY);
+      if (!isActive) return;
+
+      if (
+        !hasInitialSelection.current &&
+        isValidSurahId(stored?.surahId) &&
+        Number.isInteger(Number(stored?.ayahNumber)) &&
+        Number(stored.ayahNumber) > 0
+      ) {
+        const storedParams = {
+          surah: String(stored.surahId),
+          ayah: String(stored.ayahNumber),
+        };
+        if (typeof stored.query === "string" && stored.query.trim().length >= 3) {
+          storedParams.q = stored.query.trim();
+        }
+
+        setSearchParams(storedParams, { replace: true });
+      }
+
+      setIsPreferencesReady(true);
+    };
+
+    void restorePreferences();
+    return () => {
+      isActive = false;
+    };
+  }, [setSearchParams]);
+
+  useEffect(() => {
+    if (!isPreferencesReady) return undefined;
+
     const controller = new AbortController();
     setAyahs([]);
     setStatus("loading");
@@ -37,17 +84,35 @@ const TafsirPage = () => {
       });
 
     return () => controller.abort();
-  }, [requestVersion, surahId]);
+  }, [isPreferencesReady, requestVersion, surahId]);
 
   const selectedAyah =
     ayahs.find(({ number }) => number === requestedAyah) ?? ayahs[0];
   const surahName = surahList.find(({ id }) => id === String(surahId))?.label;
 
+  useEffect(() => {
+    if (!isPreferencesReady || !selectedAyah) return;
+
+    void setStoredJson(TAFSIR_PREFERENCES_KEY, {
+      surahId,
+      ayahNumber: selectedAyah.number,
+      query: searchParams.get("q")?.trim() ?? "",
+    });
+  }, [isPreferencesReady, searchParams, selectedAyah, surahId]);
+
   const handleSurahChange = (surah) => {
+    void setStoredJson(TAFSIR_PREFERENCES_KEY, {
+      surahId: surah.id,
+      ayahNumber: 1,
+    });
     setSearchParams({ surah: surah.id, ayah: "1" });
   };
 
   const handleAyahChange = (ayah) => {
+    void setStoredJson(TAFSIR_PREFERENCES_KEY, {
+      surahId,
+      ayahNumber: ayah.number,
+    });
     setSearchParams({ surah: surahId, ayah: String(ayah.number) });
   };
 
@@ -116,7 +181,7 @@ const TafsirPage = () => {
               <FeedbackState
                 type="error"
                 title="تعذّر تحميل التفسير"
-                message="تأكد من اتصالك ثم أعد المحاولة."
+                message="تعذّر الاتصال ولم نجد نسخة محفوظة لهذه السورة على الجهاز."
                 onRetry={() => setRequestVersion((value) => value + 1)}
               />
             )}

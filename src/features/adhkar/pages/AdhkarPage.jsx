@@ -4,11 +4,24 @@ import { useEffect, useMemo, useState } from "react";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
 import SourceBadge from "../../../components/ui/SourceBadge";
+import { getStoredJson, setStoredJson } from "../../../lib/deviceStorage";
 import { getAdhkar } from "../api/adhkarApi";
+
+const ADHKAR_PREFERENCES_KEY = "islamona.adhkar-view.v1";
 
 const getTargetCount = (item) => {
   const count = Number(item.count);
   return Number.isFinite(count) && count > 0 ? count : 1;
+};
+
+const getSafeCounts = (counts) => {
+  if (!counts || Array.isArray(counts) || typeof counts !== "object") return {};
+
+  return Object.fromEntries(
+    Object.entries(counts).filter(
+      ([, value]) => Number.isInteger(value) && value >= 0
+    )
+  );
 };
 
 const AdhkarPage = () => {
@@ -22,14 +35,25 @@ const AdhkarPage = () => {
     const controller = new AbortController();
     setStatus("loading");
 
-    getAdhkar(controller.signal)
-      .then((result) => {
+    Promise.all([
+      getStoredJson(ADHKAR_PREFERENCES_KEY),
+      getAdhkar(controller.signal),
+    ])
+      .then(([stored, result]) => {
+        const storedTitle = result.some(
+          ({ title }) => title === stored?.selectedTitle
+        )
+          ? stored.selectedTitle
+          : null;
+
         setCategories(result);
         setSelectedTitle(
-          result.find(({ title }) => title.includes("الصباح"))?.title ??
+          storedTitle ??
+            result.find(({ title }) => title.includes("الصباح"))?.title ??
             result[0]?.title ??
             ""
         );
+        setCounts(getSafeCounts(stored?.counts));
         setStatus(result.length ? "success" : "empty");
       })
       .catch(() => {
@@ -46,10 +70,33 @@ const AdhkarPage = () => {
 
   const handleCount = (index, target) => {
     const key = `${selectedTitle}-${index}`;
-    setCounts((current) => ({
-      ...current,
-      [key]: Math.max(0, (current[key] ?? target) - 1),
-    }));
+    setCounts((current) => {
+      const nextCounts = {
+        ...current,
+        [key]: Math.max(0, (current[key] ?? target) - 1),
+      };
+      void setStoredJson(ADHKAR_PREFERENCES_KEY, {
+        selectedTitle,
+        counts: nextCounts,
+      });
+      return nextCounts;
+    });
+  };
+
+  const handleCategoryChange = (title) => {
+    setSelectedTitle(title);
+    void setStoredJson(ADHKAR_PREFERENCES_KEY, {
+      selectedTitle: title,
+      counts,
+    });
+  };
+
+  const handleResetCounts = () => {
+    setCounts({});
+    void setStoredJson(ADHKAR_PREFERENCES_KEY, {
+      selectedTitle,
+      counts: {},
+    });
   };
 
   return (
@@ -63,7 +110,7 @@ const AdhkarPage = () => {
             <button
               type="button"
               className="secondary-button"
-              onClick={() => setCounts({})}
+              onClick={handleResetCounts}
             >
               <FontAwesomeIcon icon={faRotate} />
               إعادة العدّادات
@@ -76,7 +123,7 @@ const AdhkarPage = () => {
           <FeedbackState
             type="error"
             title="تعذّر تحميل الأذكار"
-            message="تأكد من اتصالك ثم حاول مرة أخرى."
+            message="تعذّر الاتصال ولم نجد نسخة محفوظة من الأذكار على الجهاز."
             onRetry={() => setRequestVersion((value) => value + 1)}
           />
         )}
@@ -95,7 +142,7 @@ const AdhkarPage = () => {
                     key={category.title}
                     className={category.title === selectedTitle ? "is-selected" : ""}
                     aria-pressed={category.title === selectedTitle}
-                    onClick={() => setSelectedTitle(category.title)}
+                    onClick={() => handleCategoryChange(category.title)}
                   >
                     {category.title}
                   </button>

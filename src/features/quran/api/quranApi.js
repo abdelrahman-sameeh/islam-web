@@ -1,4 +1,5 @@
 import axios from "axios";
+import { loadWithOfflineFallback } from "../../../lib/offlineResourceStore";
 
 const QURAN_ENC_BASE_URL =
   "https://quranenc.com/api/v1/translation/sura/arabic_moyassar";
@@ -11,19 +12,28 @@ const isValidSurahId = (surahId) => {
 export const getSurahAyahs = async (surahId, signal) => {
   if (!isValidSurahId(surahId)) throw new Error("INVALID_SURAH_ID");
 
-  const response = await axios.get(`${QURAN_ENC_BASE_URL}/${surahId}`, {
+  return loadWithOfflineFallback({
+    key: `quran-surah:${surahId}`,
+    group: "quran-surahs",
+    limit: 12,
     signal,
+    isValid: (value) => Array.isArray(value) && value.length > 0,
+    load: async () => {
+      const response = await axios.get(`${QURAN_ENC_BASE_URL}/${surahId}`, {
+        signal,
+      });
+      const result = response.data?.result;
+
+      if (!Array.isArray(result) || result.length === 0) {
+        throw new Error("INVALID_SURAH_RESPONSE");
+      }
+
+      return result.map((ayah) => ({
+        id: String(ayah.id ?? `${surahId}-${ayah.aya}`),
+        number: Number(ayah.aya),
+        text: ayah.arabic_text,
+        tafsir: ayah.translation,
+      }));
+    },
   });
-  const result = response.data?.result;
-
-  if (!Array.isArray(result) || result.length === 0) {
-    throw new Error("INVALID_SURAH_RESPONSE");
-  }
-
-  return result.map((ayah) => ({
-    id: String(ayah.id ?? `${surahId}-${ayah.aya}`),
-    number: Number(ayah.aya),
-    text: ayah.arabic_text,
-    tafsir: ayah.translation,
-  }));
 };
