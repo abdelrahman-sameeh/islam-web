@@ -17,7 +17,9 @@ import {
   getSurahAudioUrl,
 } from "../api/recitationsApi";
 import ReciterSelect from "../components/ReciterSelect";
+import AndroidQuranAudioPlayer from "../components/AndroidQuranAudioPlayer";
 import useOfflineQuranAudio from "../hooks/useOfflineQuranAudio";
+import { isAndroidNativeRuntime } from "../native/quranAudioPlugin";
 import {
   BISMILLAH,
   shouldShowStandaloneBismillah,
@@ -235,6 +237,7 @@ const QuranReaderPage = () => {
   const audioUrl = hasPassageRange
     ? null
     : getSurahAudioUrl(selectedReciter.server, surahId);
+  const isAndroidNative = isAndroidNativeRuntime();
   const {
     source: audioSource,
     statusMessage: audioStatusMessage,
@@ -242,7 +245,7 @@ const QuranReaderPage = () => {
     saveForOffline,
     clearPlaybackError,
     handlePlaybackError,
-  } = useOfflineQuranAudio(audioUrl);
+  } = useOfflineQuranAudio(isAndroidNative ? null : audioUrl);
 
   return (
     <main className="page content-page">
@@ -356,7 +359,15 @@ const QuranReaderPage = () => {
           </section>
         )}
 
-        {!hasPassageRange && (
+        {!hasPassageRange && isAndroidNative && (
+          <AndroidQuranAudioPlayer
+            audioUrl={audioUrl}
+            surahName={surahName}
+            reciterName={selectedReciter.name}
+          />
+        )}
+
+        {!hasPassageRange && !isAndroidNative && (
           <div className="audio-player">
             <span aria-hidden="true">
               <FontAwesomeIcon icon={faHeadphones} />

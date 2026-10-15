@@ -13,9 +13,11 @@ saved preferences, sessions, or favorites.
   backed by the platform's native lightweight preferences store.
 - `src/lib/deviceStorage.js` is the only platform boundary. Features must not
   access either storage implementation directly.
-- Larger sourced content and audio use the versioned IndexedDB database
-  `daqaeq-noor-offline-v1`. Cached records are bounded by content group and are
-  never treated as a different religious source.
+- Larger sourced content uses the versioned IndexedDB database
+  `daqaeq-noor-offline-v1`. Web audio uses the same database; Android audio uses
+  private native app storage so saving can continue while the screen is locked.
+  Cached records are bounded by content group and are never treated as a
+  different religious source.
 
 ## Last-opened views
 
@@ -37,8 +39,8 @@ IndexedDB records keep their original normalized API models and source
 attribution. The cache is network-first and falls back only after the remote
 request fails. Groups have explicit limits: recent Quran surahs, hadith lists,
 searches and details, the current adhkar collection, reciter metadata, and the
-three most recently played recitations. Audio is saved as the unchanged
-response blob after playback begins.
+three most recently played recitations. Audio is saved unchanged after
+playback begins: as a blob on web and as a private native file on Android.
 
 ## Daily session
 

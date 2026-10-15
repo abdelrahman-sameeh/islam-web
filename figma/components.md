@@ -47,6 +47,9 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
   saved, already available offline, or could not be saved. Keep only a bounded
   number of recent recitations so automatic offline support cannot grow without
   limit.
+- Android uses native media controls and a foreground playback notification so
+  recitation continues when the screen is locked. Play/pause and seeking remain
+  available from the app and the system media surface.
 
 ## Feedback states
 

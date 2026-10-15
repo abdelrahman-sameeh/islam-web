@@ -1286,7 +1286,7 @@ body.dark-theme .error-copy {
   background: var(--accent-400);
 }
 
-.audio-player div {
+.audio-player > div {
   display: flex;
   flex-direction: column;
 }
@@ -1303,6 +1303,47 @@ body.dark-theme .error-copy {
 
 .audio-player audio {
   width: 100%;
+}
+
+.native-audio-controls {
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.native-audio-controls__toggle {
+  grid-row: 1 / 3;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--neutral-900);
+  background: var(--accent-400);
+  cursor: pointer;
+}
+
+.native-audio-controls input[type="range"] {
+  width: 100%;
+  min-height: 24px;
+  margin: 0;
+  accent-color: var(--accent-400);
+  cursor: pointer;
+}
+
+.native-audio-controls input[type="range"]:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.native-audio-controls__time {
+  color: var(--hero-muted);
+  font-size: 11px;
+  text-align: end;
 }
 
 /* Tafsir */
@@ -2600,6 +2641,10 @@ body.dark-theme .favorites-tabs button.is-selected {
   }
 
   .audio-player audio {
+    grid-column: 1 / -1;
+  }
+
+  .audio-player--native .native-audio-controls {
     grid-column: 1 / -1;
   }
 

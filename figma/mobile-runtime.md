@@ -38,7 +38,17 @@ hadith, tafsir-search, adhkar, and reciter data is stored in a bounded IndexedDB
 cache shared by the React code, so Android can reopen the same sourced content
 without relying on a service worker.
 
-A Quran recitation is saved after playback starts. The three most recent audio
-blobs are retained and older ones are evicted. Remote religious content still
-needs one successful request before it becomes available offline; no bundled
-copy may silently replace or alter the named upstream source.
+A Quran recitation is saved after playback starts. Web keeps the three most
+recent audio blobs in IndexedDB; Android stores the same bounded set in the
+app's private native storage so saving can continue while the screen is locked.
+Older recordings are evicted. Remote religious content still needs one
+successful request before it becomes available offline; no bundled copy may
+silently replace or alter the named upstream source.
+
+## Android background audio
+
+Android Quran audio runs through a native Media3 `MediaSessionService`, not the
+WebView audio element. The foreground media notification exposes play/pause and
+seek controls and keeps network playback active when the app is backgrounded or
+the device is locked. The service uses audio focus, reacts to unplugged
+headphones, and holds only the wake mode needed for network playback.
