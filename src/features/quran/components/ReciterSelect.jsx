@@ -5,11 +5,17 @@ const arabicCollator = new Intl.Collator("ar", {
   ignorePunctuation: true,
 });
 
-const ReciterSelect = ({ options, selectedReciter, onSelect }) => (
+const ReciterSelect = ({
+  options,
+  selectedReciter,
+  onSelect,
+  disabled = false,
+}) => (
   <SearchableSelect
     options={options}
     value={selectedReciter.id}
     onChange={onSelect}
+    disabled={disabled}
     getOptionLabel={(reciter) => reciter.name}
     searchPlaceholder="ابحث باسم القارئ"
     emptyMessage="لا يوجد قارئ بهذا الاسم."

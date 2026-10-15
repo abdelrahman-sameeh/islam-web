@@ -58,6 +58,8 @@ const QuranReaderPage = () => {
   const [reciters, setReciters] = useState([]);
   const [selectedReciter, setSelectedReciter] = useState(DEFAULT_RECITER);
   const [isPreferencesReady, setIsPreferencesReady] = useState(false);
+  const [reciterFallbackMessage, setReciterFallbackMessage] = useState("");
+  const hasUserInteracted = useRef(false);
   const initialSelection = useRef({
     surahId: id,
     reciterId: requestedReciterId,
@@ -85,6 +87,11 @@ const QuranReaderPage = () => {
     const restorePreferences = async () => {
       const stored = await getStoredJson(QURAN_PREFERENCES_KEY);
       if (!isActive) return;
+
+      if (hasUserInteracted.current) {
+        setIsPreferencesReady(true);
+        return;
+      }
 
       const initialSurahId = isValidSurahId(initialSelection.current.surahId)
         ? String(initialSelection.current.surahId)
@@ -156,19 +163,14 @@ const QuranReaderPage = () => {
     [ayahs, hasPassageRange, passageEnd, passageStart]
   );
   const surahName = surahList.find(({ id: itemId }) => itemId === surahId)?.label;
-  const availableSurahs = selectedReciter.availableSurahs
-    ? surahList.filter(({ id: itemId }) =>
-        selectedReciter.availableSurahs.includes(itemId)
-      )
-    : surahList;
-  const currentSurahIndex = availableSurahs.findIndex(
+  const currentSurahIndex = surahList.findIndex(
     ({ id: itemId }) => itemId === surahId
   );
   const previousSurah =
-    currentSurahIndex > 0 ? availableSurahs[currentSurahIndex - 1] : null;
+    currentSurahIndex > 0 ? surahList[currentSurahIndex - 1] : null;
   const nextSurah =
-    currentSurahIndex >= 0 && currentSurahIndex < availableSurahs.length - 1
-      ? availableSurahs[currentSurahIndex + 1]
+    currentSurahIndex >= 0 && currentSurahIndex < surahList.length - 1
+      ? surahList[currentSurahIndex + 1]
       : null;
   const reciterOptions = useMemo(
     () => [
@@ -197,12 +199,14 @@ const QuranReaderPage = () => {
       requestedReciter.availableSurahs &&
       !requestedReciter.availableSurahs.includes(surahId)
     ) {
-      const firstAvailableSurahId = requestedReciter.availableSurahs[0] ?? "1";
-      setSurahId(firstAvailableSurahId);
-      navigate(
-        getReaderPath(firstAvailableSurahId, requestedReciter.id),
-        { replace: true }
+      setSelectedReciter(DEFAULT_RECITER);
+      setReciterFallbackMessage(
+        "التلاوة المختارة غير متاحة لهذه السورة، لذلك تم استخدام القارئ الافتراضي."
       );
+      void setStoredJson(QURAN_PREFERENCES_KEY, {
+        reciterId: DEFAULT_RECITER.id,
+      });
+      navigate(getReaderPath(surahId, DEFAULT_RECITER.id), { replace: true });
       return;
     }
 
@@ -214,6 +218,8 @@ const QuranReaderPage = () => {
   }, [isPreferencesReady, navigate, reciterOptions, requestedReciterId, surahId]);
 
   const handleReciterChange = (reciter) => {
+    hasUserInteracted.current = true;
+    setReciterFallbackMessage("");
     setSelectedReciter(reciter);
     const nextSurahId =
       reciter.availableSurahs && !reciter.availableSurahs.includes(surahId)
@@ -228,9 +234,28 @@ const QuranReaderPage = () => {
   };
 
   const handleSurahChange = (surah) => {
+    hasUserInteracted.current = true;
     const nextSurahId = String(surah.id);
+    const shouldUseDefaultReciter =
+      selectedReciter.availableSurahs &&
+      !selectedReciter.availableSurahs.includes(nextSurahId);
+    const nextReciter = shouldUseDefaultReciter
+      ? DEFAULT_RECITER
+      : selectedReciter;
+
     setSurahId(nextSurahId);
-    navigate(getReaderPath(nextSurahId, selectedReciter.id));
+    setSelectedReciter(nextReciter);
+    setReciterFallbackMessage(
+      shouldUseDefaultReciter
+        ? "التلاوة المختارة غير متاحة لهذه السورة، لذلك تم استخدام القارئ الافتراضي."
+        : ""
+    );
+    if (shouldUseDefaultReciter) {
+      void setStoredJson(QURAN_PREFERENCES_KEY, {
+        reciterId: DEFAULT_RECITER.id,
+      });
+    }
+    navigate(getReaderPath(nextSurahId, nextReciter.id));
   };
 
   const audioUrl = hasPassageRange
@@ -264,9 +289,10 @@ const QuranReaderPage = () => {
           <div className="reader-toolbar__field">
             <span>السورة</span>
             <SearchableSelect
-              options={availableSurahs}
+              options={surahList}
               value={surahId}
               onChange={handleSurahChange}
+              disabled={!isPreferencesReady}
               searchPlaceholder="ابحث باسم السورة"
               emptyMessage="لا توجد سورة بهذا الاسم."
               listLabel="قائمة السور"
@@ -291,6 +317,7 @@ const QuranReaderPage = () => {
               options={reciterOptions}
               selectedReciter={selectedReciter}
               onSelect={handleReciterChange}
+              disabled={!isPreferencesReady}
             />
             <FavoriteButton
               label="حفظ القارئ"
@@ -310,6 +337,12 @@ const QuranReaderPage = () => {
             <FontAwesomeIcon icon={faSliders} />
           </span>
         </section>
+
+        {reciterFallbackMessage && (
+          <div className="session-passage-note" role="status">
+            {reciterFallbackMessage}
+          </div>
+        )}
 
         {hasPassageRange && (
           <div className="session-passage-note">
