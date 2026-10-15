@@ -26,6 +26,7 @@ import {
 } from "../utils/bismillah";
 
 const QURAN_PREFERENCES_KEY = "islamona.quran-reader.v1";
+const DEFAULT_SURAH_ID = "1";
 
 const isValidSurahId = (value) =>
   surahList.some(({ id }) => id === String(value));
@@ -34,7 +35,7 @@ const getSafeSurahId = (value) => {
   const number = Number(value);
   return Number.isInteger(number) && number >= 1 && number <= 114
     ? String(number)
-    : "1";
+    : DEFAULT_SURAH_ID;
 };
 
 const getReaderPath = (surahId, reciterId) => {
@@ -82,9 +83,7 @@ const QuranReaderPage = () => {
 
       const initialSurahId = isValidSurahId(initialSelection.current.surahId)
         ? String(initialSelection.current.surahId)
-        : isValidSurahId(stored?.surahId)
-        ? String(stored.surahId)
-        : "1";
+        : DEFAULT_SURAH_ID;
       const storedReciterId =
         !initialSelection.current.isSessionPassage &&
         typeof stored?.reciterId === "string"
@@ -201,24 +200,6 @@ const QuranReaderPage = () => {
     );
   }, [isPreferencesReady, navigate, reciterOptions, requestedReciterId, surahId]);
 
-  useEffect(() => {
-    if (!isPreferencesReady || isSessionPassage) return;
-
-    const activeReciterId = requestedReciterId ?? DEFAULT_RECITER.id;
-    if (selectedReciter.id !== activeReciterId) return;
-
-    void setStoredJson(QURAN_PREFERENCES_KEY, {
-      surahId,
-      reciterId: activeReciterId,
-    });
-  }, [
-    isPreferencesReady,
-    isSessionPassage,
-    requestedReciterId,
-    selectedReciter.id,
-    surahId,
-  ]);
-
   const handleReciterChange = (reciter) => {
     setSelectedReciter(reciter);
     const nextSurahId =
@@ -227,17 +208,12 @@ const QuranReaderPage = () => {
         : surahId;
 
     void setStoredJson(QURAN_PREFERENCES_KEY, {
-      surahId: nextSurahId,
       reciterId: reciter.id,
     });
     navigate(getReaderPath(nextSurahId, reciter.id));
   };
 
   const handleSurahChange = (surah) => {
-    void setStoredJson(QURAN_PREFERENCES_KEY, {
-      surahId: surah.id,
-      reciterId: selectedReciter.id,
-    });
     navigate(getReaderPath(surah.id, selectedReciter.id));
   };
 
