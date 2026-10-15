@@ -20,10 +20,10 @@ saved preferences, sessions, or favorites.
 
 - `islamona.quran-reader.v1`: last surah and reciter IDs. A direct URL still
   wins; otherwise both choices reopen as the defaults until the user changes
-  them.
+  them. Random daily-session passages never replace these explicit choices.
 - `islamona.tafsir-view.v1`: last surah, ayah, and active verse-search phrase.
 - `islamona.hadith-view.v1`: last category/page, search phrase, or direct
-  hadith ID.
+  hadith ID, plus the last expanded hadith in a list.
 - `islamona.adhkar-view.v1`: last category and counter progress.
 
 The preferences above are small device-local values and use the existing
