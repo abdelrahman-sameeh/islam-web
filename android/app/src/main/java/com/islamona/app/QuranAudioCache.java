@@ -81,7 +81,7 @@ final class QuranAudioCache {
         connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
         connection.setReadTimeout(READ_TIMEOUT_MS);
         connection.setInstanceFollowRedirects(true);
-        connection.setRequestProperty("User-Agent", "DaqaeqNoor-Android/1.4.1");
+        connection.setRequestProperty("User-Agent", "DaqaeqNoor-Android");
 
         try {
             int responseCode = connection.getResponseCode();
