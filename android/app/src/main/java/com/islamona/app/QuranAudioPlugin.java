@@ -41,6 +41,7 @@ public class QuranAudioPlugin extends Plugin {
 
     @Override
     public void load() {
+        QuranAudioCache.clearLegacyCache(getContext());
         mainExecutor = ContextCompat.getMainExecutor(getContext());
         SessionToken sessionToken = new SessionToken(
             getContext(),
@@ -85,9 +86,6 @@ public class QuranAudioPlugin extends Plugin {
             }
 
             mediaController.play();
-            if (cachedFile == null) {
-                QuranAudioCache.saveInBackground(getContext(), url, () -> mainExecutor.execute(this::notifyState));
-            }
             call.resolve(createState(url));
             notifyState();
         });

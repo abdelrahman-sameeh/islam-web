@@ -38,12 +38,13 @@ hadith, tafsir-search, adhkar, and reciter data is stored in a bounded IndexedDB
 cache shared by the React code, so Android can reopen the same sourced content
 without relying on a service worker.
 
-A Quran recitation is saved after playback starts. Web keeps the three most
-recent audio blobs in IndexedDB; Android stores the same bounded set in the
-app's private native storage so saving can continue while the screen is locked.
-Older recordings are evicted. Remote religious content still needs one
-successful request before it becomes available offline; no bundled copy may
-silently replace or alter the named upstream source.
+A Quran recitation is cached after playback starts only on web, which keeps the
+three most recent audio blobs in IndexedDB. Android streams playback without an
+automatic audio cache and uses private app storage only when the user presses
+`حفظ على الجهاز`. Explicit downloads are used before the remote URL. Remote
+religious content still needs one successful request before it becomes
+available offline; no bundled copy may silently replace or alter the named
+upstream source.
 
 ## Android background audio
 

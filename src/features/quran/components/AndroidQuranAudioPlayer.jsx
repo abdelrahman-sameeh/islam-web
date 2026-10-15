@@ -25,16 +25,7 @@ const getStatusMessage = ({ cacheStatus, playbackState, displayError }) => {
   if (cacheStatus === "saved") {
     return "محفوظة في مكتبتك حتى تحذفها بنفسك.";
   }
-  if (cacheStatus === "cached") {
-    return "محفوظة على الجهاز، وتستمر عند قفل الشاشة.";
-  }
-  if (cacheStatus === "saving") {
-    return "تستمر عند قفل الشاشة، وجارٍ حفظها للاستخدام دون إنترنت.";
-  }
-  if (cacheStatus === "error") {
-    return "يستمر التشغيل، لكن تعذّر حفظ التلاوة على الجهاز.";
-  }
-  return "تستمر عند قفل الشاشة، وستُحفظ تلقائيًا عند تشغيلها.";
+  return "بث مباشر؛ اضغط «حفظ على الجهاز» لتعمل دون إنترنت.";
 };
 
 const AndroidQuranAudioPlayer = ({

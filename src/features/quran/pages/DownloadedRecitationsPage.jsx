@@ -84,7 +84,7 @@ const DownloadedRecitationsPage = () => {
             {downloads.length.toLocaleString("ar-EG")} تلاوات · {formatSize(totalSize)}
           </strong>
           <small>
-            التشغيل العادي يحتفظ بآخر ٣ تلاوات مؤقتًا ولا يحذف أي تلاوة من هذه القائمة.
+            التشغيل العادي بث مباشر ولا يحفظ ملفات؛ الحفظ يتم فقط من زر «حفظ على الجهاز».
           </small>
         </section>
 
