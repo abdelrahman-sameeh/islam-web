@@ -57,6 +57,32 @@ const HadithPage = () => {
 
   useEffect(() => {
     let isActive = true;
+    const controller = new AbortController();
+
+    const restoreExpandedHadith = (hadithId) => {
+      if (!/^\d+$/.test(hadithId ?? "")) return;
+
+      setExpandedId(hadithId);
+      setDetails((current) => ({
+        ...current,
+        [hadithId]: { status: "loading" },
+      }));
+      getHadithDetails(hadithId, controller.signal)
+        .then((hadith) => {
+          if (!isActive) return;
+          setDetails((current) => ({
+            ...current,
+            [hadithId]: { status: "success", hadith },
+          }));
+        })
+        .catch(() => {
+          if (!isActive || controller.signal.aborted) return;
+          setDetails((current) => ({
+            ...current,
+            [hadithId]: { status: "error" },
+          }));
+        });
+    };
 
     const restorePreferences = async () => {
       const stored = await getStoredJson(HADITH_PREFERENCES_KEY);
@@ -86,6 +112,10 @@ const HadithPage = () => {
             { replace: true }
           );
         }
+
+        if (stored.mode === "browse" || stored.mode === "search") {
+          restoreExpandedHadith(stored.expandedHadithId);
+        }
       }
 
       setIsPreferencesReady(true);
@@ -94,6 +124,7 @@ const HadithPage = () => {
     void restorePreferences();
     return () => {
       isActive = false;
+      controller.abort();
     };
   }, [setSearchParams]);
 
@@ -242,13 +273,24 @@ const HadithPage = () => {
     const storedView = isDirectMode
       ? { mode: "direct", hadithId: directHadithId }
       : isSearchMode
-      ? { mode: "search", query: searchQuery, page }
-      : { mode: "browse", categoryId, page };
+      ? {
+          mode: "search",
+          query: searchQuery,
+          page,
+          expandedHadithId: expandedId ?? undefined,
+        }
+      : {
+          mode: "browse",
+          categoryId,
+          page,
+          expandedHadithId: expandedId ?? undefined,
+        };
 
     void setStoredJson(HADITH_PREFERENCES_KEY, storedView);
   }, [
     categoryId,
     directHadithId,
+    expandedId,
     isDirectMode,
     isPreferencesReady,
     isSearchMode,

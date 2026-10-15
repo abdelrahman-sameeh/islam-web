@@ -65,8 +65,9 @@ const QuranReaderPage = () => {
 
   const passageStart = Number(searchParams.get("from"));
   const passageEnd = Number(searchParams.get("to"));
+  const isSessionPassage = searchParams.get("session") === "1";
   const hasPassageRange =
-    searchParams.get("session") === "1" &&
+    isSessionPassage &&
     Number.isInteger(passageStart) &&
     Number.isInteger(passageEnd) &&
     passageStart > 0 &&
@@ -201,7 +202,7 @@ const QuranReaderPage = () => {
   }, [isPreferencesReady, navigate, reciterOptions, requestedReciterId, surahId]);
 
   useEffect(() => {
-    if (!isPreferencesReady) return;
+    if (!isPreferencesReady || isSessionPassage) return;
 
     const activeReciterId = requestedReciterId ?? DEFAULT_RECITER.id;
     if (selectedReciter.id !== activeReciterId) return;
@@ -210,7 +211,13 @@ const QuranReaderPage = () => {
       surahId,
       reciterId: activeReciterId,
     });
-  }, [isPreferencesReady, requestedReciterId, selectedReciter.id, surahId]);
+  }, [
+    isPreferencesReady,
+    isSessionPassage,
+    requestedReciterId,
+    selectedReciter.id,
+    surahId,
+  ]);
 
   const handleReciterChange = (reciter) => {
     setSelectedReciter(reciter);
