@@ -8,6 +8,7 @@ import FavoriteButton from "../../favorites/components/FavoriteButton";
 import useFavorites from "../../favorites/hooks/useFavorites";
 import { getStoredJson, setStoredJson } from "../../../lib/browserStorage";
 import { getSurahAyahs } from "../../quran/api/quranApi";
+import VerseAudioPlayer from "../../quran/components/VerseAudioPlayer";
 import surahList from "../../quran/data/surahs";
 import VerseTafsirSearch from "../components/VerseTafsirSearch";
 
@@ -197,6 +198,11 @@ const TafsirPage = () => {
                   <p className="quran-font" translate="no">
                     {selectedAyah.text}
                   </p>
+                  <VerseAudioPlayer
+                    surahId={surahId}
+                    fromAyah={selectedAyah.number}
+                    title="استمع للآية"
+                  />
                 </article>
                 <article className="explanation-panel">
                   <div className="explanation-panel__heading">

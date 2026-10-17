@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import FeedbackState from "../../../components/feedback/FeedbackState";
 import PageHeader from "../../../components/layout/PageHeader";
 import SourceBadge from "../../../components/ui/SourceBadge";
+import VerseAudioPlayer from "../../quran/components/VerseAudioPlayer";
 import { useDailySession } from "../hooks/useDailySession";
 import { useSessionContent } from "../hooks/useSessionContent";
 
@@ -90,14 +91,22 @@ const DailySessionPage = () => {
                   <FeedbackState type="empty" title="لم نجد آيات هذا المقطع" />
                 )}
                 {ayahState.status === "success" && (
-                  <div className="session-quran quran-font" translate="no">
-                    {ayahState.data.map((ayah) => (
-                      <span key={ayah.id}>
-                        {ayah.text}
-                        <b>{ayah.number.toLocaleString("ar-EG")}</b>
-                      </span>
-                    ))}
-                  </div>
+                  <>
+                    <div className="session-quran quran-font" translate="no">
+                      {ayahState.data.map((ayah) => (
+                        <span key={ayah.id}>
+                          {ayah.text}
+                          <b>{ayah.number.toLocaleString("ar-EG")}</b>
+                        </span>
+                      ))}
+                    </div>
+                    <VerseAudioPlayer
+                      surahId={passage.surahId}
+                      fromAyah={passage.fromAyah}
+                      toAyah={passage.toAyah}
+                      title="استمع للمقطع كاملًا"
+                    />
+                  </>
                 )}
               </section>
 

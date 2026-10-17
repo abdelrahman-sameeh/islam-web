@@ -32,7 +32,12 @@
     <line x1="292" y1="540" x2="1148" y2="540" stroke="#E8E1D5"/>
     <text x="1128" y="596" text-anchor="end" class="quran" font-size="28">الْحَمْدُ لِلَّهِ الَّذِي أَنزَلَ عَلَىٰ عَبْدِهِ الْكِتَابَ وَلَمْ يَجْعَل لَّهُ عِوَجًا</text>
     <text x="1128" y="650" text-anchor="end" class="quran" font-size="28">قَيِّمًا لِّيُنذِرَ بَأْسًا شَدِيدًا مِّن لَّدُنْهُ وَيُبَشِّرَ الْمُؤْمِنِينَ</text>
-    <text x="1128" y="704" text-anchor="end" class="quran" font-size="28">الَّذِينَ يَعْمَلُونَ الصَّالِحَاتِ أَنَّ لَهُمْ أَجْرًا حَسَنًا</text>
+    <text x="1128" y="694" text-anchor="end" class="quran" font-size="28">الَّذِينَ يَعْمَلُونَ الصَّالِحَاتِ أَنَّ لَهُمْ أَجْرًا حَسَنًا</text>
+    <rect x="306" y="714" width="842" height="44" rx="12" fill="#FCFAF5" stroke="#E8E1D5"/>
+    <circle cx="1118" cy="736" r="14" fill="#1F6F5B"/>
+    <path d="M1114 729l10 7-10 7Z" fill="#fff"/>
+    <text x="1092" y="741" text-anchor="end" class="ui label green">استمع للمقطع · الآية ١ من ١٠</text>
+    <text x="324" y="741" class="ui" font-size="12" fill="#6F7874">AlQuran Cloud · مشاري العفاسي</text>
   </g>
   <g id="HadithStep" filter="url(#shadow)">
     <rect x="260" y="796" width="920" height="330" rx="18" fill="#fff"/>

@@ -58,6 +58,11 @@ open a guided session containing those Quran ayahs -> show one independently
 random HadeethEnc hadith -> show the sourced simplified tafsir for each selected
 ayah.
 
+The Quran step also loads the explicit `ar.alafasy` audio track for every ayah
+in the generated range and plays those tracks consecutively. The active ayah is
+always visible and can be changed with previous/next controls. Audio failure is
+isolated from Quran text, hadith, and tafsir content.
+
 The browser stores the selected passage and duration. Randomness happens on a
 new day, an explicit duration change, or `جلسة أخرى`; never on an ordinary
 render or refresh. A short random surah is skipped when it cannot fill the
@@ -66,3 +71,10 @@ chosen duration. No account or server is required.
 The Quran passage and random hadith remain stable on refresh. Requesting another
 session changes both. A failure in the hadith service never hides the Quran or
 tafsir steps; each remote section has its own retry action.
+
+## Tafsir verse audio
+
+Tafsir -> search for or select an ayah -> show its Quran text and sourced
+tafsir -> load the matching `ar.alafasy` ayah track. Changing the URL-owned
+surah or ayah replaces the track, resets playback to the new ayah, and leaves
+the tafsir source unchanged.
