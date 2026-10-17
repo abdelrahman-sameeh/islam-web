@@ -39,7 +39,10 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
 
 ## Audio
 
-- `AudioPlayer`: play/pause, seek, elapsed/remaining time, reciter, explicit download, and a direct link to saved recitations. Android volume stays with the system controls.
+- `AudioPlayer`: play/pause, a large touch-friendly seek track, elapsed/remaining
+  time, 10-second rewind/forward actions, reciter, explicit download, and a
+  direct link to saved recitations. Android volume stays with the system
+  controls.
 - Desktop: sticky bottom card within content width.
 - Mobile: persistent mini-player above bottom navigation; expands to a sheet.
 - Preserve playback when navigating between Quran routes.

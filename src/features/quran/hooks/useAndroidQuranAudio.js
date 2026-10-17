@@ -90,8 +90,18 @@ const useAndroidQuranAudio = ({
   };
 
   const seekTo = async (position) => {
+    const safePosition = Math.max(
+      0,
+      Math.min(position, playerState.duration || position)
+    );
+    setActionError("");
+    setPlayerState((currentState) => ({
+      ...currentState,
+      position: safePosition,
+    }));
+
     try {
-      const nextState = await QuranAudio.seekTo({ position });
+      const nextState = await QuranAudio.seekTo({ position: safePosition });
       setPlayerState(nextState);
     } catch {
       setActionError("تعذّر الانتقال إلى هذا الموضع في التلاوة.");

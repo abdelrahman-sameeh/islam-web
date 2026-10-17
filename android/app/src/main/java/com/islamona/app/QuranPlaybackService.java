@@ -12,6 +12,8 @@ import androidx.media3.session.MediaSessionService;
 @OptIn(markerClass = UnstableApi.class)
 public class QuranPlaybackService extends MediaSessionService {
 
+    private static final long SEEK_STEP_MS = 10_000;
+
     private ExoPlayer player;
     private MediaSession mediaSession;
 
@@ -19,7 +21,10 @@ public class QuranPlaybackService extends MediaSessionService {
     public void onCreate() {
         super.onCreate();
 
-        player = new ExoPlayer.Builder(this).build();
+        player = new ExoPlayer.Builder(this)
+            .setSeekBackIncrementMs(SEEK_STEP_MS)
+            .setSeekForwardIncrementMs(SEEK_STEP_MS)
+            .build();
         player.setAudioAttributes(AudioAttributes.DEFAULT, true);
         player.setHandleAudioBecomingNoisy(true);
         player.setWakeMode(C.WAKE_MODE_NETWORK);

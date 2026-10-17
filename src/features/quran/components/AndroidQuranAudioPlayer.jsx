@@ -7,8 +7,11 @@ import {
   faFolderOpen,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import useAndroidQuranAudio from "../hooks/useAndroidQuranAudio";
+
+const SEEK_STEP = 10_000;
 
 const formatTime = (milliseconds) => {
   const totalSeconds = Math.floor(Math.max(0, milliseconds) / 1000);
@@ -46,6 +49,37 @@ const AndroidQuranAudioPlayer = ({
   const duration = player.isCurrentAudio ? player.duration : 0;
   const isPlaying = player.isCurrentAudio && player.isPlaying;
   const statusMessage = getStatusMessage(player);
+  const [pendingPosition, setPendingPosition] = useState(null);
+  const pendingPositionRef = useRef(null);
+  const displayedPosition = pendingPosition ?? position;
+
+  useEffect(() => {
+    pendingPositionRef.current = null;
+    setPendingPosition(null);
+  }, [audioUrl]);
+
+  const handleSeekPreview = (event) => {
+    const nextPosition = Number(event.target.value);
+    pendingPositionRef.current = nextPosition;
+    setPendingPosition(nextPosition);
+  };
+
+  const handleSeekCommit = () => {
+    const nextPosition = pendingPositionRef.current;
+    if (nextPosition === null) return;
+
+    pendingPositionRef.current = null;
+    setPendingPosition(null);
+    void player.seekTo(nextPosition);
+  };
+
+  const handleSeekBy = (offset) => {
+    const nextPosition = Math.min(
+      Math.max(position + offset, 0),
+      Math.max(duration, 0)
+    );
+    void player.seekTo(nextPosition);
+  };
 
   return (
     <div className="audio-player audio-player--native">
@@ -60,28 +94,54 @@ const AndroidQuranAudioPlayer = ({
         </small>
       </div>
       <div className="native-audio-controls">
-        <button
-          type="button"
-          className="native-audio-controls__toggle"
-          aria-label={isPlaying ? "إيقاف التلاوة مؤقتًا" : "تشغيل التلاوة"}
-          onClick={player.togglePlayback}
-        >
-          <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
-        </button>
-        <input
-          type="range"
-          dir="ltr"
-          min="0"
-          max={Math.max(duration, 1)}
-          step="1000"
-          value={Math.min(position, Math.max(duration, 1))}
-          disabled={!duration}
-          aria-label="موضع التلاوة"
-          onChange={(event) => player.seekTo(Number(event.target.value))}
-        />
-        <span className="native-audio-controls__time" dir="ltr">
-          {formatTime(position)} / {formatTime(duration)}
-        </span>
+        <div className="native-audio-controls__transport" dir="ltr">
+          <button
+            type="button"
+            className="native-audio-controls__skip"
+            disabled={!duration}
+            aria-label="الرجوع عشر ثوانٍ"
+            onClick={() => handleSeekBy(-SEEK_STEP)}
+          >
+            −١٠ ث
+          </button>
+          <button
+            type="button"
+            className="native-audio-controls__toggle"
+            aria-label={isPlaying ? "إيقاف التلاوة مؤقتًا" : "تشغيل التلاوة"}
+            onClick={player.togglePlayback}
+          >
+            <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+          </button>
+          <button
+            type="button"
+            className="native-audio-controls__skip"
+            disabled={!duration}
+            aria-label="التقديم عشر ثوانٍ"
+            onClick={() => handleSeekBy(SEEK_STEP)}
+          >
+            +١٠ ث
+          </button>
+        </div>
+        <div className="native-audio-controls__progress">
+          <input
+            type="range"
+            dir="ltr"
+            min="0"
+            max={Math.max(duration, 1)}
+            step="1000"
+            value={Math.min(displayedPosition, Math.max(duration, 1))}
+            disabled={!duration}
+            aria-label="موضع التلاوة"
+            onChange={handleSeekPreview}
+            onPointerUp={handleSeekCommit}
+            onPointerCancel={handleSeekCommit}
+            onKeyUp={handleSeekCommit}
+            onBlur={handleSeekCommit}
+          />
+          <span className="native-audio-controls__time" dir="ltr">
+            {formatTime(displayedPosition)} / {formatTime(duration)}
+          </span>
+        </div>
         <div className="native-audio-controls__actions">
           <button
             type="button"

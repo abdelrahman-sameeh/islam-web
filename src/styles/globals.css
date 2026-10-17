@@ -1307,14 +1307,18 @@ body.dark-theme .error-copy {
 
 .native-audio-controls {
   display: grid !important;
-  grid-template-columns: 44px minmax(0, 1fr);
-  grid-template-rows: auto auto auto;
+  grid-template-columns: auto minmax(180px, 1fr);
   align-items: center;
-  gap: 6px 12px;
+  gap: 10px 14px;
+}
+
+.native-audio-controls__transport {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
 }
 
 .native-audio-controls__toggle {
-  grid-row: 1 / 3;
   display: grid;
   place-items: center;
   width: 44px;
@@ -1327,13 +1331,70 @@ body.dark-theme .error-copy {
   cursor: pointer;
 }
 
+.native-audio-controls__skip {
+  min-width: 58px;
+  min-height: 44px;
+  padding-inline: 9px;
+  border: 1px solid color-mix(in srgb, var(--hero-muted) 35%, transparent);
+  border-radius: 12px;
+  color: var(--hero-text);
+  background: color-mix(in srgb, var(--hero-text) 9%, transparent);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.native-audio-controls__skip:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.native-audio-controls__progress {
+  display: grid !important;
+  gap: 2px;
+  min-width: 0;
+}
+
 .native-audio-controls input[type="range"] {
-  grid-column: 2;
+  appearance: none;
   width: 100%;
-  min-height: 24px;
+  min-height: 44px;
   margin: 0;
   accent-color: var(--accent-400);
+  background: transparent;
   cursor: pointer;
+  touch-action: none;
+}
+
+.native-audio-controls input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--hero-muted) 45%, transparent);
+}
+
+.native-audio-controls input[type="range"]::-webkit-slider-thumb {
+  width: 24px;
+  height: 24px;
+  margin-top: -8px;
+  border: 3px solid var(--hero-surface);
+  border-radius: 50%;
+  appearance: none;
+  background: var(--accent-400);
+}
+
+.native-audio-controls input[type="range"]::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--hero-muted) 45%, transparent);
+}
+
+.native-audio-controls input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--hero-surface);
+  border-radius: 50%;
+  background: var(--accent-400);
 }
 
 .native-audio-controls input[type="range"]:disabled {
@@ -2771,11 +2832,11 @@ body.dark-theme .favorites-tabs button.is-selected {
   }
 
   .native-audio-controls {
-    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-columns: 1fr;
   }
 
-  .native-audio-controls input[type="range"] {
-    grid-column: 2;
+  .native-audio-controls__transport {
+    justify-content: center;
   }
 
   .native-audio-controls__actions {
