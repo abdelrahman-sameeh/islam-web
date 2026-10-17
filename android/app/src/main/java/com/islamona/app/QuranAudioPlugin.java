@@ -111,8 +111,10 @@ public class QuranAudioPlugin extends Plugin {
 
     @PluginMethod
     public void seekTo(PluginCall call) {
-        Long position = call.getLong("position");
-        if (position == null || position < 0) {
+        Long position = QuranAudioPosition.fromBridgeValue(
+            call.getData().opt("position")
+        );
+        if (position == null) {
             call.reject("A non-negative position is required");
             return;
         }
