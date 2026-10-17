@@ -2937,6 +2937,10 @@ body.dark-theme .favorites-tabs button.is-selected {
     width: 100%;
   }
 
+  .surah-navigation {
+    margin-block: 24px;
+  }
+
   .surah-navigation button {
     min-width: 0;
     flex: 1;
