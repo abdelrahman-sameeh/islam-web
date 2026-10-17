@@ -68,6 +68,20 @@ characters, caps rendered results, and uses only the returned surah/ayah
 coordinates. The selected tafsir continues to come from QuranEnc, so the
 search provider never becomes the tafsir source.
 
+Verse audio was verified on 2026-10-17 against the official API and CDN
+documentation. The frontend uses the explicit audio edition `ar.alafasy` and
+requests `/v1/surah/{surahNumber}/ar.alafasy`; every returned ayah provides its
+global number, number in surah, and an HTTPS audio URL. This needs no API key or
+client secret and the live response permits browser CORS access. The app maps
+only valid HTTPS tracks, labels the source as `AlQuran Cloud · مشاري العفاسي`,
+and uses the result in two places: the exact contiguous daily-session range and
+the selected/search-result ayah in tafsir. The normalized URL metadata may use
+the existing bounded IndexedDB fallback (six recent surahs); MP3 files are not
+downloaded or silently cached by this adapter. Playback/network errors stay
+local to the compact player and expose a retry action. Relevant documentation:
+`https://alquran.cloud/api`, `https://legacy.alquran.cloud/api`, and
+`https://alquran.cloud/cdn`.
+
 ## 3. QuranEnc
 
 Official documentation: https://quranenc.com/en/home/api/

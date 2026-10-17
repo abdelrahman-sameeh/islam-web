@@ -52,6 +52,12 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
 - Android uses native media controls and a foreground playback notification so
   recitation continues when the screen is locked. Play/pause and seeking remain
   available from the app and the system media surface.
+- `VerseAudioPlayer`: a compact sourced player for an explicit ayah or a
+  contiguous ayah range. It loads one AlQuran Cloud track per ayah, continues
+  through the range in order, and exposes previous/next ayah actions. Show the
+  active ayah and its position in the range, plus loading, empty, error, and
+  retry states. The daily session uses the exact generated range; tafsir uses
+  the currently selected or searched ayah.
 
 ## Feedback states
 
@@ -73,3 +79,5 @@ Build these in Figma with Auto Layout and mirror the same vocabulary in React.
 - Keep religious text immutable; counters and highlights are separate UI layers.
 - Keep the Quran reader card aligned with the 1200px app container, while its
   text column stays near 860px with compact card padding and a calm line height.
+- On mobile, keep a 24px clear area above and below the previous/next-surah row
+  so it does not visually collide with either the reader or the audio player.

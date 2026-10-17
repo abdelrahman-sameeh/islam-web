@@ -20,6 +20,7 @@
   --neutral-500: #6f7874;
   --neutral-700: #3d4743;
   --neutral-900: #17211f;
+  --danger-color: #b43a3a;
   --focus-ring: #2f8f74;
   --main-color: var(--neutral-100);
   --secondary-color: var(--neutral-0);
@@ -1438,6 +1439,86 @@ body.dark-theme .error-copy {
   opacity: 0.7;
 }
 
+.verse-audio-player {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 16px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 14px;
+  background: var(--neutral-50);
+}
+
+.verse-audio-player__heading,
+.verse-audio-player__now-playing,
+.verse-audio-player__message {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.verse-audio-player__heading > div {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--brand-700);
+}
+
+.verse-audio-player__now-playing span {
+  color: var(--accent-600);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.verse-audio-player__now-playing small,
+.verse-audio-player__message {
+  color: var(--neutral-500);
+  font-size: 13px;
+}
+
+.verse-audio-player__message {
+  margin: 0;
+  min-height: 44px;
+}
+
+.verse-audio-player__controls {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 10px;
+}
+
+.verse-audio-player__controls audio {
+  width: 100%;
+  min-width: 0;
+}
+
+.verse-audio-player__controls button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--neutral-200);
+  border-radius: 12px;
+  color: var(--brand-700);
+  background: var(--secondary-color);
+  cursor: pointer;
+}
+
+.verse-audio-player__controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.verse-audio-player__error {
+  margin: 0;
+  color: var(--danger-color);
+  font-size: 13px;
+}
+
 .surah-navigation {
   display: flex;
   align-items: center;
@@ -2841,6 +2922,19 @@ body.dark-theme .favorites-tabs button.is-selected {
 
   .native-audio-controls__actions {
     grid-template-columns: 1fr;
+  }
+
+  .verse-audio-player__controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .verse-audio-player__controls audio {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .verse-audio-player__controls button {
+    width: 100%;
   }
 
   .surah-navigation button {
